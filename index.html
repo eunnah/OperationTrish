@@ -1,62 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>OPERATION TRISH — Gate Crash Mission Briefing</title>
+<title>Operation Trish — Gate Crash Mission Briefing</title>
 <style>
-:root {
-  --bg: #0a0e17;
-  --surface: #131a2a;
-  --border: #1e2d45;
-  --text: #c8d6e5;
-  --accent: #e74c3c;
-  --gold: #f0c040;
-  --green: #27ae60;
-  --amber: #f39c12;
-  --muted: #5a6f8a;
-  --mono: 'Courier New', Courier, monospace;
-  --serif: Georgia, 'Times New Roman', serif;
-  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.6;min-height:100vh}
+:root{color-scheme:dark;--bg:#0a0e17;--surface:#131a2a;--text:#c8d6e5;--dim:#5a6f8a;--border:#1e2d45;--accent:#e74c3c;--gold:#f0c040;--green:#27ae60;--amber:#f39c12;--radius:6px;--mono:'Courier New',Courier,monospace;--serif:Georgia,'Times New Roman',serif;--sans:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);margin:0;font-family:var(--sans);color:var(--text);line-height:1.6}
 .container{max-width:820px;margin:0 auto;padding:16px}
 
+/* Agent Badge */
+.agent-badge-wrap{position:sticky;top:0;z-index:50;display:flex;justify-content:flex-end;padding:8px 0;background:var(--bg)}
+.agent-badge{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 14px;font-family:var(--mono);font-size:.75rem;color:var(--gold);cursor:pointer;transition:border-color .2s}
+.agent-badge:hover{border-color:var(--gold)}
+.agent-badge-input{background:var(--surface);border:1px solid var(--gold);border-radius:20px;padding:4px 14px;font-family:var(--mono);font-size:.75rem;color:var(--gold);outline:none;width:180px}
+
 /* Top Secret Banner */
-.ts-banner{text-align:center;padding:32px 16px 8px;position:relative}
+.ts-banner{text-align:center;padding:24px 16px 8px}
 .ts-stamp{display:inline-block;border:4px solid var(--accent);padding:8px 32px;font-family:var(--mono);font-size:clamp(1.2rem,4vw,1.6rem);font-weight:700;color:var(--accent);letter-spacing:6px;transform:rotate(-2deg);text-transform:uppercase;position:relative}
 .ts-stamp::before{content:'';position:absolute;inset:-2px;border:1px solid var(--accent);opacity:.4}
-.ts-sub{font-family:var(--mono);font-size:.75rem;color:var(--muted);letter-spacing:3px;margin-top:12px;text-transform:uppercase}
+.ts-sub{font-family:var(--mono);font-size:.75rem;color:var(--dim);letter-spacing:3px;margin-top:12px;text-transform:uppercase}
 
-/* Cover Page */
+/* Countdown */
+.countdown-wrap{text-align:center;padding:20px 16px;margin:12px 0;background:linear-gradient(135deg,rgba(231,76,60,.08),rgba(240,192,64,.06));border:1px solid var(--border);border-radius:8px}
+.countdown-label{font-family:var(--mono);font-size:.65rem;color:var(--dim);letter-spacing:4px;text-transform:uppercase;margin-bottom:8px}
+.countdown-digits{font-family:var(--mono);display:flex;align-items:baseline;justify-content:center;gap:4px;flex-wrap:wrap}
+.cd-num{font-size:clamp(1.4rem,5vw,2.2rem);font-weight:700;color:var(--accent);letter-spacing:2px;animation:pulse-glow 2s ease-in-out infinite}
+.cd-sep{font-size:.55rem;color:var(--dim);letter-spacing:2px;margin:0 2px}
+.cd-dot{font-size:1.2rem;color:var(--dim);margin:0 4px}
+@keyframes pulse-glow{0%,100%{opacity:1}50%{opacity:.7}}
+
+/* Cover */
 .cover{text-align:center;padding:40px 16px 48px;border-bottom:1px solid var(--border)}
-.cover h1{font-family:var(--serif);font-size:clamp(2rem,6vw,3.2rem);color:#fff;letter-spacing:2px;margin:16px 0 8px}
-.cover .subtitle{font-family:var(--mono);color:var(--gold);font-size:clamp(.85rem,2.5vw,1.1rem);letter-spacing:3px}
-.cover .meta-info{font-family:var(--mono);font-size:.8rem;color:var(--muted);margin-top:24px;line-height:2}
-.cover .meta-info span{color:var(--text)}
-.redacted{background:var(--muted);color:var(--muted);padding:0 8px;border-radius:2px;cursor:pointer;transition:all .3s}
+.cover-title{font-family:var(--serif);font-size:clamp(2rem,6vw,3.2rem);color:#fff;letter-spacing:2px;margin:16px 0 8px}
+.cover-subtitle{font-family:var(--mono);color:var(--gold);font-size:clamp(.85rem,2.5vw,1.1rem);letter-spacing:3px}
+.meta-info{font-family:var(--mono);font-size:.8rem;color:var(--dim);margin-top:24px;line-height:2}
+.meta-info span{color:var(--text)}
+.redacted{background:var(--dim);color:var(--dim);padding:0 8px;border-radius:2px;cursor:pointer;transition:all .3s}
 .redacted:hover,.redacted.revealed{background:transparent;color:var(--accent)}
 
-/* Section styling */
+/* Section */
 .section{padding:32px 0;border-bottom:1px solid var(--border)}
 .section-label{font-family:var(--mono);font-size:.7rem;color:var(--accent);letter-spacing:4px;text-transform:uppercase;margin-bottom:4px}
-.section h2{font-family:var(--serif);font-size:clamp(1.3rem,4vw,1.8rem);color:#fff;margin-bottom:16px}
-.section h3{font-family:var(--serif);font-size:clamp(1.05rem,3vw,1.3rem);color:var(--gold);margin:20px 0 8px}
+.section-title{font-family:var(--serif);font-size:clamp(1.3rem,4vw,1.8rem);color:#fff;margin-bottom:16px}
+.subsection-title{font-family:var(--serif);font-size:clamp(1.05rem,3vw,1.3rem);color:var(--gold);margin:20px 0 8px}
+.rules-text{margin-top:12px;font-family:var(--mono);color:var(--accent);font-size:.85rem}
+
+/* Crew Grid */
+.crew-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin:12px 0}
+.crew-badge{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:10px;text-align:center;font-size:.8rem}
+.crew-name{color:#fff;font-weight:600;display:block}
+.crew-role{font-family:var(--mono);font-size:.65rem;color:var(--dim);letter-spacing:1px;margin-top:2px;display:block}
+
+/* Timeline */
+.timeline-total{font-family:var(--mono);font-size:.85rem;color:var(--amber);margin-bottom:16px}
+.timeline{position:relative;padding-left:32px;margin:16px 0}
+.timeline::before{content:'';position:absolute;left:12px;top:0;bottom:0;width:2px;background:var(--border)}
+.tl-item{position:relative;margin:16px 0;padding:8px 0}
+.tl-item::before{content:'';position:absolute;left:-24px;top:12px;width:10px;height:10px;border-radius:50%;background:var(--accent);border:2px solid var(--bg)}
+.tl-time{font-family:var(--mono);font-size:.75rem;color:var(--amber)}
+.tl-desc{font-size:.9rem;margin-top:2px}
 
 /* Station Cards */
 .station{background:var(--surface);border:1px solid var(--border);border-radius:6px;margin:20px 0;overflow:hidden;transition:border-color .2s}
 .station:hover{border-color:var(--accent)}
-.station-header{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--border);cursor:pointer;user-select:none}
+.station.drag-over{border-color:var(--gold);box-shadow:0 0 12px rgba(240,192,64,.2)}
+.station-header{display:flex;align-items:center;gap:8px;padding:12px 16px;cursor:pointer;user-select:none;flex-wrap:wrap}
+@media(min-width:640px){.station-header{flex-wrap:nowrap;padding:16px 20px;gap:12px}}
+.station-drag-handle{color:var(--dim);font-size:1rem;cursor:grab;padding:0 4px;flex-shrink:0}
+.station-drag-handle:active{cursor:grabbing}
 .station-num{background:var(--accent);color:#fff;font-family:var(--mono);font-weight:700;font-size:.85rem;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.station-title{flex:1}
-.station-title h3{font-family:var(--serif);font-size:1.1rem;color:#fff;margin:0}
-.station-title .station-tagline{font-family:var(--mono);font-size:.7rem;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-top:2px}
-.station-time{font-family:var(--mono);font-size:.75rem;color:var(--amber);white-space:nowrap}
-.station-body{padding:20px;display:none}
-.station.open .station-body{display:block}
-.station-header::after{content:'▸';color:var(--muted);font-size:1.2rem;transition:transform .2s}
-.station.open .station-header::after{transform:rotate(90deg)}
+.station-title-wrap{flex:1;min-width:0}
+.station-name{font-family:var(--serif);font-size:1.1rem;color:#fff;margin:0}
+.station-tagline{font-family:var(--mono);font-size:.7rem;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-top:2px}
+.station-chevron{color:var(--dim);font-size:1.2rem;flex-shrink:0}
+.station-body{padding:20px;border-top:1px solid var(--border)}
+.station-reorder-btns{display:flex;flex-direction:column;gap:2px;flex-shrink:0}
+.station-reorder-btn{background:transparent;border:1px solid var(--border);border-radius:3px;width:22px;height:18px;font-size:.6rem;color:var(--dim);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.station-reorder-btn:hover{border-color:var(--gold);color:var(--gold)}
 
 /* Tags */
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
@@ -67,727 +89,1594 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);line-height:
 .tag-photo{background:#1a2a3a;color:#60a5fa;border:1px solid #3b82f6}
 
 /* Instructions */
+.concept-label{color:var(--gold);font-family:var(--mono);font-size:.75rem;letter-spacing:2px;margin:12px 0 8px}
 .instructions{background:rgba(255,255,255,.03);border-left:3px solid var(--gold);padding:12px 16px;margin:12px 0;border-radius:0 4px 4px 0;font-size:.9rem}
+.instructions-title{color:var(--gold);font-size:.85rem;margin-bottom:8px}
 .instructions ol,.instructions ul{padding-left:20px;margin:8px 0}
 .instructions li{margin:6px 0}
 .instructions strong{color:var(--gold)}
 
-/* Supply/detail callouts */
+/* Callouts */
 .callout{display:flex;gap:8px;align-items:flex-start;margin:8px 0;font-size:.85rem}
 .callout-icon{font-size:1rem;flex-shrink:0;margin-top:2px}
 .callout-text{flex:1}
 .callout-text strong{color:var(--text)}
 
-/* Supply list */
+/* Vote Buttons */
+.vote-row{display:flex;gap:4px;flex-shrink:0}
+.vote-btn{background:transparent;border:1px solid var(--border);border-radius:16px;padding:2px 8px;font-size:.75rem;cursor:pointer;color:var(--dim);display:flex;align-items:center;gap:3px;transition:all .15s}
+.vote-btn:hover{border-color:var(--dim)}
+.vote-active-up{border-color:var(--green);color:var(--green);background:rgba(39,174,96,.1)}
+.vote-active-down{border-color:var(--accent);color:var(--accent);background:rgba(231,76,60,.1)}
+.vote-count{font-family:var(--mono);font-size:.7rem}
+
+/* Duration Editor */
+.duration-editor{display:flex;align-items:center;gap:2px;flex-shrink:0}
+.dur-btn{background:transparent;border:1px solid var(--border);border-radius:4px;width:22px;height:22px;font-size:.85rem;color:var(--dim);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color .15s}
+.dur-btn:hover{border-color:var(--amber);color:var(--amber)}
+.dur-val{font-family:var(--mono);font-size:.7rem;color:var(--amber);white-space:nowrap;min-width:42px;text-align:center}
+
+/* Comments */
+.comment-section{margin-top:16px;border-top:1px solid var(--border);padding-top:12px}
+.comment-toggle{background:none;border:none;font-family:var(--mono);font-size:.7rem;color:var(--dim);letter-spacing:2px;text-transform:uppercase;cursor:pointer;padding:4px 0}
+.comment-toggle:hover{color:var(--text)}
+.comment-list{margin-top:8px}
+.comment-card{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:4px;padding:10px 12px;margin:6px 0;position:relative}
+.comment-meta{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+.comment-name{font-family:var(--mono);font-size:.75rem;color:var(--gold);font-weight:600}
+.comment-time{font-family:var(--mono);font-size:.6rem;color:var(--dim)}
+.comment-text{font-size:.85rem;color:var(--text)}
+.comment-empty{font-family:var(--mono);font-size:.75rem;color:var(--dim);padding:8px 0}
+.comment-form{display:flex;gap:8px;margin-top:8px}
+.comment-input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:8px 12px;font-size:.85rem;color:var(--text);font-family:var(--sans);outline:none}
+.comment-input:focus{border-color:var(--dim)}
+.comment-input::placeholder{color:var(--dim)}
+.comment-submit{background:var(--accent);color:#fff;border:none;border-radius:4px;padding:8px 16px;font-family:var(--mono);font-size:.7rem;letter-spacing:2px;cursor:pointer;white-space:nowrap}
+.comment-submit:disabled{opacity:.4;cursor:default}
+.comment-delete{position:absolute;top:8px;right:8px;background:none;border:none;color:var(--dim);cursor:pointer;font-size:.7rem;padding:2px 6px;border-radius:3px;opacity:.5;transition:all .15s}
+.comment-delete:hover{color:var(--accent);opacity:1;background:rgba(231,76,60,.1)}
+
+/* Supply Grid */
 .supply-grid{display:grid;grid-template-columns:1fr;gap:16px;margin:16px 0}
 @media(min-width:640px){.supply-grid{grid-template-columns:1fr 1fr}}
 .supply-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:16px}
-.supply-card h4{font-family:var(--mono);font-size:.8rem;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
-.supply-card ul{list-style:none;padding:0}
-.supply-card li{padding:4px 0;font-size:.85rem;border-bottom:1px solid rgba(255,255,255,.04)}
-.supply-card li::before{content:'☐ ';color:var(--muted)}
-.supply-card li:last-child{border-bottom:none}
+.supply-card-title{font-family:var(--mono);font-size:.8rem;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+.supply-note{font-family:var(--mono);font-size:.8rem;color:var(--amber);margin-bottom:12px}
+.supply-list{list-style:none;padding:0}
+.supply-item{padding:6px 0;font-size:.85rem;border-bottom:1px solid rgba(255,255,255,.04);display:flex;align-items:center;gap:6px}
+.supply-item:last-child{border-bottom:none}
+.supply-check{font-family:var(--mono);color:var(--dim);flex-shrink:0}
+.supply-claimed .supply-check{color:var(--green)}
+.supply-text{flex:1}
+.supply-claimed .supply-text{color:var(--dim)}
+.supply-claimer{font-family:var(--mono);font-size:.7rem;color:var(--green);font-weight:600}
+.supply-claim-btn,.supply-unclaim-btn{background:none;border:1px solid var(--border);border-radius:12px;padding:1px 8px;font-family:var(--mono);font-size:.6rem;cursor:pointer;letter-spacing:1px;text-transform:uppercase;white-space:nowrap;transition:all .15s;flex-shrink:0}
+.supply-claim-btn{color:var(--dim)}
+.supply-claim-btn:hover{border-color:var(--green);color:var(--green)}
+.supply-unclaim-btn{color:var(--dim)}
+.supply-unclaim-btn:hover{border-color:var(--accent);color:var(--accent)}
 
-/* Timeline */
-.timeline{position:relative;padding-left:32px;margin:16px 0}
-.timeline::before{content:'';position:absolute;left:12px;top:0;bottom:0;width:2px;background:var(--border)}
-.tl-item{position:relative;margin:16px 0;padding:8px 0}
-.tl-item::before{content:'';position:absolute;left:-24px;top:12px;width:10px;height:10px;border-radius:50%;background:var(--accent);border:2px solid var(--bg)}
-.tl-time{font-family:var(--mono);font-size:.75rem;color:var(--amber)}
-.tl-desc{font-size:.9rem;margin-top:2px}
-
-/* Checklist */
-.checklist{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:16px 20px;margin:16px 0}
-.checklist h4{font-family:var(--mono);color:var(--gold);font-size:.8rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
-.checklist ul{list-style:none;padding:0}
-.checklist li{padding:6px 0;font-size:.85rem;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer}
-.checklist li:last-child{border-bottom:none}
-.checklist li::before{content:'☐ ';color:var(--accent);font-family:var(--mono)}
-.checklist li.checked::before{content:'☑ ';color:var(--green)}
-.checklist li.checked{color:var(--muted);text-decoration:line-through}
-
-/* Music */
-.music-list{display:grid;grid-template-columns:1fr;gap:8px;margin:12px 0}
-@media(min-width:480px){.music-list{grid-template-columns:1fr 1fr}}
-.music-item{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:10px 14px;font-size:.85rem}
-.music-item .song{color:#fff;font-weight:600}
-.music-item .use{font-family:var(--mono);font-size:.7rem;color:var(--muted);margin-top:2px}
-
-/* Crew roster */
-.crew-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin:12px 0}
-.crew-badge{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:10px;text-align:center;font-size:.8rem}
-.crew-badge .name{color:#fff;font-weight:600;display:block}
-.crew-badge .role{font-family:var(--mono);font-size:.65rem;color:var(--muted);letter-spacing:1px;margin-top:2px}
+/* Handler Assignments */
+.handler-card{position:relative}
+.handler-task-list{list-style:none;padding:0}
+.handler-task{padding:4px 0;font-size:.85rem;display:flex;align-items:center;gap:6px}
+.custom-task{color:var(--amber)}
+.task-remove-btn{background:none;border:none;color:var(--dim);font-size:.7rem;cursor:pointer;padding:0 4px;margin-left:auto;flex-shrink:0}
+.task-remove-btn:hover{color:var(--accent)}
+.add-task-link{background:none;border:none;font-family:var(--mono);font-size:.7rem;color:var(--dim);cursor:pointer;padding:6px 0 0;letter-spacing:1px}
+.add-task-link:hover{color:var(--gold)}
+.add-task-form{display:flex;gap:6px;margin-top:8px;align-items:center}
+.add-task-input{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:6px 10px;font-size:.8rem;color:var(--text);font-family:var(--sans);outline:none}
+.add-task-input:focus{border-color:var(--dim)}
+.add-task-input::placeholder{color:var(--dim)}
+.add-task-submit{background:var(--gold);color:var(--bg);border:none;border-radius:4px;padding:6px 12px;font-family:var(--mono);font-size:.65rem;letter-spacing:1px;cursor:pointer}
+.add-task-submit:disabled{opacity:.4}
+.add-task-cancel{background:none;border:none;color:var(--dim);cursor:pointer;font-size:.85rem}
 
 /* Ang Bao */
 .angbao-box{background:linear-gradient(135deg,#3a1a1a,#1a1a2a);border:2px solid var(--accent);border-radius:8px;padding:20px;margin:16px 0;text-align:center}
 .angbao-box h3{color:var(--accent);font-family:var(--serif);margin-bottom:8px}
 
+/* Music */
+.music-list{display:grid;grid-template-columns:1fr;gap:8px;margin:12px 0}
+@media(min-width:480px){.music-list{grid-template-columns:1fr 1fr}}
+.music-item{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:10px 14px;font-size:.85rem}
+.music-song{color:#fff;font-weight:600}
+.music-use{font-family:var(--mono);font-size:.7rem;color:var(--dim);margin-top:2px}
+
+/* Checklist */
+.checklist-group{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:16px 20px;margin:16px 0}
+.checklist-title{font-family:var(--mono);color:var(--gold);font-size:.8rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.checklist-list{list-style:none;padding:0}
+.checklist-item{padding:6px 0;font-size:.85rem;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;display:flex;align-items:flex-start;gap:6px}
+.checklist-item:last-child{border-bottom:none}
+.check-mark{font-family:var(--mono);color:var(--accent);flex-shrink:0}
+.checklist-item.checked .check-mark{color:var(--green)}
+.checklist-item.checked{color:var(--dim);text-decoration:line-through}
+.backup-note{margin-bottom:12px;font-family:var(--mono);font-size:.85rem;color:var(--amber)}
+.backup-meta{font-size:.8rem;color:var(--dim)}
+
 /* Footer */
-.footer{text-align:center;padding:32px 16px;font-family:var(--mono);font-size:.7rem;color:var(--muted);letter-spacing:2px}
+.footer{text-align:center;padding:32px 16px;font-family:var(--mono);font-size:.7rem;color:var(--dim);letter-spacing:2px}
 
-/* Print */
-@media print{
-  body{background:#fff;color:#000}
-  .station-body{display:block!important}
-  .station{break-inside:avoid}
-  .ts-stamp,.tag-savage,.tag-funny{border-color:#000;color:#000}
-}
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(10,14,23,.95);display:flex;align-items:center;justify-content:center;z-index:100;padding:20px}
+.modal-box{background:var(--surface);border:2px solid var(--accent);border-radius:8px;padding:40px 32px;max-width:400px;width:100%;text-align:center}
+.modal-stamp{display:inline-block;border:3px solid var(--accent);padding:4px 20px;font-family:var(--mono);font-size:.85rem;font-weight:700;color:var(--accent);letter-spacing:4px;text-transform:uppercase;transform:rotate(-2deg);margin-bottom:20px}
+.modal-title{font-family:var(--serif);font-size:1.4rem;color:#fff;margin-bottom:8px}
+.modal-sub{font-family:var(--mono);font-size:.75rem;color:var(--dim);letter-spacing:2px;margin-bottom:24px}
+.modal-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:12px 16px;font-family:var(--mono);font-size:1rem;color:var(--gold);text-align:center;letter-spacing:2px;outline:none;margin-bottom:16px}
+.modal-input:focus{border-color:var(--accent)}
+.modal-input::placeholder{color:var(--dim);letter-spacing:1px}
+.modal-btn{background:var(--accent);color:#fff;border:none;border-radius:4px;padding:12px 32px;font-family:var(--mono);font-size:.85rem;font-weight:700;letter-spacing:3px;cursor:pointer;text-transform:uppercase;transition:opacity .2s}
+.modal-btn:disabled{opacity:.4;cursor:default}
+.modal-btn:hover:not(:disabled){opacity:.9}
 
-/* Animations */
-@keyframes flicker{0%,100%{opacity:1}50%{opacity:.7}}
-.flicker{animation:flicker 3s infinite}
+/* Firebase status */
+.fb-status{text-align:center;font-family:var(--mono);font-size:.7rem;padding:4px;color:var(--dim)}
+.fb-status.error{color:var(--accent)}
 </style>
 </head>
 <body>
+<div id="app"></div>
 
-<div class="container">
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
 
-<!-- TOP SECRET BANNER -->
-<div class="ts-banner">
-  <div class="ts-stamp">TOP SECRET</div>
-  <div class="ts-sub">Clearance Level: Handler Eyes Only</div>
-</div>
+// ╔═══════════════════════════════════════════════════════════╗
+// ║  FIREBASE CONFIG — REPLACE THESE WITH YOUR VALUES        ║
+// ╚═══════════════════════════════════════════════════════════╝
 
-<!-- COVER PAGE -->
-<div class="cover">
-  <h1>OPERATION TRISH</h1>
-  <div class="subtitle">Gate Crash Mission Briefing</div>
-  <div class="meta-info">
-    Date: <span>24 MAY 2026 — 1400H</span><br>
-    Location: <span>Boracay Island, Philippines</span><br>
-    Classification: <span class="redacted" tabindex="0" role="button" aria-label="Reveal classified info">CLASSIFIED</span><br>
-    Objective: <span>Extraction of Asset "TRISH"</span><br>
-    Handler: <span>Agent Evelyn</span><br>
-    Opposition: <span>14 Hostile Agents (Groomsmen)</span>
-  </div>
-</div>
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
 
-<!-- MISSION OVERVIEW -->
-<div class="section">
-  <div class="section-label">Section 01</div>
-  <h2>Mission Overview</h2>
-  <p>Asset TRISH is secured inside the Bridal Suite. The Groom — codename <strong style="color:var(--gold)">"The Spy"</strong> — and his 14-man extraction team will attempt to breach our perimeter at approximately 1400H.</p>
-  <p style="margin-top:12px">Our mission: subject the extraction team to <strong style="color:var(--accent)">6 security clearance stations</strong> before we even consider releasing the asset. The operation runs 60% comedy, 40% pain. They must survive to attend the ceremony.</p>
-  <p style="margin-top:12px;font-family:var(--mono);color:var(--accent);font-size:.85rem">⚠ RULES OF ENGAGEMENT: No permanent damage. No ruined outfits (tuxes go on after). Hydration breaks between stations. The groom suffers most. Always.</p>
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyDYhEHW-1ejlZzdAu3LHO0j8ddSlYDyYp4",
+    authDomain: "operation-trish.firebaseapp.com",
+    databaseURL: "https://operation-trish-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "operation-trish",
+    storageBucket: "operation-trish.firebasestorage.app",
+    messagingSenderId: "214450269004",
+    appId: "1:214450269004:web:4336595de7cb5312363de9"
+  };
 
-  <h3>Opposition Dossier — 14 Hostiles</h3>
-  <div class="crew-grid">
-    <div class="crew-badge"><span class="name">JOHN GOBOK</span><span class="role">Primary Target</span></div>
-    <div class="crew-badge"><span class="name">Kenley</span><span class="role">Childhood · PH</span></div>
-    <div class="crew-badge"><span class="name">Jedd</span><span class="role">Childhood · PH</span></div>
-    <div class="crew-badge"><span class="name">Chris</span><span class="role">Childhood · PH</span></div>
-    <div class="crew-badge"><span class="name">Yen</span><span class="role">GSB</span></div>
-    <div class="crew-badge"><span class="name">Dan</span><span class="role">GSB</span></div>
-    <div class="crew-badge"><span class="name">Ed</span><span class="role">GSB</span></div>
-    <div class="crew-badge"><span class="name">Jeff</span><span class="role">GSB</span></div>
-    <div class="crew-badge"><span class="name">Eddie</span><span class="role">GSB</span></div>
-    <div class="crew-badge"><span class="name">Edmund</span><span class="role">Harvard · PH</span></div>
-    <div class="crew-badge"><span class="name">Kola</span><span class="role">Harvard</span></div>
-    <div class="crew-badge"><span class="name">Kogos</span><span class="role">Harvard</span></div>
-    <div class="crew-badge"><span class="name">Vernon</span><span class="role">Harvard</span></div>
-    <div class="crew-badge"><span class="name">Ron</span><span class="role">Harvard · Roomie</span></div>
-    <div class="crew-badge"><span class="name">Noel</span><span class="role">GSB</span></div>
-  </div>
 
-  <h3>Our Team — Handler Squad</h3>
-  <div class="crew-grid">
-    <div class="crew-badge" style="border-color:var(--gold)"><span class="name">Evelyn</span><span class="role" style="color:var(--gold)">Handler</span></div>
-    <div class="crew-badge"><span class="name">Jenny</span><span class="role">Handler</span></div>
-    <div class="crew-badge"><span class="name">Laura</span><span class="role">Handler</span></div>
-    <div class="crew-badge"><span class="name">Shu-min</span><span class="role">Handler</span></div>
-    <div class="crew-badge"><span class="name">Chere</span><span class="role">Handler</span></div>
-    <div class="crew-badge"><span class="name">Bonkie</span><span class="role">Handler</span></div>
-    <div class="crew-badge"><span class="name">Wm</span><span class="role">Handler</span></div>
-  </div>
-</div>
 
-<!-- OPERATION TIMELINE -->
-<div class="section">
-  <div class="section-label">Section 02</div>
-  <h2>Operation Timeline</h2>
-  <p style="font-family:var(--mono);font-size:.85rem;color:var(--amber);margin-bottom:16px">Total Runtime: ~40 minutes | 6 Stations + Ang Bao Negotiation</p>
-  <div class="timeline">
-    <div class="tl-item"><div class="tl-time">T-60 min (1300H)</div><div class="tl-desc">Handler squad assembles in Bridal Suite. Set up all stations. Test sound system. Brief Trish.</div></div>
-    <div class="tl-item"><div class="tl-time">T-15 min (1345H)</div><div class="tl-desc">Final positions. Door barricaded. Camera rolling. Spy movie soundtrack ON.</div></div>
-    <div class="tl-item"><div class="tl-time">T-0 (1400H)</div><div class="tl-desc">Groom + 14 agents arrive at the door. <strong style="color:var(--accent)">OPERATION BEGINS.</strong></div></div>
-    <div class="tl-item"><div class="tl-time">1400–1407</div><div class="tl-desc">Station 1 — Security Clearance Polygraph (7 min)</div></div>
-    <div class="tl-item"><div class="tl-time">1407–1414</div><div class="tl-desc">Station 2 — Field Agent Fitness Exam (7 min)</div></div>
-    <div class="tl-item"><div class="tl-time">1414–1421</div><div class="tl-desc">Station 3 — Interrogation Room (7 min)</div></div>
-    <div class="tl-item"><div class="tl-time">1421–1428</div><div class="tl-desc">Station 4 — Code Breaking (7 min)</div></div>
-    <div class="tl-item"><div class="tl-time">1428–1435</div><div class="tl-desc">Station 5 — Disguise & Infiltration (7 min)</div></div>
-    <div class="tl-item"><div class="tl-time">1435–1442</div><div class="tl-desc">Station 6 — Final Debrief & Extraction (7 min)</div></div>
-    <div class="tl-item"><div class="tl-time">1442–1445</div><div class="tl-desc">Ang Bao Negotiation. Door opens. Asset extracted. 🎉</div></div>
-  </div>
-</div>
 
-<!-- STATIONS -->
-<div class="section">
-  <div class="section-label">Section 03</div>
-  <h2>Mission Stations</h2>
-  <p style="margin-bottom:8px">Click each station to expand the full briefing. All stations happen at or near the Bridal Suite corridor/beach area.</p>
+// ╔═══════════════════════════════════════════════════════════════════════════╗
+// ║  STATION CONFIG — THE ONLY SECTION YOU NEED TO EDIT FOR STATIONS       ║
+// ║                                                                         ║
+// ║  Each station is one object in this array. To add, edit, or remove      ║
+// ║  stations, just edit this array. The rest of the app reads from it.     ║
+// ║                                                                         ║
+// ║  HOW TO ADD A NEW STATION:                                              ║
+// ║  1. Copy any station object below                                       ║
+// ║  2. Give it a unique "id" (e.g., "station-7")                          ║
+// ║  3. Fill in the fields (title, tagline, etc.)                           ║
+// ║  4. Add it wherever you want in the array — position = default order    ║
+// ║  5. That's it! The app handles numbering, timeline, and Firebase sync.  ║
+// ║                                                                         ║
+// ║  HOW TO REMOVE A STATION:                                               ║
+// ║  Delete the entire { ... } block for that station from the array.       ║
+// ║                                                                         ║
+// ║  HOW TO EDIT A STATION:                                                 ║
+// ║  Change any field below. "instructions" uses HTML for formatting:       ║
+// ║    <strong>bold</strong>  <ol><li>numbered list</li></ol>               ║
+// ║    <ul><li>bullet list</li></ul>                                        ║
+// ║                                                                         ║
+// ║  FIELDS:                                                                ║
+// ║    id          — unique identifier (don't change after going live)      ║
+// ║    title       — station name shown in the header                       ║
+// ║    tagline     — subtitle shown under the title                         ║
+// ║    defaultMin  — default duration in minutes                            ║
+// ║    tags        — mood/vibe badges shown when station is expanded        ║
+// ║    concept     — one-paragraph description of the station               ║
+// ║    instructions — full HTML of "How to Run It" steps                    ║
+// ║    callouts    — icon + text tip cards (photo moments, supplies, etc.)  ║
+// ║    photoGuide  — what to capture on camera (shown in Photo Guide)       ║
+// ║                  use "html" instead of "text" for rich formatting       ║
+// ╚═══════════════════════════════════════════════════════════════════════════╝
 
-  <!-- STATION 1 -->
-  <div class="station" id="s1">
-    <div class="station-header" tabindex="0" role="button" aria-expanded="false" aria-controls="s1-body">
-      <div class="station-num">01</div>
-      <div class="station-title">
-        <h3>Security Clearance Polygraph</h3>
-        <div class="station-tagline">How well does the spy know his asset?</div>
-      </div>
-      <div class="station-time">7 min</div>
-    </div>
-    <div class="station-body" id="s1-body">
-      <div class="tags">
-        <span class="tag tag-funny">60% Funny</span>
-        <span class="tag tag-savage">40% Savage</span>
-        <span class="tag tag-photo">📸 Photo Op</span>
-      </div>
+const STATION_CONFIG = [
+  // ── Station 1: Security Clearance Polygraph ─────────────────────────
+  {
+    id: "station-1",
+    title: "Security Clearance Polygraph",
+    tagline: "How well does the spy know his asset?",
+    defaultMin: 7,
 
-      <h4 style="color:var(--gold);font-family:var(--mono);font-size:.75rem;letter-spacing:2px;margin:12px 0 8px">CONCEPT</h4>
-      <p>The groom sits in a chair facing the door (the "polygraph chair"). Handler reads questions about Trish. Wrong answers = punishment for the ENTIRE squad. The groomsmen learn quickly that the groom's ignorance costs everyone.</p>
+    tags: [
+      { label: "60% Funny", cls: "tag-funny" },
+      { label: "40% Savage", cls: "tag-savage" },
+      { label: "📸 Photo Op", cls: "tag-photo" },
+    ],
 
-      <div class="instructions">
-        <h4 style="color:var(--gold);font-size:.85rem;margin-bottom:8px">How to Run It</h4>
-        <ol>
-          <li>Place a chair in the hallway — this is the <strong>"polygraph station."</strong> Groom must sit. No phone, no lifelines.</li>
-          <li>Handler reads 8-10 questions about Trish (prepared in advance with Trish's answers sealed in envelopes).</li>
-          <li><strong>Easy warmups:</strong> Trish's birthday, her favourite food, the date they first met.</li>
-          <li><strong>Trap questions:</strong> Her shoe size, her most-used emoji, the first movie they watched together, her childhood pet's name, her order at her favourite restaurant.</li>
-          <li><strong>Wrong answer punishment:</strong> Groom + all 14 groomsmen do 10 push-ups per wrong answer (on the floor right there). OR they must yell "TRISH IS ALWAYS RIGHT" at the top of their lungs facing the beach.</li>
-          <li>After 3+ wrong answers, start adding <strong>"penalty interest"</strong> — additional push-ups stack (10, then 15, then 20…)</li>
-          <li><strong>Twist:</strong> One question should be "What would Trish say is your most annoying habit?" — both answers are read aloud. Comedy gold.</li>
-        </ol>
-      </div>
+    concept: `The groom sits in a chair facing the door (the "polygraph chair"). Handler reads questions about Trish. Wrong answers = punishment for the ENTIRE squad. The groomsmen learn quickly that the groom's ignorance costs everyone.`,
 
-      <div class="callout"><span class="callout-icon">🎬</span><div class="callout-text"><strong>Photo moment:</strong> Get the groom sweating in the polygraph chair. Film the groomsmen's faces when they realize wrong answers punish THEM.</div></div>
-      <div class="callout"><span class="callout-icon">📦</span><div class="callout-text"><strong>Supplies:</strong> Question cards, sealed answer envelopes, a chair, optional desk lamp for "interrogation lighting"</div></div>
-      <div class="callout"><span class="callout-icon">👤</span><div class="callout-text"><strong>Run by:</strong> Jenny (the serious one — play it deadpan for maximum comedy)</div></div>
-    </div>
-  </div>
+    instructions: `<ol>
+<li>Place a chair in the hallway — this is the <strong>"polygraph station."</strong> Groom must sit. No phone, no lifelines.</li>
+<li>Handler reads 8-10 questions about Trish (prepared in advance with Trish's answers sealed in envelopes).</li>
+<li><strong>Easy warmups:</strong> Trish's birthday, her favourite food, the date they first met.</li>
+<li><strong>Trap questions:</strong> Her shoe size, her most-used emoji, the first movie they watched together, her childhood pet's name, her order at her favourite restaurant.</li>
+<li><strong>Wrong answer punishment:</strong> Groom + all 14 groomsmen do 10 push-ups per wrong answer (on the floor right there). OR they must yell "TRISH IS ALWAYS RIGHT" at the top of their lungs facing the beach.</li>
+<li>After 3+ wrong answers, start adding <strong>"penalty interest"</strong> — additional push-ups stack (10, then 15, then 20…)</li>
+<li><strong>Twist:</strong> One question should be "What would Trish say is your most annoying habit?" — both answers are read aloud. Comedy gold.</li>
+</ol>`,
 
-  <!-- STATION 2 -->
-  <div class="station" id="s2">
-    <div class="station-header" tabindex="0" role="button" aria-expanded="false" aria-controls="s2-body">
-      <div class="station-num">02</div>
-      <div class="station-title">
-        <h3>Field Agent Fitness Exam</h3>
-        <div class="station-tagline">A spy must be in peak physical condition</div>
-      </div>
-      <div class="station-time">7 min</div>
-    </div>
-    <div class="station-body" id="s2-body">
-      <div class="tags">
-        <span class="tag tag-funny">50% Funny</span>
-        <span class="tag tag-savage">50% Savage</span>
-        <span class="tag tag-photo">📸 Photo Op</span>
-      </div>
+    callouts: [
+      { icon: "🎬", html: `<strong>Photo moment:</strong> Get the groom sweating in the polygraph chair. Film the groomsmen's faces when they realize wrong answers punish THEM.` },
+      { icon: "📦", html: `<strong>Supplies:</strong> Question cards, sealed answer envelopes, a chair, optional desk lamp for "interrogation lighting"` },
+      { icon: "👤", html: `<strong>Run by:</strong> Jenny (the serious one — play it deadpan for maximum comedy)` },
+    ],
 
-      <h4 style="color:var(--gold);font-family:var(--mono);font-size:.75rem;letter-spacing:2px;margin:12px 0 8px">CONCEPT</h4>
-      <p>Move outside to the beach/pool deck. The 14 groomsmen split into 2 teams for a relay. Losers get extra punishment. This is where the beach setting really shines.</p>
+    photoGuide: { text: `Groom in the "polygraph chair" — close-up of his face when he gets one wrong` },
+  },
 
-      <div class="instructions">
-        <h4 style="color:var(--gold);font-size:.85rem;margin-bottom:8px">How to Run It</h4>
-        <ol>
-          <li><strong>Warm-up:</strong> Everyone (including the groom) holds a plank. Last man standing earns a "free pass" token good for one future station. The groom must last longer than at least 5 others or everyone restarts.</li>
-          <li><strong>Beach Relay — "Agent Extraction Drill":</strong> Split into 2 teams of ~6 (groom participates on both, running twice).</li>
-          <li>Relay legs:
-            <ul>
-              <li><strong>Leg 1:</strong> Crab walk 10m on the sand</li>
-              <li><strong>Leg 2:</strong> Carry a teammate piggyback 10m</li>
-              <li><strong>Leg 3:</strong> Army crawl under a string/towel line 5m</li>
-              <li><strong>Leg 4:</strong> Spin around a bat 10 times then sprint 10m straight (hilarious to watch)</li>
-            </ul>
-          </li>
-          <li><strong>Losing team:</strong> 30-second wall-sit against the building while singing a love song chosen by the handlers (suggest something embarrassing like a Backstreet Boys ballad).</li>
-          <li><strong>Groom penalty (always):</strong> Whether his team wins or loses, the groom must do 5 burpees "for love."</li>
-        </ol>
-      </div>
+  // ── Station 2: Field Agent Fitness Exam ─────────────────────────────
+  {
+    id: "station-2",
+    title: "Field Agent Fitness Exam",
+    tagline: "A spy must be in peak physical condition",
+    defaultMin: 7,
 
-      <div class="callout"><span class="callout-icon">🎬</span><div class="callout-text"><strong>Photo moment:</strong> The bat-spin-then-sprint is ALWAYS hilarious — video this. Also the piggyback carries on sand.</div></div>
-      <div class="callout"><span class="callout-icon">📦</span><div class="callout-text"><strong>Supplies:</strong> A towel or string for the crawl line, a bat/stick for spinning, timer</div></div>
-      <div class="callout"><span class="callout-icon">👤</span><div class="callout-text"><strong>Run by:</strong> Evelyn (lead) — you're the drill sergeant here</div></div>
-    </div>
-  </div>
+    tags: [
+      { label: "50% Funny", cls: "tag-funny" },
+      { label: "50% Savage", cls: "tag-savage" },
+      { label: "📸 Photo Op", cls: "tag-photo" },
+    ],
 
-  <!-- STATION 3 -->
-  <div class="station" id="s3">
-    <div class="station-header" tabindex="0" role="button" aria-expanded="false" aria-controls="s3-body">
-      <div class="station-num">03</div>
-      <div class="station-title">
-        <h3>Interrogation Room</h3>
-        <div class="station-tagline">Suan Tian Ku La — The four flavours of marriage</div>
-      </div>
-      <div class="station-time">7 min</div>
-    </div>
-    <div class="station-body" id="s3-body">
-      <div class="tags">
-        <span class="tag tag-savage">70% Savage</span>
-        <span class="tag tag-funny">30% Funny</span>
-        <span class="tag tag-photo">📸 Photo Op</span>
-      </div>
+    concept: `Move outside to the beach/pool deck. The 14 groomsmen split into 2 teams for a relay. Losers get extra punishment. This is where the beach setting really shines.`,
 
-      <h4 style="color:var(--gold);font-family:var(--mono);font-size:.75rem;letter-spacing:2px;margin:12px 0 8px">CONCEPT</h4>
-      <p>The classic Suan Tian Ku La (酸甜苦辣 — sour, sweet, bitter, spicy) with a CIA twist. Each flavour represents a "truth serum" the groom and his team must consume during interrogation.</p>
+    instructions: `<ol>
+<li><strong>Warm-up:</strong> Everyone (including the groom) holds a plank. Last man standing earns a "free pass" token good for one future station. The groom must last longer than at least 5 others or everyone restarts.</li>
+<li><strong>Beach Relay — "Agent Extraction Drill":</strong> Split into 2 teams of ~7 (groom participates on both, running twice).</li>
+<li>Relay legs:<ul>
+<li><strong>Leg 1:</strong> Crab walk 10m on the sand</li>
+<li><strong>Leg 2:</strong> Carry a teammate piggyback 10m</li>
+<li><strong>Leg 3:</strong> Army crawl under a string/towel line 5m</li>
+<li><strong>Leg 4:</strong> Spin around a bat 10 times then sprint 10m straight (hilarious to watch)</li>
+</ul></li>
+<li><strong>Losing team:</strong> 30-second wall-sit against the building while singing a love song chosen by the handlers (suggest something embarrassing like a Backstreet Boys ballad).</li>
+<li><strong>Groom penalty (always):</strong> Whether his team wins or loses, the groom must do 5 burpees "for love."</li>
+</ol>`,
 
-      <div class="instructions">
-        <h4 style="color:var(--gold);font-size:.85rem;margin-bottom:8px">How to Run It</h4>
-        <ol>
-          <li>Prepare 4 "truth serums" (drinks/bites):
-            <ul>
-              <li><strong>SOUR (酸):</strong> Pure lime/calamansi juice, no sugar. Full shot glass.</li>
-              <li><strong>SWEET (甜):</strong> Condensed milk mixed with soy sauce (looks sweet, tastes confusing).</li>
-              <li><strong>BITTER (苦):</strong> Bitter melon juice or strong unsweetened coffee + wasabi shot.</li>
-              <li><strong>SPICY (辣):</strong> Hot sauce (bring Samyang or local chili paste) on a cracker. This is the boss level.</li>
-            </ul>
-          </li>
-          <li><strong>The groom goes first</strong> and must consume ALL FOUR while reciting why he loves Trish (one reason per flavour). If he pauses, stutters, or makes a face — restart that flavour.</li>
-          <li><strong>Then 4 volunteers</strong> (or victims chosen by Handlers) from the groomsmen must each take one flavour. They must toast "To Trish and [Groom]!" while consuming it.</li>
-          <li><strong>Savage twist:</strong> If the groom's love declarations aren't sincere enough, the Handlers vote to make him do a bonus round — spicy + bitter combined. The "Double Agent Cocktail."</li>
-          <li><strong>Water is available</strong> but costs 1 push-up per sip. (This is important — don't be monsters, just expensive ones.)</li>
-        </ol>
-      </div>
+    callouts: [
+      { icon: "🎬", html: `<strong>Photo moment:</strong> The bat-spin-then-sprint is ALWAYS hilarious — video this. Also the piggyback carries on sand.` },
+      { icon: "📦", html: `<strong>Supplies:</strong> A towel or string for the crawl line, a bat/stick for spinning, timer` },
+      { icon: "👤", html: `<strong>Run by:</strong> Evelyn — you're the drill sergeant here` },
+    ],
 
-      <div class="callout"><span class="callout-icon">🎬</span><div class="callout-text"><strong>Photo moment:</strong> Close-up reactions on the spicy round. The groom trying to say sweet things while dying inside. Pure gold.</div></div>
-      <div class="callout"><span class="callout-icon">📦</span><div class="callout-text"><strong>Supplies:</strong> Limes/calamansi, condensed milk, soy sauce, bitter melon juice or strong coffee, wasabi, hot sauce (Samyang level), crackers, shot glasses, cups, water bottles, napkins</div></div>
-      <div class="callout"><span class="callout-icon">👤</span><div class="callout-text"><strong>Run by:</strong> Laura — deliver each "truth serum" with a straight face and a dossier label</div></div>
-    </div>
-  </div>
+    photoGuide: { text: `The bat-spin-then-sprint (VIDEO — always hilarious). Piggyback carries on sand.` },
+  },
 
-  <!-- STATION 4 -->
-  <div class="station" id="s4">
-    <div class="station-header" tabindex="0" role="button" aria-expanded="false" aria-controls="s4-body">
-      <div class="station-num">04</div>
-      <div class="station-title">
-        <h3>Code Breaking</h3>
-        <div class="station-tagline">Decrypt the intel to proceed</div>
-      </div>
-      <div class="station-time">7 min</div>
-    </div>
-    <div class="station-body" id="s4-body">
-      <div class="tags">
-        <span class="tag tag-funny">80% Funny</span>
-        <span class="tag tag-sweet">20% Sweet</span>
-      </div>
+  // ── Station 3: Interrogation Room ───────────────────────────────────
+  {
+    id: "station-3",
+    title: "Interrogation Room",
+    tagline: "Suan Tian Ku La — The four flavours of marriage",
+    defaultMin: 7,
 
-      <h4 style="color:var(--gold);font-family:var(--mono);font-size:.75rem;letter-spacing:2px;margin:12px 0 8px">CONCEPT</h4>
-      <p>The team must solve puzzles and decode messages about the couple's relationship. Brain over brawn — but there's a catch. Time pressure + physical penalties for wrong guesses keep it chaotic.</p>
+    tags: [
+      { label: "70% Savage", cls: "tag-savage" },
+      { label: "30% Funny", cls: "tag-funny" },
+      { label: "📸 Photo Op", cls: "tag-photo" },
+    ],
 
-      <div class="instructions">
-        <h4 style="color:var(--gold);font-size:.85rem;margin-bottom:8px">How to Run It</h4>
-        <ol>
-          <li><strong>Puzzle 1 — Photo Decode:</strong> Show 5 zoomed-in/cropped photos of Trish (her eye, her hand with a specific ring, a childhood photo, a favourite place, her handwriting). Team must identify what each photo shows. 30 seconds per photo.</li>
-          <li><strong>Puzzle 2 — Cipher Message:</strong> Give the groom a coded love message from Trish written in a simple cipher (A=1, B=2 or reversed alphabet). He has 2 minutes to decode it. The message should be something sweet and personal — maybe the first text she ever sent him, or an inside joke.</li>
-          <li><strong>Puzzle 3 — Emoji Story:</strong> Display a sequence of emojis that tells the story of the couple's relationship (first meeting → first date → proposal, etc.). The team must narrate what each emoji represents. Every wrong guess = one person has to serenade Trish's door with "My Heart Will Go On" for 10 seconds.</li>
-          <li><strong>Bonus — "Agent's Oath":</strong> The team must collectively write a 4-line poem/pledge declaring why the groom deserves Trish. Read it aloud. Handlers rate it 1-10. Below a 7? Rewrite. This is secretly sweet but publicly humiliating — perfect.</li>
-        </ol>
-      </div>
+    concept: `The classic Suan Tian Ku La (酸甜苦辣 — sour, sweet, bitter, spicy) with a CIA twist. Each flavour represents a "truth serum" the groom and his team must consume during interrogation.`,
 
-      <div class="callout"><span class="callout-icon">🎬</span><div class="callout-text"><strong>Photo moment:</strong> 14 grown men crowded around a cipher trying to crack it. The serenade penalty. The poem reading.</div></div>
-      <div class="callout"><span class="callout-icon">📦</span><div class="callout-text"><strong>Supplies:</strong> Printed cropped photos, cipher message (prepare with Trish), emoji sequence card, paper + pens for the poem, timer</div></div>
-      <div class="callout"><span class="callout-icon">👤</span><div class="callout-text"><strong>Run by:</strong> Shu-min — keep the timer strict, hype the pressure</div></div>
-    </div>
-  </div>
+    instructions: `<ol>
+<li>Prepare 4 "truth serums" (drinks/bites):<ul>
+<li><strong>SOUR (酸):</strong> Pure lime/calamansi juice, no sugar. Full shot glass.</li>
+<li><strong>SWEET (甜):</strong> Condensed milk mixed with soy sauce (looks sweet, tastes confusing).</li>
+<li><strong>BITTER (苦):</strong> Bitter melon juice or strong unsweetened coffee + wasabi shot.</li>
+<li><strong>SPICY (辣):</strong> Hot sauce (bring Samyang or local chili paste) on a cracker. This is the boss level.</li>
+</ul></li>
+<li><strong>The groom goes first</strong> and must consume ALL FOUR while reciting why he loves Trish (one reason per flavour). If he pauses, stutters, or makes a face — restart that flavour.</li>
+<li><strong>Then 4 volunteers</strong> (or victims chosen by Handlers) from the groomsmen must each take one flavour. They must toast "To Trish and John!" while consuming it.</li>
+<li><strong>Savage twist:</strong> If the groom's love declarations aren't sincere enough, the Handlers vote to make him do a bonus round — spicy + bitter combined. The "Double Agent Cocktail."</li>
+<li><strong>Water is available</strong> but costs 1 push-up per sip. (This is important — don't be monsters, just expensive ones.)</li>
+</ol>`,
 
-  <!-- STATION 5 -->
-  <div class="station" id="s5">
-    <div class="station-header" tabindex="0" role="button" aria-expanded="false" aria-controls="s5-body">
-      <div class="station-num">05</div>
-      <div class="station-title">
-        <h3>Disguise & Infiltration</h3>
-        <div class="station-tagline">A good spy can become anyone</div>
-      </div>
-      <div class="station-time">7 min</div>
-    </div>
-    <div class="station-body" id="s5-body">
-      <div class="tags">
-        <span class="tag tag-funny">90% Funny</span>
-        <span class="tag tag-savage">10% Savage</span>
-        <span class="tag tag-photo">📸 Best Photo Op</span>
-      </div>
+    callouts: [
+      { icon: "🎬", html: `<strong>Photo moment:</strong> Close-up reactions on the spicy round. The groom trying to say sweet things while dying inside. Pure gold.` },
+      { icon: "📦", html: `<strong>Supplies:</strong> Limes/calamansi, condensed milk, soy sauce, bitter melon juice or strong coffee, wasabi, hot sauce (Samyang level), crackers, shot glasses, cups, water bottles, napkins` },
+      { icon: "👤", html: `<strong>Run by:</strong> Laura — deliver each "truth serum" with a straight face and a dossier label` },
+    ],
 
-      <h4 style="color:var(--gold);font-family:var(--mono);font-size:.75rem;letter-spacing:2px;margin:12px 0 8px">CONCEPT</h4>
-      <p>The team's most photogenic station. Groomsmen must "disguise" themselves to infiltrate the bridal suite. This is where the 60/40 funny-to-savage ratio lives its best life.</p>
+    photoGuide: { text: `Spicy reaction close-ups. The groom trying to say "I love you" while his mouth is on fire (VIDEO).` },
+  },
 
-      <div class="instructions">
-        <h4 style="color:var(--gold);font-size:.85rem;margin-bottom:8px">How to Run It</h4>
-        <ol>
-          <li><strong>Round 1 — "Undercover as the Bride":</strong> Pick 3 groomsmen. Each gets 90 seconds to "become Trish" using a supply box of props: a wig or towel as hair, lipstick, clip-on earrings, a sarong as a dress. They must pose and give their best "Trish impression." Handlers + Trish (watching from inside) vote on the best one.</li>
-          <li><strong>Round 2 — The Groom's Makeover:</strong> The groom sits still while the groomsmen (NOT the Handlers) apply makeup on him — lipstick, blush, eyeliner. Timer: 2 minutes. He cannot look in a mirror until the big reveal. This photo goes in the wedding slideshow.</li>
-          <li><strong>Round 3 — TikTok Dance Challenge:</strong> The entire squad must learn a 30-second choreographed dance (pick a trending one or a classic like "Nobody" by Wonder Girls for the Singaporean crowd). They perform it together outside Trish's door. No half-efforts — Handlers judge and can make them redo it.</li>
-          <li><strong>Groom penalty:</strong> Regardless of results, the groom must do the dance SOLO one more time while yelling "I LOVE YOU TRISH" at the bridge of the song.</li>
-        </ol>
-      </div>
+  // ── Station 4: Code Breaking ────────────────────────────────────────
+  {
+    id: "station-4",
+    title: "Code Breaking",
+    tagline: "Decrypt the intel to proceed",
+    defaultMin: 7,
 
-      <div class="callout"><span class="callout-icon">🎬</span><div class="callout-text"><strong>Photo moment:</strong> THIS IS THE STATION. Every single round is Instagram/TikTok gold. Film everything. The groom's makeover reveal is the centrepiece — get his reaction in the mirror.</div></div>
-      <div class="callout"><span class="callout-icon">📦</span><div class="callout-text"><strong>Supplies:</strong> Cheap makeup kit (lipstick, blush, eyeliner), wigs or towels, clip-on earrings, sarongs, props, a mirror (for the reveal), Bluetooth speaker, phone with the dance video queued</div></div>
-      <div class="callout"><span class="callout-icon">👤</span><div class="callout-text"><strong>Run by:</strong> Evelyn (lead) + Jenny — you're the judges and the hype squad</div></div>
-    </div>
-  </div>
+    tags: [
+      { label: "80% Funny", cls: "tag-funny" },
+      { label: "20% Sweet", cls: "tag-sweet" },
+    ],
 
-  <!-- STATION 6 -->
-  <div class="station" id="s6">
-    <div class="station-header" tabindex="0" role="button" aria-expanded="false" aria-controls="s6-body">
-      <div class="station-num">06</div>
-      <div class="station-title">
-        <h3>Final Debrief — The Extraction</h3>
-        <div class="station-tagline">Mission complete. Almost.</div>
-      </div>
-      <div class="station-time">7 min</div>
-    </div>
-    <div class="station-body" id="s6-body">
-      <div class="tags">
-        <span class="tag tag-sweet">80% Sweet</span>
-        <span class="tag tag-funny">20% Funny</span>
-        <span class="tag tag-photo">📸 The Money Shot</span>
-      </div>
+    concept: `The team must solve puzzles and decode messages about the couple's relationship. Brain over brawn — but there's a catch. Time pressure + physical penalties for wrong guesses keep it chaotic.`,
 
-      <h4 style="color:var(--gold);font-family:var(--mono);font-size:.75rem;letter-spacing:2px;margin:12px 0 8px">CONCEPT</h4>
-      <p>The emotional closer. After all the chaos, this is the moment that makes people cry. The groom delivers his "final debrief" — a heartfelt declaration to Trish through the closed door. Then the ang bao negotiation. Then the door opens.</p>
+    instructions: `<ol>
+<li><strong>Puzzle 1 — Photo Decode:</strong> Show 5 zoomed-in/cropped photos of Trish (her eye, her hand with a specific ring, a childhood photo, a favourite place, her handwriting). Team must identify what each photo shows. 30 seconds per photo.</li>
+<li><strong>Puzzle 2 — Cipher Message:</strong> Give the groom a coded love message from Trish written in a simple cipher (A=1, B=2 or reversed alphabet). He has 2 minutes to decode it. The message should be something sweet and personal — maybe the first text she ever sent him, or an inside joke.</li>
+<li><strong>Puzzle 3 — Emoji Story:</strong> Display a sequence of emojis that tells the story of the couple's relationship (first meeting → first date → proposal, etc.). The team must narrate what each emoji represents. Every wrong guess = one person has to serenade Trish's door with "My Heart Will Go On" for 10 seconds.</li>
+<li><strong>Bonus — "Agent's Oath":</strong> The team must collectively write a 4-line poem/pledge declaring why the groom deserves Trish. Read it aloud. Handlers rate it 1-10. Below a 7? Rewrite. This is secretly sweet but publicly humiliating — perfect.</li>
+</ol>`,
 
-      <div class="instructions">
-        <h4 style="color:var(--gold);font-size:.85rem;margin-bottom:8px">How to Run It</h4>
-        <ol>
-          <li><strong>The Groom's Declaration:</strong> Standing at the door, the groom must say (not read from a phone!) <strong>3 promises</strong> to Trish for their marriage. These must be specific and personal, not generic. Handlers reject anything like "I'll love you forever" — too easy. Make him dig deep.</li>
-          <li><strong>The Brothers' Testimony:</strong> Pick 2-3 groomsmen (Edmund, Ron, and one childhood friend like Kenley work well — different eras of friendship). Each says ONE sentence about why the groom deserves Trish. Keep it tight — this isn't a roast, it's a testimony.</li>
-          <li><strong>The Squad Shout:</strong> On the count of 3, all 14 groomsmen yell something the groom has prepared — a line in Trish's love language, a meaningful phrase from their relationship, or simply "TRISH, OPEN THE DOOR, YOUR SPY HAS COME HOME!" 🕵️</li>
-          <li><strong>Ang Bao negotiation</strong> (see next section) happens now — don't let this drag.</li>
-          <li><strong>THE DOOR OPENS.</strong> Music cue: James Bond theme or something triumphant. Groom walks in. First look. Everyone cheers. Mission complete. 🎉</li>
-        </ol>
-      </div>
+    callouts: [
+      { icon: "🎬", html: `<strong>Photo moment:</strong> 14 grown men crowded around a cipher trying to crack it. The serenade penalty. The poem reading.` },
+      { icon: "📦", html: `<strong>Supplies:</strong> Printed cropped photos, cipher message (prepare with Trish), emoji sequence card, paper + pens for the poem, timer` },
+      { icon: "👤", html: `<strong>Run by:</strong> Shu-min — keep the timer strict, hype the pressure` },
+    ],
 
-      <div class="callout"><span class="callout-icon">🎬</span><div class="callout-text"><strong>Photo moment:</strong> Film the groom's face when the door opens. Film Trish's reaction. This is THE shot. Have two cameras — one on each side of the door.</div></div>
-      <div class="callout"><span class="callout-icon">👤</span><div class="callout-text"><strong>Run by:</strong> Evelyn (lead) — you control the pacing here. Don't rush the emotional beats.</div></div>
-    </div>
-  </div>
-</div>
+    photoGuide: { text: `14 grown men crowded around a cipher trying to crack it. The forced serenade punishment (VIDEO).` },
+  },
 
-<!-- ANG BAO STRATEGY -->
-<div class="section">
-  <div class="section-label">Section 04</div>
-  <h2>Ang Bao Strategy</h2>
-  <div class="angbao-box">
-    <h3>🧧 The Red Packet Negotiation</h3>
-    <p style="margin:8px 0;font-size:.9rem">This happens at the very end, after Station 6. It's the "ransom" for Trish's release.</p>
-  </div>
+  // ── Station 5: Disguise & Infiltration ──────────────────────────────
+  {
+    id: "station-5",
+    title: "Disguise & Infiltration",
+    tagline: "A good spy can become anyone",
+    defaultMin: 7,
 
-  <div class="instructions">
-    <ol>
-      <li><strong>Start high, negotiate down.</strong> Open with an absurd number (like $9,999) — it's theatre, everyone knows it. The groom will counter. Settle on an auspicious amount with 8s ($888, $388, $168).</li>
-      <li><strong>Accept red packets only</strong> — make them bring actual ang baos. No Venmo, no PayPal. This is tradition.</li>
-      <li><strong>The comedy beats:</strong> Slide a receipt under the door: "INVOICE: Emotional Damages — $X." If the first offer is too low, slide it back with "REJECTED" stamped on it. Escalate theatrically.</li>
-      <li><strong>The backup:</strong> If negotiation stalls, add a final challenge — "sing us one more song and we'll settle for $[lower amount]."</li>
-      <li><strong>Keep it to 2-3 minutes max.</strong> The emotional high from Station 6 is the real payload — don't kill it with a long haggle.</li>
-    </ol>
-  </div>
-</div>
+    tags: [
+      { label: "90% Funny", cls: "tag-funny" },
+      { label: "10% Savage", cls: "tag-savage" },
+      { label: "📸 Best Photo Op", cls: "tag-photo" },
+    ],
 
-<!-- SUPPLY LIST -->
-<div class="section">
-  <div class="section-label">Section 05</div>
-  <h2>Supply List — Mission Loadout</h2>
-  <p style="font-family:var(--mono);font-size:.8rem;color:var(--amber);margin-bottom:12px">✈ Items marked PACK must come with you. Items marked LOCAL can be sourced in Boracay.</p>
+    concept: `The team's most photogenic station. Groomsmen must "disguise" themselves to infiltrate the bridal suite. This is where the 60/40 funny-to-savage ratio lives its best life.`,
 
-  <div class="supply-grid">
-    <div class="supply-card">
-      <h4>✈ Pack from Home</h4>
-      <ul>
-        <li>Question cards + sealed answer envelopes (Station 1)</li>
-        <li>Cheap makeup kit — lipstick, blush, eyeliner (Station 5)</li>
-        <li>Wigs or costume hair pieces (Station 5)</li>
-        <li>Clip-on earrings + fun accessories (Station 5)</li>
-        <li>Printed cropped photos of Trish (Station 4)</li>
-        <li>Cipher message prepared with Trish (Station 4)</li>
-        <li>Emoji sequence card (Station 4)</li>
-        <li>Hot sauce — Samyang or equivalent (Station 3)</li>
-        <li>Wasabi paste (Station 3)</li>
-        <li>Bluetooth speaker (all stations)</li>
-        <li>"TOP SECRET" + "CLASSIFIED" printable labels</li>
-        <li>Fake CIA badges for Handlers (optional but 🔥)</li>
-        <li>Red packets / ang bao envelopes</li>
-        <li>Pens + paper (Station 4 poem)</li>
-        <li>Timer (phone is fine)</li>
-      </ul>
-    </div>
-    <div class="supply-card">
-      <h4>🏝 Buy in Boracay</h4>
-      <ul>
-        <li>Limes or calamansi (Station 3)</li>
-        <li>Condensed milk (Station 3)</li>
-        <li>Soy sauce (Station 3)</li>
-        <li>Bitter melon juice or strong instant coffee (Station 3)</li>
-        <li>Crackers (Station 3)</li>
-        <li>Shot glasses / small cups (Station 3)</li>
-        <li>Water bottles — lots (all stations)</li>
-        <li>Napkins / paper towels (all stations)</li>
-        <li>Sarongs — cheap ones for costumes (Station 5)</li>
-        <li>Towels or string for army crawl line (Station 2)</li>
-        <li>A stick/bat for spinning relay (Station 2)</li>
-        <li>A mirror — borrow from hotel (Station 5)</li>
-        <li>Ice — for water (it'll be hot)</li>
-      </ul>
-    </div>
-  </div>
-</div>
+    instructions: `<ol>
+<li><strong>Round 1 — "Undercover as the Bride":</strong> Pick 3 groomsmen. Each gets 90 seconds to "become Trish" using a supply box of props: a wig or towel as hair, lipstick, clip-on earrings, a sarong as a dress. They must pose and give their best "Trish impression." Handlers + Trish (watching from inside) vote on the best one.</li>
+<li><strong>Round 2 — The Groom's Makeover:</strong> The groom sits still while the groomsmen (NOT the Handlers) apply makeup on him — lipstick, blush, eyeliner. Timer: 2 minutes. He cannot look in a mirror until the big reveal. This photo goes in the wedding slideshow.</li>
+<li><strong>Round 3 — TikTok Dance Challenge:</strong> The entire squad must learn a 30-second choreographed dance (pick a trending one or a classic like "Nobody" by Wonder Girls). They perform it together outside Trish's door. No half-efforts — Handlers judge and can make them redo it.</li>
+<li><strong>Groom penalty:</strong> Regardless of results, the groom must do the dance SOLO one more time while yelling "I LOVE YOU TRISH" at the bridge of the song.</li>
+</ol>`,
 
-<!-- HANDLER ASSIGNMENTS -->
-<div class="section">
-  <div class="section-label">Section 06</div>
-  <h2>Handler Assignments</h2>
-  <p style="margin-bottom:12px">Each Handler owns specific stations. Evelyn floats as coordinator — jump in where needed and keep the energy up.</p>
+    callouts: [
+      { icon: "🎬", html: `<strong>Photo moment:</strong> THIS IS THE STATION. Every single round is Instagram/TikTok gold. Film everything. The groom's makeover reveal is the centrepiece — get his reaction in the mirror.` },
+      { icon: "📦", html: `<strong>Supplies:</strong> Cheap makeup kit (lipstick, blush, eyeliner), wigs or towels, clip-on earrings, sarongs, props, a mirror (for the reveal), Bluetooth speaker, phone with the dance video queued` },
+      { icon: "👤", html: `<strong>Run by:</strong> Evelyn + Jenny — you're the judges and the hype squad` },
+    ],
 
-  <div class="supply-grid">
-    <div class="supply-card" style="border-color:var(--gold)">
-      <h4 style="color:var(--gold)">Evelyn — Coordinating Handler</h4>
-      <ul style="list-style:none">
-        <li style="padding:4px 0">🎯 Overall MC + timekeeper</li>
-        <li style="padding:4px 0">🏋️ Runs Station 2 (Fitness Exam)</li>
-        <li style="padding:4px 0">💃 Co-runs Station 5 (Disguise)</li>
-        <li style="padding:4px 0">❤️ Runs Station 6 (Final Debrief)</li>
-        <li style="padding:4px 0">🧧 Leads Ang Bao negotiation</li>
-      </ul>
-    </div>
-    <div class="supply-card">
-      <h4>Jenny — The Interrogator</h4>
-      <ul style="list-style:none">
-        <li style="padding:4px 0">🔍 Runs Station 1 (Polygraph)</li>
-        <li style="padding:4px 0">💃 Co-runs Station 5 (Disguise judge)</li>
-        <li style="padding:4px 0">📋 Backup timekeeper</li>
-      </ul>
-    </div>
-    <div class="supply-card">
-      <h4>Laura — The Chemist</h4>
-      <ul style="list-style:none">
-        <li style="padding:4px 0">🥵 Runs Station 3 (Interrogation / food)</li>
-        <li style="padding:4px 0">🍋 Preps all truth serums morning-of</li>
-        <li style="padding:4px 0">💧 Manages water supply</li>
-      </ul>
-    </div>
-    <div class="supply-card">
-      <h4>Shu-min — Intel & Media</h4>
-      <ul style="list-style:none">
-        <li style="padding:4px 0">🧩 Runs Station 4 (Code Breaking)</li>
-        <li style="padding:4px 0">📸 Primary photographer/videographer</li>
-        <li style="padding:4px 0">🎵 Manages Bluetooth speaker + playlist</li>
-      </ul>
-    </div>
-    <div class="supply-card">
-      <h4>Chere — Station Support</h4>
-      <ul style="list-style:none">
-        <li style="padding:4px 0">🏋️ Co-runs Station 2 (Fitness Exam)</li>
-        <li style="padding:4px 0">🧧 Backup ang bao collector</li>
-        <li style="padding:4px 0">🎬 Secondary camera</li>
-      </ul>
-    </div>
-    <div class="supply-card">
-      <h4>Bonkie — Station Support</h4>
-      <ul style="list-style:none">
-        <li style="padding:4px 0">🥵 Co-runs Station 3 (Interrogation assist)</li>
-        <li style="padding:4px 0">💃 Co-runs Station 5 (Disguise props)</li>
-        <li style="padding:4px 0">💧 Hydration + supplies runner</li>
-      </ul>
-    </div>
-    <div class="supply-card">
-      <h4>Wm — Station Support</h4>
-      <ul style="list-style:none">
-        <li style="padding:4px 0">❤️ Co-runs Station 6 (Final Debrief)</li>
-        <li style="padding:4px 0">📸 Secondary photographer</li>
-        <li style="padding:4px 0">🧹 Cleanup lead post-extraction</li>
-      </ul>
-    </div>
-  </div>
-</div>
+    photoGuide: { html: `<strong style="color:var(--accent)">MONEY SHOTS.</strong> The Trish impersonations. The groom's makeup reveal in the mirror. The group dance (VIDEO — film from two angles).` },
+  },
 
-<!-- PHOTO/VIDEO GUIDE -->
-<div class="section">
-  <div class="section-label">Section 07</div>
-  <h2>📸 Photo & Video Moments</h2>
-  <p style="margin-bottom:12px">Mark these in your mental shot list. These are the moments you'll want for the wedding video and Instagram.</p>
+  // ── Station 6: Final Debrief — The Extraction ──────────────────────
+  {
+    id: "station-6",
+    title: "Final Debrief — The Extraction",
+    tagline: "Mission complete. Almost.",
+    defaultMin: 7,
 
-  <div class="instructions">
-    <ul>
-      <li><strong>Station 1:</strong> Groom in the "polygraph chair" — close-up of his face when he gets one wrong</li>
-      <li><strong>Station 2:</strong> The bat-spin-then-sprint (VIDEO — always hilarious). Piggyback carries on sand.</li>
-      <li><strong>Station 3:</strong> Spicy reaction close-ups. The groom trying to say "I love you" while his mouth is on fire (VIDEO).</li>
-      <li><strong>Station 4:</strong> 14 men huddled over a cipher. The forced serenade punishment (VIDEO).</li>
-      <li><strong>Station 5:</strong> <strong style="color:var(--accent)">MONEY SHOTS.</strong> The Trish impersonations. The groom's makeup reveal in the mirror. The group dance (VIDEO — film from two angles).</li>
-      <li><strong>Station 6:</strong> The groom's 3 promises through the door (VIDEO + AUDIO). The squad shout. <strong style="color:var(--accent)">The door opening — two cameras, one on each side.</strong> First look. This is the shot.</li>
-      <li><strong>Ang Bao:</strong> Slide the "INVOICE" under the door — film from inside and outside.</li>
-    </ul>
-  </div>
-</div>
+    tags: [
+      { label: "80% Sweet", cls: "tag-sweet" },
+      { label: "20% Funny", cls: "tag-funny" },
+      { label: "📸 The Money Shot", cls: "tag-photo" },
+    ],
 
-<!-- EMERGENCY BACKUP -->
-<div class="section">
-  <div class="section-label">Section 08</div>
-  <h2>Emergency Backup Games</h2>
-  <p style="margin-bottom:12px;font-family:var(--mono);font-size:.85rem;color:var(--amber)">Deploy if a station runs short or if energy dips. Quick, no prep needed.</p>
+    concept: `The emotional closer. After all the chaos, this is the moment that makes people cry. The groom delivers his "final debrief" — a heartfelt declaration to Trish through the closed door. Then the ang bao negotiation. Then the door opens.`,
 
-  <div class="supply-grid">
-    <div class="supply-card">
-      <h4>Backup A — "Body Language Decoder"</h4>
-      <p style="font-size:.85rem;margin:8px 0">The groom acts out moments from the relationship (first date, proposal, first fight, meeting her parents) using ONLY body language — no words. The team must guess. 30 seconds per charade. Wrong guesses = squat jumps.</p>
-      <p style="font-size:.8rem;color:var(--muted)">Time: 3-5 min | Supplies: None | Vibe: 80% funny</p>
-    </div>
-    <div class="supply-card">
-      <h4>Backup B — "Waxing Intelligence"</h4>
-      <p style="font-size:.85rem;margin:8px 0">For the truly savage option: wax strips on the groom's legs (or arms if he's precious about his legs). One strip per incorrect answer in any earlier station. Pack wax strips just in case.</p>
-      <p style="font-size:.8rem;color:var(--muted)">Time: 2-3 min | Supplies: Wax strips | Vibe: 90% savage — deploy only if the bride approves</p>
-    </div>
-  </div>
-</div>
+    instructions: `<ol>
+<li><strong>The Groom's Declaration:</strong> Standing at the door, the groom must say (not read from a phone!) <strong>3 promises</strong> to Trish for their marriage. These must be specific and personal, not generic. Handlers reject anything like "I'll love you forever" — too easy. Make him dig deep.</li>
+<li><strong>The Brothers' Testimony:</strong> Pick 2-3 groomsmen (Edmund, Ron, and one childhood friend like Kenley work well — different eras of friendship). Each says ONE sentence about why the groom deserves Trish. Keep it tight — this isn't a roast, it's a testimony.</li>
+<li><strong>The Squad Shout:</strong> On the count of 3, all 14 groomsmen yell something the groom has prepared — a line in Trish's love language, a meaningful phrase from their relationship, or simply "TRISH, OPEN THE DOOR, YOUR SPY HAS COME HOME!" 🕵️</li>
+<li><strong>Ang Bao negotiation</strong> (see next section) happens now — don't let this drag.</li>
+<li><strong>THE DOOR OPENS.</strong> Music cue: James Bond theme or something triumphant. Groom walks in. First look. Everyone cheers. Mission complete. 🎉</li>
+</ol>`,
 
-<!-- MUSIC -->
-<div class="section">
-  <div class="section-label">Section 09</div>
-  <h2>🎵 Soundtrack — Mission Playlist</h2>
-  <p style="margin-bottom:12px">Play through a Bluetooth speaker. Set the mood from the moment they arrive.</p>
+    callouts: [
+      { icon: "🎬", html: `<strong>Photo moment:</strong> Film the groom's face when the door opens. Film Trish's reaction. This is THE shot. Have two cameras — one on each side of the door.` },
+      { icon: "👤", html: `<strong>Run by:</strong> Evelyn — you control the pacing here. Don't rush the emotional beats.` },
+    ],
 
-  <div class="music-list">
-    <div class="music-item"><div class="song">Mission: Impossible Theme</div><div class="use">Opening — when groomsmen arrive at the door</div></div>
-    <div class="music-item"><div class="song">James Bond Theme</div><div class="use">Station transitions / walk-up music</div></div>
-    <div class="music-item"><div class="song">Eye of the Tiger — Survivor</div><div class="use">Station 2 — Fitness Exam</div></div>
-    <div class="music-item"><div class="song">Danger Zone — Kenny Loggins</div><div class="use">Station 3 — Interrogation (spicy round)</div></div>
-    <div class="music-item"><div class="song">Pink Panther Theme</div><div class="use">Station 4 — Code Breaking</div></div>
-    <div class="music-item"><div class="song">Nobody — Wonder Girls</div><div class="use">Station 5 — Dance challenge</div></div>
-    <div class="music-item"><div class="song">I Don't Want to Miss a Thing — Aerosmith</div><div class="use">Station 5 — Groom solo dance penalty</div></div>
-    <div class="music-item"><div class="song">A Thousand Years — Christina Perri</div><div class="use">Station 6 — Emotional closer (play softly)</div></div>
-    <div class="music-item"><div class="song">Celebration — Kool & The Gang</div><div class="use">Door opens — BLAST IT</div></div>
-    <div class="music-item"><div class="song">Marry You — Bruno Mars</div><div class="use">Victory walk-in / group photo after</div></div>
-  </div>
-</div>
+    photoGuide: { html: `The groom's 3 promises through the door (VIDEO + AUDIO). The squad shout. <strong style="color:var(--accent)">The door opening — two cameras, one on each side.</strong> First look. This is the shot.` },
+  },
 
-<!-- DAY-OF CHECKLIST -->
-<div class="section" style="border-bottom:none">
-  <div class="section-label">Section 10</div>
-  <h2>Day-Of Checklist — Morning of May 24</h2>
-  <p style="margin-bottom:12px">Handler squad prep timeline. Everyone should be dressed and ready by 1330H.</p>
+]; // ← end of STATION_CONFIG
 
-  <div class="checklist" id="checklist-prep">
-    <h4>🕕 1230H — Wake Up & Prep</h4>
-    <ul>
-      <li>Handlers get dressed (coordinate outfits — matching is cute)</li>
-      <li>Eat breakfast! You'll need energy to be evil.</li>
-      <li>Charge all phones. Clear camera storage.</li>
-    </ul>
-  </div>
-  <div class="checklist" id="checklist-setup">
-    <h4>🕖 1300H — Station Setup</h4>
-    <ul>
-      <li>Set up "polygraph chair" in hallway (Station 1)</li>
-      <li>Prep truth serums — lime juice, condensed milk + soy sauce, coffee/wasabi, hot sauce + crackers (Station 3)</li>
-      <li>Lay out disguise supplies — makeup, wigs, sarongs, accessories (Station 5)</li>
-      <li>Print/arrange cipher and photo puzzles (Station 4)</li>
-      <li>Set up Bluetooth speaker and queue playlist</li>
-      <li>Tape "TOP SECRET" and "CLASSIFIED" labels on the bridal suite door</li>
-      <li>Brief Trish on the plan — she stays inside until the door opens</li>
-      <li>Quick run-through with all Handlers: who runs what, timing, signals</li>
-    </ul>
-  </div>
-  <div class="checklist" id="checklist-go">
-    <h4>🕗 1345H — Final Positions</h4>
-    <ul>
-      <li>Door barricaded (chairs, luggage, whatever's handy — for show)</li>
-      <li>Camera person in position (Shu-min)</li>
-      <li>Speaker playing Mission: Impossible theme on low</li>
-      <li>Station 1 Handler at the door with question cards ready</li>
-      <li>Water + napkins staged at each station</li>
-      <li>Text the groom's best man: "We're ready. Send your agents. 🕵️"</li>
-    </ul>
-  </div>
-  <div class="checklist" id="checklist-after">
-    <h4>🕘 1445H — Post-Extraction</h4>
-    <ul>
-      <li>Group photos — everyone together (groomsmen still in whatever state they're in)</li>
-      <li>Clean up ALL stations (don't leave mess for the hotel)</li>
-      <li>Collect the ang baos — give to the bride</li>
-      <li>Groom cleans up his face (he has a ceremony to attend)</li>
-      <li>Share best photos/videos to the group chat immediately</li>
-      <li>Pat yourselves on the back. You just ran an elite operation. 🕵️‍♀️🎉</li>
-    </ul>
-  </div>
-</div>
+// ═══════════════════════════════════════════════════════════
+// DERIVED LOOKUPS (auto-built from STATION_CONFIG — do not edit)
+// ═══════════════════════════════════════════════════════════
+const STATIONS = STATION_CONFIG.map(s => ({ id: s.id, title: s.title, tagline: s.tagline, defaultMin: s.defaultMin }));
+const STATION_MAP = Object.fromEntries(STATION_CONFIG.map(s => [s.id, s]));
+const STATION_TAGS = Object.fromEntries(STATION_CONFIG.map(s => [s.id, s.tags || []]));
+const STATION_CONTENT = Object.fromEntries(STATION_CONFIG.map(s => [s.id, { concept: s.concept, instructions: s.instructions, callouts: s.callouts || [] }]));
 
-</div><!-- end container -->
+const GROOMSMEN = [
+  { name: "JOHN GOBOK", role: "Primary Target" },
+  { name: "Kenley", role: "Childhood · PH" }, { name: "Jedd", role: "Childhood · PH" },
+  { name: "Chris", role: "Childhood · PH" }, { name: "Yen", role: "GSB" },
+  { name: "Dan", role: "GSB" }, { name: "Ed", role: "GSB" },
+  { name: "Jeff", role: "GSB" }, { name: "Eddie", role: "GSB" },
+  { name: "Edmund", role: "Harvard · PH" }, { name: "Kola", role: "Harvard" },
+  { name: "Kogos", role: "Harvard" }, { name: "Vernon", role: "Harvard" },
+  { name: "Ron", role: "Harvard · Roomie" }, { name: "Noel", role: "GSB" },
+];
 
-<!-- FOOTER -->
-<div class="footer">
-  <p>OPERATION TRISH — CLASSIFIED DOCUMENT</p>
-  <p style="margin-top:4px">Prepared by Agent Nala 🦁 for Handler Evelyn</p>
-  <p style="margin-top:4px">May 2026 — Boracay Island, Philippines</p>
-  <p style="margin-top:12px;color:var(--accent)">DESTROY AFTER READING<br>(just kidding — save it for the wedding slideshow)</p>
-</div>
+const HANDLERS = [
+  { name: "Evelyn", role: "Coordinating Handler" },
+  { name: "Jenny", role: "Handler" }, { name: "Laura", role: "Handler" },
+  { name: "Shu-min", role: "Handler" }, { name: "Chere", role: "Handler" },
+  { name: "Bonkie", role: "Handler" }, { name: "Wm", role: "Handler" },
+];
 
-<script>
-// Station accordion toggle
-document.querySelectorAll('.station-header').forEach(function(header) {
-  header.addEventListener('click', function() {
-    var station = this.parentElement;
-    var isOpen = station.classList.contains('open');
-    station.classList.toggle('open');
-    this.setAttribute('aria-expanded', String(!isOpen));
-  });
-  header.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      this.click();
-    }
-  });
-});
+const HANDLER_KEYS = ["evelyn", "jenny", "laura", "shu-min", "chere", "bonkie", "wm"];
+const HANDLER_TITLES = {
+  evelyn: "Evelyn — Coordinating Handler",
+  jenny: "Jenny — The Interrogator",
+  laura: "Laura — The Chemist",
+  "shu-min": "Shu-min — Intel & Media",
+  chere: "Chere — Station Support",
+  bonkie: "Bonkie — Station Support",
+  wm: "Wm — Station Support",
+};
 
-// Checklist interactive toggle
-document.querySelectorAll('.checklist li').forEach(function(item) {
-  item.addEventListener('click', function() {
-    this.classList.toggle('checked');
-    // Save state
-    var checklists = {};
-    document.querySelectorAll('.checklist').forEach(function(cl) {
-      var id = cl.id;
-      if (!id) return;
-      var states = [];
-      cl.querySelectorAll('li').forEach(function(li) {
-        states.push(li.classList.contains('checked'));
-      });
-      checklists[id] = states;
-    });
-    try { localStorage.setItem('op-trish-checks', JSON.stringify(checklists)); } catch(e) {}
-  });
-});
+// Seed assignments with {S:station-X} placeholders for dynamic station numbers
+const SEED_ASSIGNMENTS = [
+  { handler: "evelyn", text: "🎯 Overall MC + timekeeper" },
+  { handler: "evelyn", text: "🏋️ Runs {S:station-2} (Fitness Exam)" },
+  { handler: "evelyn", text: "💃 Co-runs {S:station-5} (Disguise)" },
+  { handler: "evelyn", text: "❤️ Runs {S:station-6} (Final Debrief)" },
+  { handler: "evelyn", text: "🧧 Leads Ang Bao negotiation" },
+  { handler: "jenny", text: "🔍 Runs {S:station-1} (Polygraph)" },
+  { handler: "jenny", text: "💃 Co-runs {S:station-5} (Disguise judge)" },
+  { handler: "jenny", text: "📋 Backup timekeeper" },
+  { handler: "laura", text: "🥵 Runs {S:station-3} (Interrogation / food)" },
+  { handler: "laura", text: "🍋 Preps all truth serums morning-of" },
+  { handler: "laura", text: "💧 Manages water supply" },
+  { handler: "shu-min", text: "🧩 Runs {S:station-4} (Code Breaking)" },
+  { handler: "shu-min", text: "📸 Primary photographer/videographer" },
+  { handler: "shu-min", text: "🎵 Manages Bluetooth speaker + playlist" },
+  { handler: "chere", text: "🏋️ Co-runs {S:station-2} (Fitness Exam)" },
+  { handler: "chere", text: "🧧 Backup ang bao collector" },
+  { handler: "chere", text: "🎬 Secondary camera" },
+  { handler: "bonkie", text: "🥵 Co-runs {S:station-3} (Interrogation assist)" },
+  { handler: "bonkie", text: "💃 Co-runs {S:station-5} (Disguise props)" },
+  { handler: "bonkie", text: "💧 Hydration + supplies runner" },
+  { handler: "wm", text: "❤️ Co-runs {S:station-6} (Final Debrief)" },
+  { handler: "wm", text: "📸 Secondary photographer" },
+  { handler: "wm", text: "🧹 Cleanup lead post-extraction" },
+];
 
-// Restore checklist state
-try {
-  var saved = JSON.parse(localStorage.getItem('op-trish-checks'));
-  if (saved) {
-    Object.keys(saved).forEach(function(id) {
-      var cl = document.getElementById(id);
-      if (!cl) return;
-      var items = cl.querySelectorAll('li');
-      saved[id].forEach(function(checked, i) {
-        if (checked && items[i]) items[i].classList.add('checked');
-      });
-    });
-  }
-} catch(e) {}
+// Supply items with station associations for dynamic labeling
+const PACK_ITEMS = [
+  { id: "pack-1", text: "Question cards + sealed answer envelopes", stn: "station-1" },
+  { id: "pack-2", text: "Cheap makeup kit — lipstick, blush, eyeliner", stn: "station-5" },
+  { id: "pack-3", text: "Wigs or costume hair pieces", stn: "station-5" },
+  { id: "pack-4", text: "Clip-on earrings + fun accessories", stn: "station-5" },
+  { id: "pack-5", text: "Printed cropped photos of Trish", stn: "station-4" },
+  { id: "pack-6", text: "Cipher message prepared with Trish", stn: "station-4" },
+  { id: "pack-7", text: "Emoji sequence card", stn: "station-4" },
+  { id: "pack-8", text: "Hot sauce — Samyang or equivalent", stn: "station-3" },
+  { id: "pack-9", text: "Wasabi paste", stn: "station-3" },
+  { id: "pack-10", text: "Bluetooth speaker", stn: null },
+  { id: "pack-11", text: '"TOP SECRET" + "CLASSIFIED" printable labels', stn: null },
+  { id: "pack-12", text: "Fake CIA badges for Handlers (optional but 🔥)", stn: null },
+  { id: "pack-13", text: "Red packets / ang bao envelopes", stn: null },
+  { id: "pack-14", text: "Pens + paper (poem)", stn: "station-4" },
+  { id: "pack-15", text: "Timer (phone is fine)", stn: null },
+];
 
-// Redacted text reveal
-document.querySelectorAll('.redacted').forEach(function(el) {
-  el.addEventListener('click', function() {
-    this.classList.toggle('revealed');
-    if (this.classList.contains('revealed')) {
-      this.textContent = 'Handler Eyes Only';
-    } else {
-      this.textContent = 'CLASSIFIED';
-    }
-  });
-});
+const LOCAL_ITEMS = [
+  { id: "local-1", text: "Limes or calamansi", stn: "station-3" },
+  { id: "local-2", text: "Condensed milk", stn: "station-3" },
+  { id: "local-3", text: "Soy sauce", stn: "station-3" },
+  { id: "local-4", text: "Bitter melon juice or strong instant coffee", stn: "station-3" },
+  { id: "local-5", text: "Crackers", stn: "station-3" },
+  { id: "local-6", text: "Shot glasses / small cups", stn: "station-3" },
+  { id: "local-7", text: "Water bottles — lots", stn: null },
+  { id: "local-8", text: "Napkins / paper towels", stn: null },
+  { id: "local-9", text: "Sarongs — cheap ones for costumes", stn: "station-5" },
+  { id: "local-10", text: "Towels or string for army crawl line", stn: "station-2" },
+  { id: "local-11", text: "A stick/bat for spinning relay", stn: "station-2" },
+  { id: "local-12", text: "A mirror — borrow from hotel", stn: "station-5" },
+  { id: "local-13", text: "Ice — for water (it'll be hot)", stn: null },
+];
 
-// Open first station by default
-var first = document.getElementById('s1');
-if (first) {
-  first.classList.add('open');
-  var hdr = first.querySelector('.station-header');
-  if (hdr) hdr.setAttribute('aria-expanded', 'true');
+// Photo guide — auto-built from STATION_CONFIG.photoGuide + the static ang bao entry
+const PHOTO_GUIDE = STATION_CONFIG.filter(s => s.photoGuide).map(s => ({ stn: s.id, ...s.photoGuide }));
+PHOTO_GUIDE.push({ stn: null, text: `Ang Bao: Slide the "INVOICE" under the door — film from inside and outside.` });
+
+const MUSIC = [
+  { song: "Mission: Impossible Theme", use: "Opening — when groomsmen arrive at the door" },
+  { song: "James Bond Theme", use: "Station transitions / walk-up music" },
+  { song: "Eye of the Tiger — Survivor", use: "Fitness Exam" },
+  { song: "Danger Zone — Kenny Loggins", use: "Interrogation (spicy round)" },
+  { song: "Pink Panther Theme", use: "Code Breaking" },
+  { song: "Nobody — Wonder Girls", use: "Dance challenge" },
+  { song: "I Don't Want to Miss a Thing — Aerosmith", use: "Groom solo dance penalty" },
+  { song: "A Thousand Years — Christina Perri", use: "Emotional closer (play softly)" },
+  { song: "Celebration — Kool & The Gang", use: "Door opens — BLAST IT" },
+  { song: "Marry You — Bruno Mars", use: "Victory walk-in / group photo after" },
+];
+
+// Checklist with station refs for dynamic labeling
+const CHECKLIST_GROUPS = [
+  { id: "prep", title: "🕕 1230H — Wake Up & Prep", items: [
+    { text: "Handlers get dressed (coordinate outfits — matching is cute)" },
+    { text: "Eat lunch! You'll need energy to be evil." },
+    { text: "Charge all phones. Clear camera storage." },
+  ]},
+  { id: "setup", title: "🕖 1300H — Station Setup", items: [
+    { text: 'Set up "polygraph chair" in hallway', stn: "station-1" },
+    { text: "Prep truth serums — lime juice, condensed milk + soy sauce, coffee/wasabi, hot sauce + crackers", stn: "station-3" },
+    { text: "Lay out disguise supplies — makeup, wigs, sarongs, accessories", stn: "station-5" },
+    { text: "Print/arrange cipher and photo puzzles", stn: "station-4" },
+    { text: "Set up Bluetooth speaker and queue playlist" },
+    { text: 'Tape "TOP SECRET" and "CLASSIFIED" labels on the bridal suite door' },
+    { text: "Brief Trish on the plan — she stays inside until the door opens" },
+    { text: "Quick run-through with all Handlers: who runs what, timing, signals" },
+  ]},
+  { id: "go", title: "🕗 1345H — Final Positions", items: [
+    { text: "Door barricaded (chairs, luggage, whatever's handy — for show)" },
+    { text: "Camera person in position (Shu-min)" },
+    { text: "Speaker playing Mission: Impossible theme on low" },
+    { text: "Handler at the door with question cards ready", stn: "station-1" },
+    { text: "Water + napkins staged at each station" },
+    { text: 'Text the groom\'s best man: "We\'re ready. Send your agents. 🕵️"' },
+  ]},
+  { id: "after", title: "🕘 1445H — Post-Extraction", items: [
+    { text: "Group photos — everyone together (groomsmen still in whatever state they're in)" },
+    { text: "Clean up ALL stations (don't leave mess for the hotel)" },
+    { text: "Collect the ang baos — give to the bride" },
+    { text: "Groom cleans up his face (he has a ceremony to attend)" },
+    { text: "Share best photos/videos to the group chat immediately" },
+    { text: "Pat yourselves on the back. You just ran an elite operation. 🕵️‍♀️🎉" },
+  ]},
+];
+
+
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+
+const state = {
+  userName: localStorage.getItem('op-trish-name') || '',
+  showNameModal: !localStorage.getItem('op-trish-name'),
+  openStations: new Set(),
+  showComments: new Set(),
+  addTaskForms: new Set(), // handler keys with open add-task forms
+  votes: {},        // { stationId: { sanitizedName: "up"|"down" } }
+  comments: {},     // { stationId: { pushKey: { name, text, ts, author } } }
+  suggestions: {},  // { pushKey: { name, text, ts, author } }
+  tasks: {},        // { pushKey: { handler, description, author } }
+  claims: {},       // { itemId: { claimer, ts } }
+  order: STATIONS.map(s => s.id),
+  durations: Object.fromEntries(STATIONS.map(s => [s.id, s.defaultMin])),
+  checkStates: JSON.parse(localStorage.getItem('op-trish-checks') || '{}'),
+  fbConnected: false,
+  fbError: null,
+};
+
+// ═══════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════
+
+// Get display number for a station based on current order
+function sn(stationId) {
+  const idx = state.order.indexOf(stationId);
+  return idx >= 0 ? idx + 1 : '?';
 }
+function stationLabel(stationId) { return 'Station ' + sn(stationId); }
+function stationPad(stationId) { const n = sn(stationId); return n < 10 ? '0' + n : '' + n; }
+
+// Resolve {S:station-X} placeholders → "Station N"
+function resolveRefs(text) {
+  return text.replace(/\{S:(station-\d+)\}/g, (_, id) => stationLabel(id));
+}
+
+function sanitizeName(name) {
+  return name.replace(/[.#$\[\]/]/g, '_').trim();
+}
+
+function escapeHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+function formatTime(ts) {
+  const d = new Date(typeof ts === 'number' ? ts : Date.parse(ts));
+  if (isNaN(d)) return '';
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+// Supply item label with dynamic station number
+function supplyLabel(item) {
+  let label = item.text;
+  if (item.stn) label += ` <span style="color:var(--dim);font-family:var(--mono);font-size:.75rem">(${stationLabel(item.stn)})</span>`;
+  return label;
+}
+
+// ═══════════════════════════════════════════════════════════
+// FIREBASE
+// ═══════════════════════════════════════════════════════════
+
+let db = null;
+
+function isConfigured() {
+  return FIREBASE_CONFIG.apiKey && !FIREBASE_CONFIG.apiKey.includes('PASTE_YOUR');
+}
+
+function initFirebase() {
+  if (!isConfigured()) {
+    state.fbError = 'Firebase not configured — edit FIREBASE_CONFIG in index.html';
+    render();
+    return;
+  }
+  try {
+    firebase.initializeApp(FIREBASE_CONFIG);
+    db = firebase.database();
+    state.fbConnected = true;
+    seedIfEmpty();
+    setupListeners();
+  } catch (e) {
+    state.fbError = 'Firebase init failed: ' + e.message;
+    render();
+  }
+}
+
+function seedIfEmpty() {
+  db.ref('order').once('value', snap => {
+    if (!snap.exists()) {
+      db.ref('order').set(STATIONS.map(s => s.id));
+      const durs = {};
+      STATIONS.forEach(s => { durs[s.id] = s.defaultMin; });
+      db.ref('durations').set(durs);
+    }
+  });
+}
+
+function setupListeners() {
+  // Votes
+  db.ref('votes').on('value', snap => {
+    state.votes = snap.val() || {};
+    render();
+  });
+  // Comments
+  db.ref('comments').on('value', snap => {
+    state.comments = snap.val() || {};
+    render();
+  });
+  // Suggestions
+  db.ref('suggestions').on('value', snap => {
+    state.suggestions = snap.val() || {};
+    render();
+  });
+  // Custom tasks
+  db.ref('tasks').on('value', snap => {
+    state.tasks = snap.val() || {};
+    render();
+  });
+  // Supply claims
+  db.ref('claims').on('value', snap => {
+    state.claims = snap.val() || {};
+    render();
+  });
+  // Station order
+  db.ref('order').on('value', snap => {
+    if (snap.val()) state.order = snap.val();
+    render();
+  });
+  // Station durations
+  db.ref('durations').on('value', snap => {
+    if (snap.val()) state.durations = snap.val();
+    render();
+  });
+}
+
+// Firebase write helpers
+function fbVote(stationId, voteType) {
+  if (!db || !state.userName) return;
+  const key = sanitizeName(state.userName);
+  const ref = db.ref(`votes/${stationId}/${key}`);
+  ref.once('value', snap => {
+    if (snap.val() === voteType) ref.remove();
+    else ref.set(voteType);
+  });
+}
+
+function fbAddComment(stationId, text) {
+  if (!db || !state.userName || !text.trim()) return;
+  db.ref(`comments/${stationId}`).push({
+    name: state.userName, text: text.trim(), ts: Date.now(), author: state.userName
+  });
+}
+
+function fbDeleteComment(stationId, key) {
+  if (!db) return;
+  db.ref(`comments/${stationId}/${key}`).remove();
+}
+
+function fbAddSuggestion(text) {
+  if (!db || !state.userName || !text.trim()) return;
+  db.ref('suggestions').push({
+    name: state.userName, text: text.trim(), ts: Date.now(), author: state.userName
+  });
+}
+
+function fbDeleteSuggestion(key) {
+  if (!db) return;
+  db.ref(`suggestions/${key}`).remove();
+}
+
+function fbAddTask(handler, description) {
+  if (!db || !state.userName || !description.trim()) return;
+  db.ref('tasks').push({
+    handler: handler, description: description.trim(), author: state.userName
+  });
+}
+
+function fbDeleteTask(key) {
+  if (!db) return;
+  db.ref(`tasks/${key}`).remove();
+}
+
+function fbClaim(itemId) {
+  if (!db || !state.userName) return;
+  db.ref(`claims/${itemId}`).set({ claimer: state.userName, ts: Date.now() });
+}
+
+function fbUnclaim(itemId) {
+  if (!db) return;
+  db.ref(`claims/${itemId}`).remove();
+}
+
+function fbSetOrder(order) {
+  if (!db) return;
+  db.ref('order').set(order);
+}
+
+function fbSetDuration(stationId, mins) {
+  if (!db) return;
+  db.ref(`durations/${stationId}`).set(Math.max(1, mins));
+}
+
+
+// ═══════════════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════════════
+
+let renderScheduled = false;
+function render() {
+  if (renderScheduled) return;
+  renderScheduled = true;
+  requestAnimationFrame(() => {
+    renderScheduled = false;
+    doRender();
+  });
+}
+
+function doRender() {
+  const app = document.getElementById('app');
+  // Save scroll position
+  const scrollY = window.scrollY;
+  // Save any focused element info
+  const focusedId = document.activeElement?.dataset?.inputId;
+
+  let html = '<div class="container">';
+
+  // Name modal
+  if (state.showNameModal) {
+    html += renderNameModal();
+  }
+
+  // Agent badge (name display/change)
+  html += renderAgentBadge();
+
+  // Firebase status
+  if (state.fbError) {
+    html += `<div class="fb-status error">⚠️ ${escapeHtml(state.fbError)}</div>`;
+  }
+
+  // Top Secret Banner
+  html += renderBanner();
+
+  // Countdown
+  html += '<div id="countdown-wrap" class="countdown-wrap"></div>';
+
+  // Cover
+  html += renderCover();
+
+  // Section 01 — Personnel
+  html += renderPersonnel();
+
+  // Section 02 — Timeline
+  html += renderTimeline();
+
+  // Section 03 — Stations
+  html += renderStations();
+
+  // Section 04 — Supply List
+  html += renderSupplyList();
+
+  // Section 05 — Ang Bao
+  html += renderAngBao();
+
+  // Section 06 — Handler Assignments
+  html += renderAssignments();
+
+  // Section 07 — Suggestions
+  html += renderSuggestions();
+
+  // Section 08 — Soundtrack
+  html += renderSoundtrack();
+
+  // Section 09 — Photo & Video Guide
+  html += renderPhotoGuide();
+
+  // Section 10 — Day-of Checklist
+  html += renderChecklist();
+
+  // Section 11 — Backup Games
+  html += renderBackup();
+
+  // Footer
+  html += renderFooter();
+
+  html += '</div>'; // .container
+
+  app.innerHTML = html;
+
+  // Start countdown timer
+  updateCountdown();
+  if (!window._cdInterval) {
+    window._cdInterval = setInterval(updateCountdown, 1000);
+  }
+
+  // Restore scroll
+  window.scrollTo(0, scrollY);
+
+  // Restore focus if possible
+  if (focusedId) {
+    const el = document.querySelector(`[data-input-id="${focusedId}"]`);
+    if (el) el.focus();
+  }
+}
+
+function renderNameModal() {
+  return `<div class="modal-overlay" id="name-modal">
+    <div class="modal-box">
+      <div class="modal-stamp">CLASSIFIED</div>
+      <div class="modal-title">Identify Yourself, Agent</div>
+      <div class="modal-sub">YOUR CODENAME FOR THIS OPERATION</div>
+      <input class="modal-input" id="name-input" type="text" placeholder="Enter your name"
+        value="${escapeHtml(state.userName)}" maxlength="30"
+        onkeydown="if(event.key==='Enter')confirmName()">
+      <br>
+      <button class="modal-btn" onclick="confirmName()" ${state.userName ? '' : 'disabled'}>
+        CONFIRM IDENTITY
+      </button>
+    </div>
+  </div>`;
+}
+
+function renderAgentBadge() {
+  if (state.showNameModal) return '';
+  return `<div class="agent-badge-wrap">
+    <button class="agent-badge" onclick="changeName()" title="Click to change name">
+      🕵️ Agent ${escapeHtml(state.userName)}
+    </button>
+  </div>`;
+}
+
+function renderBanner() {
+  return `<div class="ts-banner">
+    <div class="ts-stamp">TOP SECRET</div>
+    <div class="ts-sub">AUTHORIZED PERSONNEL ONLY</div>
+  </div>`;
+}
+
+function renderCover() {
+  return `<div class="cover">
+    <div class="cover-title">Operation Trish</div>
+    <div class="cover-subtitle">GATE CRASH MISSION BRIEFING</div>
+    <div class="meta-info">
+      <strong>SUBJECT:</strong> <span>TRISH & JOHN GOBOK — WEDDING GATE CRASH</span><br>
+      <strong>DATE:</strong> <span>24 MAY 2026, 1400H PHT</span><br>
+      <strong>LOCATION:</strong> <span>BORACAY ISLAND, PHILIPPINES</span><br>
+      <strong>CLASSIFICATION:</strong> <span class="redacted ${state.redactRevealed ? 'revealed' : ''}" onclick="toggleRedact()">EYES ONLY — HANDLERS</span><br>
+      <strong>SQUAD SIZE:</strong> <span>1 Groom + 14 Groomsmen vs 7 Handlers</span>
+    </div>
+  </div>`;
+}
+
+function renderPersonnel() {
+  let html = `<div class="section">
+    <div class="section-label">SECTION 00</div>
+    <div class="section-title">Personnel Dossier</div>
+    <div class="subsection-title">🎯 Primary Target + Groomsmen</div>
+    <div class="crew-grid">`;
+  for (const g of GROOMSMEN) {
+    html += `<div class="crew-badge">
+      <span class="crew-name">${escapeHtml(g.name)}</span>
+      <span class="crew-role">${escapeHtml(g.role)}</span>
+    </div>`;
+  }
+  html += `</div>
+    <div class="subsection-title">🕵️‍♀️ Handlers</div>
+    <div class="crew-grid">`;
+  for (const h of HANDLERS) {
+    html += `<div class="crew-badge">
+      <span class="crew-name">${escapeHtml(h.name)}</span>
+      <span class="crew-role">${escapeHtml(h.role)}</span>
+    </div>`;
+  }
+  html += `</div></div>`;
+  return html;
+}
+
+function renderTimeline() {
+  // Build timeline from current order and durations
+  const baseHour = 14; // 2:00 PM
+  const baseMin = 0;
+  let totalMins = 0;
+  const items = [];
+
+  items.push({ time: "1400H", desc: "🚪 Groomsmen arrive at the bridal suite door", offset: 0 });
+
+  let elapsed = 0;
+  for (const sid of state.order) {
+    const st = STATION_MAP[sid];
+    const dur = state.durations[sid] || 7;
+    const startMins = elapsed;
+    const hr = Math.floor((baseMin + startMins) / 60) + baseHour;
+    const mn = (baseMin + startMins) % 60;
+    const timeStr = `${String(hr).padStart(2,'0')}${String(mn).padStart(2,'0')}H`;
+    items.push({ time: timeStr, desc: `${stationLabel(sid)}: ${st.title}`, dur: dur });
+    elapsed += dur;
+  }
+
+  // Ang Bao negotiation
+  const abHr = Math.floor((baseMin + elapsed) / 60) + baseHour;
+  const abMn = (baseMin + elapsed) % 60;
+  items.push({ time: `${String(abHr).padStart(2,'0')}${String(abMn).padStart(2,'0')}H`, desc: "🧧 Ang Bao Negotiation + Door Opens", dur: 5 });
+  elapsed += 5;
+
+  // End
+  const endHr = Math.floor((baseMin + elapsed) / 60) + baseHour;
+  const endMn = (baseMin + elapsed) % 60;
+  items.push({ time: `${String(endHr).padStart(2,'0')}${String(endMn).padStart(2,'0')}H`, desc: "🎉 Mission Complete — Group Photos" });
+
+  let html = `<div class="section">
+    <div class="section-label">SECTION 01</div>
+    <div class="section-title">Operational Timeline</div>
+    <div class="timeline-total">Total estimated runtime: ${elapsed} min (${state.order.length} stations × ~${Math.round(elapsed/state.order.length)} min avg + ang bao)</div>
+    <div class="rules-text">⏱️ Times auto-adjust when you reorder stations or edit durations.</div>
+    <div class="timeline">`;
+  for (const item of items) {
+    html += `<div class="tl-item">
+      <div class="tl-time">${item.time}${item.dur ? ` (${item.dur} min)` : ''}</div>
+      <div class="tl-desc">${item.desc}</div>
+    </div>`;
+  }
+  html += `</div></div>`;
+  return html;
+}
+
+function renderStations() {
+  let html = `<div class="section">
+    <div class="section-label">SECTION 02</div>
+    <div class="section-title">Mission Stations</div>
+    <p style="color:var(--dim);font-size:.85rem;margin-bottom:8px;">Drag to reorder stations. Use arrows on mobile. All station numbers across the page update automatically.</p>
+    <div id="stations-container">`;
+
+  for (let i = 0; i < state.order.length; i++) {
+    const sid = state.order[i];
+    const st = STATION_MAP[sid];
+    const content = STATION_CONTENT[sid];
+    const tags = STATION_TAGS[sid] || [];
+    const isOpen = state.openStations.has(sid);
+    const showComments = state.showComments.has(sid);
+    const displayNum = stationPad(sid);
+
+    // Vote counts
+    const stationVotes = state.votes[sid] || {};
+    let upCount = 0, downCount = 0, myVote = null;
+    const myKey = sanitizeName(state.userName);
+    for (const [voter, vtype] of Object.entries(stationVotes)) {
+      if (vtype === 'up') upCount++;
+      if (vtype === 'down') downCount++;
+      if (voter === myKey) myVote = vtype;
+    }
+
+    html += `<div class="station" draggable="true" data-station-id="${sid}"
+      ondragstart="onDragStart(event,'${sid}')" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)"
+      ondrop="onDrop(event,'${sid}')" ondragend="onDragEnd(event)">
+      <div class="station-header" onclick="toggleStation('${sid}',event)">
+        <div class="station-reorder-btns" onclick="event.stopPropagation()">
+          <button class="station-reorder-btn" onclick="moveStation('${sid}',-1)" ${i===0?'disabled':''} title="Move up">▲</button>
+          <button class="station-reorder-btn" onclick="moveStation('${sid}',1)" ${i===state.order.length-1?'disabled':''} title="Move down">▼</button>
+        </div>
+        <div class="station-drag-handle" title="Drag to reorder">⠿</div>
+        <div class="station-num">${displayNum}</div>
+        <div class="station-title-wrap">
+          <div class="station-name">${escapeHtml(st.title)}</div>
+          <div class="station-tagline">${escapeHtml(st.tagline)}</div>
+        </div>
+        <div class="vote-row" onclick="event.stopPropagation()">
+          <button class="vote-btn ${myVote==='up'?'vote-active-up':''}" onclick="fbVote('${sid}','up')">
+            👍 <span class="vote-count">${upCount||''}</span>
+          </button>
+          <button class="vote-btn ${myVote==='down'?'vote-active-down':''}" onclick="fbVote('${sid}','down')">
+            👎 <span class="vote-count">${downCount||''}</span>
+          </button>
+        </div>
+        <div class="duration-editor" onclick="event.stopPropagation()">
+          <button class="dur-btn" onclick="changeDuration('${sid}',-1)">−</button>
+          <span class="dur-val">${state.durations[sid]||7} min</span>
+          <button class="dur-btn" onclick="changeDuration('${sid}',1)">+</button>
+        </div>
+        <div class="station-chevron">${isOpen ? '▾' : '▸'}</div>
+      </div>`;
+
+    if (isOpen) {
+      html += `<div class="station-body">`;
+      // Tags
+      html += `<div class="tags">`;
+      for (const tag of tags) {
+        html += `<span class="tag ${tag.cls}">${tag.label}</span>`;
+      }
+      html += `</div>`;
+
+      // Concept
+      html += `<div class="concept-label">CONCEPT</div>`;
+      html += `<p style="margin:8px 0">${content.concept}</p>`;
+
+      // Instructions
+      html += `<div class="instructions">
+        <div class="instructions-title">HOW TO RUN IT</div>
+        ${content.instructions}
+      </div>`;
+
+      // Callouts
+      for (const co of content.callouts) {
+        html += `<div class="callout">
+          <span class="callout-icon">${co.icon}</span>
+          <span class="callout-text">${co.html}</span>
+        </div>`;
+      }
+
+      // Comments section
+      html += renderCommentSection(sid, showComments);
+
+      html += `</div>`; // .station-body
+    }
+
+    html += `</div>`; // .station
+  }
+
+  html += `</div></div>`;
+  return html;
+}
+
+function renderCommentSection(stationId, showComments) {
+  const stationComments = state.comments[stationId] || {};
+  const commentEntries = Object.entries(stationComments).sort((a,b) => (a[1].ts||0) - (b[1].ts||0));
+  const count = commentEntries.length;
+
+  let html = `<div class="comment-section">
+    <button class="comment-toggle" onclick="event.stopPropagation();toggleComments('${stationId}')">
+      💬 ${count > 0 ? `${count} comment${count>1?'s':''}` : 'Add a comment'} ${showComments ? '▾' : '▸'}
+    </button>`;
+
+  if (showComments) {
+    html += `<div class="comment-list">`;
+    if (count === 0) {
+      html += `<div class="comment-empty">No comments yet — be the first operative to weigh in.</div>`;
+    }
+    for (const [key, c] of commentEntries) {
+      const canDelete = c.author === state.userName;
+      html += `<div class="comment-card">
+        <div class="comment-meta">
+          <span class="comment-name">🕵️ ${escapeHtml(c.name)}</span>
+          <span class="comment-time">${formatTime(c.ts)}</span>
+        </div>
+        <div class="comment-text">${escapeHtml(c.text)}</div>
+        ${canDelete ? `<button class="comment-delete" onclick="fbDeleteComment('${stationId}','${key}')" title="Delete comment">✕</button>` : ''}
+      </div>`;
+    }
+    html += `</div>`;
+    // Comment form
+    html += `<div class="comment-form">
+      <input class="comment-input" data-input-id="comment-${stationId}" placeholder="Add intel…"
+        onkeydown="if(event.key==='Enter'){submitComment('${stationId}',this);event.preventDefault()}" maxlength="500">
+      <button class="comment-submit" onclick="submitComment('${stationId}',this.previousElementSibling)">SEND</button>
+    </div>`;
+  }
+
+  html += `</div>`;
+  return html;
+}
+
+
+function renderSupplyList() {
+  let html = `<div class="section">
+    <div class="section-label">SECTION 03</div>
+    <div class="section-title">Supply List</div>
+    <p style="color:var(--dim);font-size:.85rem;margin-bottom:12px;">Click "CLAIM" to sign up for an item. Station labels update automatically when stations are reordered.</p>
+    <div class="supply-grid">`;
+
+  // Pack from Home
+  html += `<div class="supply-card">
+    <div class="supply-card-title">🧳 Pack From Home</div>
+    <ul class="supply-list">`;
+  for (const item of PACK_ITEMS) {
+    html += renderSupplyItem(item);
+  }
+  html += `</ul></div>`;
+
+  // Buy in Boracay
+  html += `<div class="supply-card">
+    <div class="supply-card-title">🏝️ Buy in Boracay</div>
+    <div class="supply-note">💡 Assign someone arriving early to do a supply run</div>
+    <ul class="supply-list">`;
+  for (const item of LOCAL_ITEMS) {
+    html += renderSupplyItem(item);
+  }
+  html += `</ul></div>`;
+
+  html += `</div></div>`;
+  return html;
+}
+
+function renderSupplyItem(item) {
+  const claim = state.claims[item.id];
+  const isClaimed = !!claim;
+  const isMyClaimVal = claim && claim.claimer === state.userName;
+
+  let html = `<li class="supply-item ${isClaimed ? 'supply-claimed' : ''}">
+    <span class="supply-check">${isClaimed ? '☑' : '☐'}</span>
+    <span class="supply-text">${supplyLabel(item)}</span>`;
+  if (isClaimed) {
+    html += `<span class="supply-claimer">${escapeHtml(claim.claimer)}</span>`;
+    if (isMyClaimVal) {
+      html += `<button class="supply-unclaim-btn" onclick="fbUnclaim('${item.id}')">UNCLAIM</button>`;
+    }
+  } else {
+    html += `<button class="supply-claim-btn" onclick="fbClaim('${item.id}')">CLAIM</button>`;
+  }
+  html += `</li>`;
+  return html;
+}
+
+function renderAngBao() {
+  return `<div class="section">
+    <div class="section-label">SECTION 04</div>
+    <div class="section-title">Ang Bao Protocol 🧧</div>
+    <div class="angbao-box">
+      <h3>THE INVOICE</h3>
+      <p style="margin:8px 0">After ${stationLabel(STATIONS[STATIONS.length-1].id.replace(/.*/, () => state.order[state.order.length-1]))} — before the door opens — slide a red envelope under the door.</p>
+      <p style="margin:8px 0;font-family:var(--mono);font-size:.85rem;color:var(--dim)">Inside: a handwritten "invoice" listing what the Handlers put up with.</p>
+    </div>
+    <p style="margin:12px 0;font-size:.9rem;">
+      The groom slides the money back under the door. Standard practice: <strong>first offer is always rejected</strong>.
+      The Handlers confer dramatically. Trish decides when it's enough (coordinate via text — she has final say).
+    </p>
+    <p style="margin:12px 0;font-size:.9rem;">
+      <strong>Recommended ask:</strong> $888 per Handler = $6,216 total (7 Handlers).
+      Settle for whatever feels right — this is ceremonial, not a shakedown.
+    </p>
+    <div class="callout" style="margin-top:12px">
+      <span class="callout-icon">🎬</span>
+      <span class="callout-text"><strong>Photo moment:</strong> Film the envelope sliding under the door — from BOTH sides if possible.</span>
+    </div>
+  </div>`;
+}
+
+function renderAssignments() {
+  let html = `<div class="section">
+    <div class="section-label">SECTION 05</div>
+    <div class="section-title">Handler Assignments</div>
+    <p style="color:var(--dim);font-size:.85rem;margin-bottom:12px;">Station numbers update automatically when stations are reordered. Add custom tasks for any handler.</p>`;
+
+  for (const hk of HANDLER_KEYS) {
+    const title = HANDLER_TITLES[hk];
+    const seedTasks = SEED_ASSIGNMENTS.filter(a => a.handler === hk);
+    // Custom tasks from Firebase
+    const customTasks = Object.entries(state.tasks).filter(([_, t]) => t.handler === hk);
+    const showForm = state.addTaskForms.has(hk);
+
+    html += `<div class="crew-badge handler-card" style="text-align:left;margin:10px 0;padding:14px 16px">
+      <span class="crew-name" style="font-size:.9rem">${escapeHtml(title)}</span>
+      <ul class="handler-task-list" style="margin-top:8px">`;
+
+    // Seed assignments with resolved station refs
+    for (const task of seedTasks) {
+      html += `<li class="handler-task">${resolveRefs(task.text)}</li>`;
+    }
+
+    // Custom tasks
+    for (const [key, task] of customTasks) {
+      const canDelete = task.author === state.userName;
+      html += `<li class="handler-task custom-task">
+        📌 ${escapeHtml(task.description)}
+        <span style="font-size:.65rem;color:var(--dim)">— ${escapeHtml(task.author)}</span>
+        ${canDelete ? `<button class="task-remove-btn" onclick="fbDeleteTask('${key}')" title="Remove">✕</button>` : ''}
+      </li>`;
+    }
+
+    html += `</ul>`;
+
+    // Add task form or button
+    if (showForm) {
+      html += `<div class="add-task-form">
+        <input class="add-task-input" data-input-id="task-${hk}" placeholder="New task…"
+          onkeydown="if(event.key==='Enter'){submitTask('${hk}',this);event.preventDefault()}" maxlength="200">
+        <button class="add-task-submit" onclick="submitTask('${hk}',this.parentElement.querySelector('input'))">ADD</button>
+        <button class="add-task-cancel" onclick="cancelTask('${hk}')">✕</button>
+      </div>`;
+    } else {
+      html += `<button class="add-task-link" onclick="showTaskForm('${hk}')">+ add task</button>`;
+    }
+
+    html += `</div>`;
+  }
+
+  html += `</div>`;
+  return html;
+}
+
+function renderSuggestions() {
+  const entries = Object.entries(state.suggestions).sort((a,b) => (a[1].ts||0) - (b[1].ts||0));
+
+  let html = `<div class="section">
+    <div class="section-label">SECTION 06</div>
+    <div class="section-title">Suggestions & Ideas</div>
+    <p style="color:var(--dim);font-size:.85rem;margin-bottom:12px;">Got a brilliant idea? Drop it here. All Handlers can see it.</p>`;
+
+  if (entries.length === 0) {
+    html += `<div class="comment-empty">No suggestions yet — got a genius idea? Add it below.</div>`;
+  }
+  for (const [key, s] of entries) {
+    const canDelete = s.author === state.userName;
+    html += `<div class="comment-card">
+      <div class="comment-meta">
+        <span class="comment-name">💡 ${escapeHtml(s.name)}</span>
+        <span class="comment-time">${formatTime(s.ts)}</span>
+      </div>
+      <div class="comment-text">${escapeHtml(s.text)}</div>
+      ${canDelete ? `<button class="comment-delete" onclick="fbDeleteSuggestion('${key}')" title="Delete">✕</button>` : ''}
+    </div>`;
+  }
+
+  html += `<div class="comment-form" style="margin-top:16px">
+    <input class="comment-input" data-input-id="suggestion" placeholder="Your idea, agent…"
+      onkeydown="if(event.key==='Enter'){submitSuggestion(this);event.preventDefault()}" maxlength="500">
+    <button class="comment-submit" onclick="submitSuggestion(this.previousElementSibling)">SUBMIT</button>
+  </div>`;
+
+  html += `</div>`;
+  return html;
+}
+
+function renderSoundtrack() {
+  let html = `<div class="section">
+    <div class="section-label">SECTION 07</div>
+    <div class="section-title">Suggested Soundtrack 🎵</div>
+    <p style="color:var(--dim);font-size:.85rem;margin-bottom:12px;">Queue these up on the Bluetooth speaker. Music makes everything better.</p>
+    <div class="music-list">`;
+  for (const m of MUSIC) {
+    html += `<div class="music-item">
+      <div class="music-song">🎵 ${escapeHtml(m.song)}</div>
+      <div class="music-use">${escapeHtml(m.use)}</div>
+    </div>`;
+  }
+  html += `</div></div>`;
+  return html;
+}
+
+function renderPhotoGuide() {
+  let html = `<div class="section">
+    <div class="section-label">SECTION 08</div>
+    <div class="section-title">Photo & Video Guide 📸</div>
+    <p style="color:var(--dim);font-size:.85rem;margin-bottom:12px;">Station references update automatically when stations are reordered.</p>
+    <ul style="padding-left:20px;">`;
+
+  for (const pg of PHOTO_GUIDE) {
+    if (pg.stn) {
+      const content = pg.html || escapeHtml(pg.text);
+      html += `<li style="margin:8px 0;font-size:.9rem"><strong>${stationLabel(pg.stn)}:</strong> ${content}</li>`;
+    } else {
+      const content = pg.html || escapeHtml(pg.text);
+      html += `<li style="margin:8px 0;font-size:.9rem">${content}</li>`;
+    }
+  }
+
+  html += `</ul>
+    <div class="callout" style="margin-top:16px">
+      <span class="callout-icon">📱</span>
+      <span class="callout-text"><strong>Tip:</strong> Designate a primary videographer (Shu-min) and a secondary (Wm).
+      Everyone else shoots stills. Better to have two great angles than eight shaky ones.</span>
+    </div>
+  </div>`;
+  return html;
+}
+
+function renderChecklist() {
+  let html = `<div class="section">
+    <div class="section-label">SECTION 09</div>
+    <div class="section-title">Day-Of Checklist ✅</div>
+    <p style="color:var(--dim);font-size:.85rem;margin-bottom:12px;">Your personal checklist — ticks are saved locally on your device.</p>`;
+
+  for (const group of CHECKLIST_GROUPS) {
+    html += `<div class="checklist-group">
+      <div class="checklist-title">${group.title}</div>
+      <ul class="checklist-list">`;
+    for (let i = 0; i < group.items.length; i++) {
+      const item = group.items[i];
+      const checkKey = `${group.id}-${i}`;
+      const isChecked = !!state.checkStates[checkKey];
+      let label = item.text;
+      if (item.stn) label += ` <span style="color:var(--dim);font-family:var(--mono);font-size:.75rem">(${stationLabel(item.stn)})</span>`;
+      html += `<li class="checklist-item ${isChecked ? 'checked' : ''}" onclick="toggleCheck('${checkKey}')">
+        <span class="check-mark">${isChecked ? '☑' : '☐'}</span>
+        <span>${label}</span>
+      </li>`;
+    }
+    html += `</ul></div>`;
+  }
+
+  html += `</div>`;
+  return html;
+}
+
+function renderBackup() {
+  return `<div class="section">
+    <div class="section-label">SECTION 10</div>
+    <div class="section-title">Backup Games 🎲</div>
+    <div class="backup-note">⚠️ Use only if a station falls flat or you need to fill time.</div>
+
+    <div class="crew-badge" style="text-align:left;margin:10px 0;padding:14px 16px">
+      <span class="crew-name" style="font-size:.9rem">🎤 Serenade Roulette</span>
+      <p style="margin:8px 0;font-size:.85rem">Spin-the-bottle but with love songs. Whoever it lands on must sing 30 seconds of a love song chosen by the Handlers. No mumbling. No laughing. Full commitment.</p>
+      <p class="backup-meta">⏱ 5 min · 😂 High comedy · 📸 Film reactions</p>
+    </div>
+
+    <div class="crew-badge" style="text-align:left;margin:10px 0;padding:14px 16px">
+      <span class="crew-name" style="font-size:.9rem">🤸 Human Spell-Out</span>
+      <p style="margin:8px 0;font-size:.85rem">The groomsmen must spell "TRISH + JOHN" using their bodies on the ground (like human letters) — one letter at a time, photo each one. Time limit: 3 minutes for the full phrase.</p>
+      <p class="backup-meta">⏱ 3 min · 📸 Aerial photo required · Best on the beach</p>
+    </div>
+
+    <div class="crew-badge" style="text-align:left;margin:10px 0;padding:14px 16px">
+      <span class="crew-name" style="font-size:.9rem">🍼 Baby Bottle Chug</span>
+      <p style="margin:8px 0;font-size:.85rem">Fill baby bottles with a drink (water, juice, or something worse). First groomsman to finish wins. Last one standing does push-ups. Classic but effective.</p>
+      <p class="backup-meta">⏱ 2 min · 🥵 Savage if you use something spicy</p>
+    </div>
+  </div>`;
+}
+
+function renderFooter() {
+  return `<div class="footer">
+    <p>OPERATION TRISH — BORACAY 2026</p>
+    <p style="margin-top:4px">🦁 COMPILED BY AGENT NALA · FOR COORDINATING HANDLER EVELYN</p>
+    <p style="margin-top:8px;font-size:.6rem">ALL STATION NUMBERS DYNAMIC — REORDER FREELY</p>
+  </div>`;
+}
+
+
+// ═══════════════════════════════════════════════════════════
+// EVENT HANDLERS
+// ═══════════════════════════════════════════════════════════
+
+function confirmName() {
+  const input = document.getElementById('name-input');
+  if (!input || !input.value.trim()) return;
+  state.userName = input.value.trim();
+  localStorage.setItem('op-trish-name', state.userName);
+  state.showNameModal = false;
+  render();
+}
+
+function changeName() {
+  const newName = prompt('Enter your codename:', state.userName);
+  if (newName && newName.trim()) {
+    state.userName = newName.trim();
+    localStorage.setItem('op-trish-name', state.userName);
+    render();
+  }
+}
+
+function toggleRedact() {
+  state.redactRevealed = !state.redactRevealed;
+  render();
+}
+
+function toggleStation(stationId, event) {
+  // Don't toggle if clicking interactive elements
+  if (event && event.target.closest('.vote-row, .duration-editor, .station-reorder-btns, .station-drag-handle')) return;
+  if (state.openStations.has(stationId)) {
+    state.openStations.delete(stationId);
+  } else {
+    state.openStations.add(stationId);
+  }
+  render();
+}
+
+function toggleComments(stationId) {
+  if (state.showComments.has(stationId)) {
+    state.showComments.delete(stationId);
+  } else {
+    state.showComments.add(stationId);
+  }
+  render();
+}
+
+function submitComment(stationId, input) {
+  if (!input || !input.value.trim()) return;
+  fbAddComment(stationId, input.value);
+  input.value = '';
+}
+
+function submitSuggestion(input) {
+  if (!input || !input.value.trim()) return;
+  fbAddSuggestion(input.value);
+  input.value = '';
+}
+
+function changeDuration(stationId, delta) {
+  const current = state.durations[stationId] || 7;
+  const newVal = Math.max(1, current + delta);
+  fbSetDuration(stationId, newVal);
+}
+
+function moveStation(stationId, direction) {
+  const idx = state.order.indexOf(stationId);
+  const newIdx = idx + direction;
+  if (newIdx < 0 || newIdx >= state.order.length) return;
+  const newOrder = [...state.order];
+  [newOrder[idx], newOrder[newIdx]] = [newOrder[newIdx], newOrder[idx]];
+  fbSetOrder(newOrder);
+}
+
+function showTaskForm(handlerKey) {
+  state.addTaskForms.add(handlerKey);
+  render();
+  // Focus the input after render
+  setTimeout(() => {
+    const input = document.querySelector(`[data-input-id="task-${handlerKey}"]`);
+    if (input) input.focus();
+  }, 50);
+}
+
+function cancelTask(handlerKey) {
+  state.addTaskForms.delete(handlerKey);
+  render();
+}
+
+function submitTask(handlerKey, input) {
+  if (!input || !input.value.trim()) return;
+  fbAddTask(handlerKey, input.value);
+  input.value = '';
+  state.addTaskForms.delete(handlerKey);
+}
+
+function toggleCheck(key) {
+  state.checkStates[key] = !state.checkStates[key];
+  localStorage.setItem('op-trish-checks', JSON.stringify(state.checkStates));
+  render();
+}
+
+// ═══════════════════════════════════════════════════════════
+// COUNTDOWN
+// ═══════════════════════════════════════════════════════════
+
+function updateCountdown() {
+  const el = document.getElementById('countdown-wrap');
+  if (!el) return;
+
+  // May 24, 2026 2:00 PM PHT (UTC+8)
+  const target = new Date('2026-05-24T06:00:00Z'); // 2 PM PHT = 6 AM UTC
+  const now = new Date();
+  const diff = target - now;
+
+  if (diff <= 0) {
+    el.innerHTML = `<div class="countdown-label">OPERATION STATUS</div>
+      <div style="font-family:var(--mono);font-size:1.4rem;color:var(--green);letter-spacing:4px">MISSION COMPLETE 🎉</div>`;
+    return;
+  }
+
+  const days = Math.floor(diff / 86400000);
+  const hrs = Math.floor((diff % 86400000) / 3600000);
+  const mins = Math.floor((diff % 3600000) / 60000);
+  const secs = Math.floor((diff % 60000) / 1000);
+
+  el.innerHTML = `<div class="countdown-label">TIME TO EXTRACTION</div>
+    <div class="countdown-digits">
+      <span class="cd-num">${days}</span><span class="cd-sep">DAYS</span>
+      <span class="cd-dot">·</span>
+      <span class="cd-num">${String(hrs).padStart(2,'0')}</span><span class="cd-sep">HRS</span>
+      <span class="cd-dot">·</span>
+      <span class="cd-num">${String(mins).padStart(2,'0')}</span><span class="cd-sep">MIN</span>
+      <span class="cd-dot">·</span>
+      <span class="cd-num">${String(secs).padStart(2,'0')}</span><span class="cd-sep">SEC</span>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// DRAG AND DROP (Station Reorder)
+// ═══════════════════════════════════════════════════════════
+
+let draggedStationId = null;
+
+function onDragStart(e, stationId) {
+  draggedStationId = stationId;
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', stationId);
+  // Add a slight delay to let the drag image render
+  setTimeout(() => {
+    e.target.style.opacity = '0.4';
+  }, 0);
+}
+
+function onDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  const station = e.target.closest('.station');
+  if (station) station.classList.add('drag-over');
+}
+
+function onDragLeave(e) {
+  const station = e.target.closest('.station');
+  if (station) station.classList.remove('drag-over');
+}
+
+function onDrop(e, targetId) {
+  e.preventDefault();
+  const station = e.target.closest('.station');
+  if (station) station.classList.remove('drag-over');
+
+  if (!draggedStationId || draggedStationId === targetId) return;
+
+  const newOrder = [...state.order];
+  const fromIdx = newOrder.indexOf(draggedStationId);
+  const toIdx = newOrder.indexOf(targetId);
+  if (fromIdx === -1 || toIdx === -1) return;
+
+  // Remove from old position and insert at new position
+  newOrder.splice(fromIdx, 1);
+  newOrder.splice(toIdx, 0, draggedStationId);
+
+  fbSetOrder(newOrder);
+  draggedStationId = null;
+}
+
+function onDragEnd(e) {
+  e.target.style.opacity = '';
+  draggedStationId = null;
+  // Remove all drag-over classes
+  document.querySelectorAll('.station.drag-over').forEach(el => el.classList.remove('drag-over'));
+}
+
+// ═══════════════════════════════════════════════════════════
+// KEYBOARD SUPPORT FOR NAME MODAL
+// ═══════════════════════════════════════════════════════════
+
+document.addEventListener('input', (e) => {
+  if (e.target.id === 'name-input') {
+    const btn = e.target.parentElement.querySelector('.modal-btn');
+    if (btn) btn.disabled = !e.target.value.trim();
+  }
+});
+
+// ═══════════════════════════════════════════════════════════
+// INITIALIZATION
+// ═══════════════════════════════════════════════════════════
+
+initFirebase();
+render();
 </script>
 </body>
 </html>
