@@ -598,12 +598,12 @@ const MUSIC = [
 
 // Checklist with station refs for dynamic labeling
 const CHECKLIST_GROUPS = [
-  { id: "prep", title: "🕕 1230H — Wake Up & Prep", items: [
+  { id: "prep", title: "🕕 0830H — Wake Up & Prep", items: [
     { text: "Handlers get dressed (coordinate outfits — matching is cute)" },
     { text: "Eat lunch! You'll need energy to be evil." },
     { text: "Charge all phones. Clear camera storage." },
   ]},
-  { id: "setup", title: "🕖 1300H — Station Setup", items: [
+  { id: "setup", title: "🕖 0930H — Station Setup", items: [
     { text: 'Set up "polygraph chair" in hallway', stn: "station-1" },
     { text: "Prep truth serums — lime juice, condensed milk + soy sauce, coffee/wasabi, hot sauce + crackers", stn: "station-3" },
     { text: "Lay out disguise supplies — makeup, wigs, sarongs, accessories", stn: "station-5" },
@@ -621,7 +621,7 @@ const CHECKLIST_GROUPS = [
     { text: "Water + napkins staged at each station" },
     { text: 'Text the groom\'s best man: "We\'re ready. Send your agents. 🕵️"' },
   ]},
-  { id: "after", title: "🕘 1445H — Post-Extraction", items: [
+  { id: "after", title: "🕘 1115H — Post-Extraction", items: [
     { text: "Group photos — everyone together (agents still in whatever state they're in)" },
     { text: "Clean up ALL stations (don't leave mess for the hotel)" },
     { text: "Collect the ang baos — give to the bride" },
@@ -980,7 +980,7 @@ function renderCover() {
     <div class="cover-subtitle">GATE CRASH MISSION BRIEFING</div>
     <div class="meta-info">
       <strong>SUBJECT:</strong> <span>TRISH & JOHN GOBOK — WEDDING GATE CRASH</span><br>
-      <strong>DATE:</strong> <span>24 MAY 2026, 1400H PHT</span><br>
+      <strong>DATE:</strong> <span>24 MAY 2026, 1030H PHT</span><br>
       <strong>LOCATION:</strong> <span>BORACAY ISLAND, PHILIPPINES — First-floor villa near main pool</span><br>
       <strong>CLASSIFICATION:</strong> <span class="redacted ${state.redactRevealed ? 'revealed' : ''}" onclick="toggleRedact()">EYES ONLY — HANDLERS</span><br>
       <strong>SQUAD SIZE:</strong> <span>1 Groom + 14 Agents vs 7 Handlers</span>
@@ -1015,12 +1015,12 @@ function renderPersonnel() {
 
 function renderTimeline() {
   // Build timeline from current order and durations
-  const baseHour = 14; // 2:00 PM
-  const baseMin = 0;
+  const baseHour = 10; // 10:00 AM
+  const baseMin = 30;  // 10:30 AM
   let totalMins = 0;
   const items = [];
 
-  items.push({ time: "1400H", desc: "🚪 Agents arrive at the villa door (first floor, near main pool)", offset: 0 });
+  items.push({ time: "1030H", desc: "🚪 Agents arrive at the villa door (first floor, near main pool)", offset: 0 });
 
   let elapsed = 0;
   for (const sid of state.order) {
@@ -1573,8 +1573,8 @@ function updateCountdown() {
   const el = document.getElementById('countdown-wrap');
   if (!el) return;
 
-  // May 24, 2026 2:00 PM PHT (UTC+8)
-  const target = new Date('2026-05-24T06:00:00Z'); // 2 PM PHT = 6 AM UTC
+  // May 24, 2026 10:30 AM PHT (UTC+8)
+  const target = new Date('2026-05-24T02:30:00Z'); // 10:30 AM PHT = 2:30 AM UTC
   const now = new Date();
   const diff = target - now;
 
