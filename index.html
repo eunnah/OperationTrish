@@ -386,7 +386,7 @@ const STATION_CONFIG = [
 
   // ── Station 4: Disguise & Infiltration ──────────────────────────────
   {
-    id: "station-4",
+    id: "station-5",
     title: "Disguise & Infiltration",
     tagline: "A good spy can become anyone",
     defaultMin: 7,
@@ -417,7 +417,7 @@ const STATION_CONFIG = [
 
   // ── Station 5: Final Debrief — The Extraction ──────────────────────
   {
-    id: "station-5",
+    id: "station-6",
     title: "Final Debrief — The Extraction",
     tagline: "Mission complete. Almost.",
     defaultMin: 7,
@@ -488,11 +488,11 @@ const HANDLER_TITLES = {
 // Seed assignments with {S:station-X} placeholders for dynamic station numbers
 const SEED_ASSIGNMENTS = [
   { handler: "evelyn", text: "🎯 Overall MC + timekeeper" },
-  { handler: "evelyn", text: "💃 Runs {S:station-4} (Disguise)" },
-  { handler: "evelyn", text: "❤️ Runs {S:station-5} (Final Debrief)" },
+  { handler: "evelyn", text: "💃 Runs {S:station-5} (Disguise)" },
+  { handler: "evelyn", text: "❤️ Runs {S:station-6} (Final Debrief)" },
   { handler: "evelyn", text: "🧧 Leads Ang Bao negotiation" },
   { handler: "jenny", text: "🔍 Assists {S:station-1} (Intelligence Test)" },
-  { handler: "jenny", text: "💃 Assists {S:station-4} (Disguise)" },
+  { handler: "jenny", text: "💃 Assists {S:station-5} (Disguise)" },
   { handler: "jenny", text: "📋 Backup timekeeper" },
   { handler: "laura", text: "🏋️ Runs {S:station-2} (Fitness Exam)" },
   { handler: "laura", text: "🍋 Preps all truth serums morning-of" },
@@ -505,9 +505,9 @@ const SEED_ASSIGNMENTS = [
   { handler: "chere", text: "🧧 Backup ang bao collector" },
   { handler: "chere", text: "🎬 Secondary camera" },
   { handler: "bonkie", text: "🥵 Runs {S:station-3} (Interrogation / food)" },
-  { handler: "bonkie", text: "💃 Assists {S:station-4} (Disguise props)" },
+  { handler: "bonkie", text: "💃 Assists {S:station-5} (Disguise props)" },
   { handler: "bonkie", text: "💧 Hydration + supplies runner" },
-  { handler: "wm", text: "❤️ Co-runs {S:station-5} (Final Debrief)" },
+  { handler: "wm", text: "❤️ Co-runs {S:station-6} (Final Debrief)" },
   { handler: "wm", text: "📸 Secondary photographer" },
   { handler: "wm", text: "🧹 Cleanup lead post-extraction" },
 ];
@@ -515,9 +515,9 @@ const SEED_ASSIGNMENTS = [
 // Supply items with station associations for dynamic labeling
 const PACK_ITEMS = [
   { id: "pack-1", text: "Question cards + sealed answer envelopes", stn: "station-1" },
-  { id: "pack-2", text: "Cheap makeup kit — lipstick, blush, eyeliner", stn: "station-4" },
-  { id: "pack-3", text: "Wigs or costume hair pieces", stn: "station-4" },
-  { id: "pack-4", text: "Clip-on earrings + fun accessories", stn: "station-4" },
+  { id: "pack-2", text: "Cheap makeup kit — lipstick, blush, eyeliner", stn: "station-5" },
+  { id: "pack-3", text: "Wigs or costume hair pieces", stn: "station-5" },
+  { id: "pack-4", text: "Clip-on earrings + fun accessories", stn: "station-5" },
   { id: "pack-5", text: "Printed cropped photos of Trish", stn: "station-1" },
   { id: "pack-6", text: "Cipher message prepared with Trish", stn: "station-1" },
   { id: "pack-7", text: "Emoji sequence card", stn: "station-1" },
@@ -542,10 +542,10 @@ const LOCAL_ITEMS = [
   { id: "local-6", text: "Shot glasses / small cups", stn: "station-3" },
   { id: "local-7", text: "Water bottles — lots", stn: null },
   { id: "local-8", text: "Napkins / paper towels", stn: null },
-  { id: "local-9", text: "Sarongs — cheap ones for costumes", stn: "station-4" },
+  { id: "local-9", text: "Sarongs — cheap ones for costumes", stn: "station-5" },
   { id: "local-10", text: "Towels or string for army crawl line", stn: "station-2" },
   { id: "local-11", text: "A stick/bat for spinning relay", stn: "station-2" },
-  { id: "local-12", text: "A mirror — borrow from hotel", stn: "station-4" },
+  { id: "local-12", text: "A mirror — borrow from hotel", stn: "station-5" },
   { id: "local-13", text: "Ice — for water (it'll be hot)", stn: null },
   { id: "local-14", text: "Raw carrots — for dangling carrot challenge", stn: "station-3" },
 ];
@@ -578,7 +578,7 @@ const CHECKLIST_GROUPS = [
     { text: 'Set up "polygraph chair" in hallway', stn: "station-1" },
     { text: "Prep truth serums — lime juice, condensed milk + soy sauce, coffee/wasabi, hot sauce + crackers", stn: "station-3" },
     { text: "Lay out disguise supplies — makeup, wigs, sarongs, accessories", stn: "station-5" },
-    { text: "Print/arrange cipher and photo puzzles", stn: "station-4" },
+    { text: "Print/arrange cipher and photo puzzles", stn: "station-1" },
     { text: "Set up Bluetooth speaker and queue playlist" },
     { text: 'Tape "TOP SECRET" and "CLASSIFIED" labels on the villa door' },
     { text: "Brief Trish on the plan — she stays inside until the door opens" },
@@ -733,7 +733,15 @@ function setupListeners() {
   });
   // Station order
   db.ref('order').on('value', snap => {
-    if (snap.val()) state.order = snap.val();
+    if (snap.val()) {
+      const validIds = new Set(STATIONS.map(s => s.id));
+      // Filter out deleted stations and append any new ones
+      let order = snap.val().filter(id => validIds.has(id));
+      for (const s of STATIONS) {
+        if (!order.includes(s.id)) order.push(s.id);
+      }
+      state.order = order;
+    }
     render();
   });
   // Station durations
@@ -996,6 +1004,7 @@ function renderTimeline() {
   let elapsed = 0;
   for (const sid of state.order) {
     const st = STATION_MAP[sid];
+    if (!st) continue; // skip removed stations
     const dur = state.durations[sid] || 7;
     const startMins = elapsed;
     const hr = Math.floor((baseMin + startMins) / 60) + baseHour;
@@ -1042,6 +1051,7 @@ function renderStations() {
   for (let i = 0; i < state.order.length; i++) {
     const sid = state.order[i];
     const st = STATION_MAP[sid];
+    if (!st) continue; // skip stations removed from config (e.g. after merge)
     const content = STATION_CONTENT[sid];
     const tags = STATION_TAGS[sid] || [];
     const isOpen = state.openStations.has(sid);
