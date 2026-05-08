@@ -409,7 +409,7 @@ const STATION_CONFIG = [
     callouts: [
       { icon: "🎬", html: `<strong>Photo moment:</strong> THIS IS THE STATION. Every single round is Instagram/TikTok gold. Film everything. The groom's makeover reveal is the centrepiece — get his reaction in the mirror.` },
       { icon: "📦", html: `<strong>Supplies:</strong> Cheap makeup kit (lipstick, blush, eyeliner), wigs or towels, clip-on earrings, sarongs, props, a mirror (for the reveal), Bluetooth speaker, phone with the dance video queued` },
-      { icon: "👤", html: `<strong>Run by:</strong> Evelyn — you're the judge and hype squad. Jenny assists` },
+      { icon: "👤", html: `<strong>Run by:</strong> Jen V — you're the judge and hype squad. Jenny assists` },
     ],
 
     photoGuide: { html: `<strong style="color:var(--accent)">MONEY SHOTS.</strong> The Trish impersonations. The groom's makeup reveal in the mirror. The group dance (VIDEO — film from two angles).` },
@@ -472,9 +472,10 @@ const HANDLERS = [
   { name: "Jenny", role: "Handler" }, { name: "Laura", role: "Handler" },
   { name: "Shu-min", role: "Handler" }, { name: "Chere", role: "Handler" },
   { name: "Bonkie", role: "Handler" }, { name: "Wm", role: "Handler" },
+  { name: "Jen V", role: "Handler" },
 ];
 
-const HANDLER_KEYS = ["evelyn", "jenny", "laura", "shu-min", "chere", "bonkie", "wm"];
+const HANDLER_KEYS = ["evelyn", "jenny", "laura", "shu-min", "chere", "bonkie", "wm", "jen-v"];
 const HANDLER_TITLES = {
   evelyn: "Evelyn — Coordinating Handler",
   jenny: "Jenny — The Interrogator",
@@ -483,12 +484,13 @@ const HANDLER_TITLES = {
   chere: "Chere — The Chemist",
   bonkie: "Bonkie — The Chemist's Assist",
   wm: "Wm — Station Support",
+  "jen-v": "Jen V — The Illusionist",
 };
 
 // Seed assignments with {S:station-X} placeholders for dynamic station numbers
 const SEED_ASSIGNMENTS = [
   { handler: "evelyn", text: "🎯 Overall MC + timekeeper" },
-  { handler: "evelyn", text: "💃 Runs {S:station-5} (Disguise)" },
+  { handler: "evelyn", text: "💃 Assists {S:station-5} (Disguise)" },
   { handler: "evelyn", text: "❤️ Runs {S:station-6} (Final Debrief)" },
   { handler: "evelyn", text: "🧧 Leads Ang Bao negotiation" },
   { handler: "jenny", text: "🔍 Assists {S:station-1} (Intelligence Test)" },
@@ -510,6 +512,8 @@ const SEED_ASSIGNMENTS = [
   { handler: "wm", text: "❤️ Co-runs {S:station-6} (Final Debrief)" },
   { handler: "wm", text: "📸 Secondary photographer" },
   { handler: "wm", text: "🧹 Cleanup lead post-extraction" },
+  { handler: "jen-v", text: "💃 Runs {S:station-5} (Disguise)" },
+  { handler: "jen-v", text: "🎭 Preps costume box + props" },
 ];
 
 // Supply items with station associations for dynamic labeling
@@ -962,7 +966,7 @@ function renderCover() {
       <strong>DATE:</strong> <span>24 MAY 2026, 1030H PHT</span><br>
       <strong>LOCATION:</strong> <span>BORACAY ISLAND, PHILIPPINES — First-floor villa near main pool</span><br>
       <strong>CLASSIFICATION:</strong> <span class="redacted ${state.redactRevealed ? 'revealed' : ''}" onclick="toggleRedact()">EYES ONLY — HANDLERS</span><br>
-      <strong>SQUAD SIZE:</strong> <span>1 Groom + 14 Agents vs 7 Handlers</span>
+      <strong>SQUAD SIZE:</strong> <span>1 Groom + 14 Agents vs 8 Handlers</span>
     </div>
   </div>`;
 }
@@ -1242,7 +1246,7 @@ function renderAngBao() {
       The Handlers confer dramatically. Trish decides when it's enough (coordinate via text — she has final say).
     </p>
     <p style="margin:12px 0;font-size:.9rem;">
-      <strong>Recommended ask:</strong> $888 per Handler = $6,216 total (7 Handlers).
+      <strong>Recommended ask:</strong> $888 per Handler = $7,104 total (8 Handlers).
       Settle for whatever feels right — this is ceremonial, not a shakedown.
     </p>
     <div class="callout" style="margin-top:12px">
