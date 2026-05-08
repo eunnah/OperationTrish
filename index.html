@@ -488,7 +488,7 @@ const STATION_TAGS = Object.fromEntries(STATION_CONFIG.map(s => [s.id, s.tags ||
 const STATION_CONTENT = Object.fromEntries(STATION_CONFIG.map(s => [s.id, { concept: s.concept, instructions: s.instructions, callouts: s.callouts || [] }]));
 
 const GROOMSMEN = [
-  { name: "JOHN GOBOK", role: "Primary Target" },
+  { name: "JOHN GOBOK", role: "Lead Agent" },
   { name: "Kenley", role: "Childhood · PH" }, { name: "Jedd", role: "Childhood · PH" },
   { name: "Chris", role: "Childhood · PH" }, { name: "Yen", role: "GSB" },
   { name: "Dan", role: "GSB" }, { name: "Ed", role: "GSB" },
@@ -509,12 +509,12 @@ const HANDLERS = [
 const HANDLER_KEYS = ["evelyn", "jenny", "laura", "shu-min", "chere", "bonkie", "wm", "jen-v"];
 const HANDLER_TITLES = {
   evelyn: "Evelyn — Coordinating Handler",
-  jenny: "Jenny — The Interrogator",
+  jenny: "Jenny — The Shadow",
   laura: "Laura — Drill Sergeant",
   "shu-min": "Shu-min — The Codemaster",
-  chere: "Chere — The Chemist",
-  bonkie: "Bonkie — The Chemist's Assist",
-  wm: "Wm — Station Support",
+  chere: "Chere — The Enforcer",
+  bonkie: "Bonkie — The Interrogator",
+  wm: "Wm — The Gatekeeper",
   "jen-v": "Jen V — The Illusionist",
 };
 
@@ -676,7 +676,7 @@ function stationPad(stationId) { const n = sn(stationId); return n < 10 ? '0' + 
 
 // Resolve {S:station-X} placeholders → "Station N"
 function resolveRefs(text) {
-  return text.replace(/\{S:(station-\d+)\}/g, (_, id) => stationLabel(id));
+  return text.replace(/\{S:(station-[a-z0-9-]+)\}/g, (_, id) => stationLabel(id));
 }
 
 function sanitizeName(name) {
@@ -1017,6 +1017,10 @@ function renderCover() {
       <strong>CLASSIFICATION:</strong> <span class="redacted ${state.redactRevealed ? 'revealed' : ''}" onclick="toggleRedact()">EYES ONLY — HANDLERS</span><br>
       <strong>SQUAD SIZE:</strong> <span>1 Groom + 14 Agents vs 8 Handlers</span>
     </div>
+    <div class="story-box" style="margin-top:1.2rem;padding:1rem 1.2rem;background:rgba(212,175,55,0.08);border-left:3px solid var(--accent);border-radius:6px;font-size:0.97rem;line-height:1.6;">
+      <strong style="color:var(--accent);text-transform:uppercase;letter-spacing:0.05em;">The Story</strong><br>
+      John and his 14 agents are CIA recruits who must pass a full field certification before they're cleared to extract the asset (Trish). Each station is a phase of their training — building from <strong>mind → body → senses → teamwork → performance → heart.</strong>
+    </div>
   </div>`;
 }
 
@@ -1024,7 +1028,7 @@ function renderPersonnel() {
   let html = `<div class="section">
     <div class="section-label">SECTION 00</div>
     <div class="section-title">Personnel Dossier</div>
-    <div class="subsection-title">🎯 Primary Target + Agents</div>
+    <div class="subsection-title">🕵️ The Agents</div>
     <div class="crew-grid">`;
   for (const g of GROOMSMEN) {
     html += `<div class="crew-badge">
