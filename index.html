@@ -11,7 +11,7 @@ body{background:var(--bg);margin:0;font-family:var(--sans);color:var(--text);lin
 .container{max-width:820px;margin:0 auto;padding:16px}
 
 /* Agent Badge */
-.agent-badge-wrap{position:sticky;top:0;z-index:50;display:flex;justify-content:flex-end;padding:8px 0;background:var(--bg)}
+.agent-badge-wrap{position:sticky;top:0;z-index:50;display:flex;justify-content:flex-end;align-items:center;gap:10px;padding:8px 0;background:var(--bg)}
 .agent-badge{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 14px;font-family:var(--mono);font-size:.75rem;color:var(--gold);cursor:pointer;transition:border-color .2s}
 .agent-badge:hover{border-color:var(--gold)}
 .agent-badge-input{background:var(--surface);border:1px solid var(--gold);border-radius:20px;padding:4px 14px;font-family:var(--mono);font-size:.75rem;color:var(--gold);outline:none;width:180px}
@@ -198,6 +198,30 @@ body{background:var(--bg);margin:0;font-family:var(--sans);color:var(--text);lin
 
 /* Footer */
 .footer{text-align:center;padding:32px 16px;font-family:var(--mono);font-size:.7rem;color:var(--dim);letter-spacing:2px}
+
+/* Notification Bell */
+.notif-bell-wrap{position:relative;display:inline-flex;align-items:center}
+.notif-bell{background:none;border:1px solid var(--border);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;cursor:pointer;transition:border-color .2s,transform .15s;position:relative}
+.notif-bell:hover{border-color:var(--gold);transform:scale(1.08)}
+.notif-bell.has-new{animation:bell-ring 1.5s ease-in-out}
+@keyframes bell-ring{0%{transform:rotate(0)}5%{transform:rotate(12deg)}10%{transform:rotate(-10deg)}15%{transform:rotate(8deg)}20%{transform:rotate(-6deg)}25%{transform:rotate(3deg)}30%,100%{transform:rotate(0)}}
+.notif-badge{position:absolute;top:-4px;right:-4px;background:var(--accent);color:#fff;font-family:var(--mono);font-size:.6rem;font-weight:700;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;line-height:1;border:2px solid var(--bg)}
+.notif-dropdown{position:absolute;top:calc(100% + 8px);right:0;width:340px;max-height:420px;background:var(--surface);border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 32px rgba(0,0,0,.5);z-index:60;overflow:hidden;display:flex;flex-direction:column}
+@media(max-width:480px){.notif-dropdown{width:calc(100vw - 32px);right:-8px}}
+.notif-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border);flex-shrink:0}
+.notif-header-title{font-family:var(--mono);font-size:.75rem;color:var(--gold);letter-spacing:2px;text-transform:uppercase}
+.notif-header-count{font-family:var(--mono);font-size:.65rem;color:var(--dim)}
+.notif-list{overflow-y:auto;flex:1;overscroll-behavior:contain}
+.notif-item{display:flex;gap:10px;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.03);font-size:.82rem;align-items:flex-start;transition:background .15s}
+.notif-item:last-child{border-bottom:none}
+.notif-item.unread{background:rgba(240,192,64,.04)}
+.notif-icon{font-size:1rem;flex-shrink:0;margin-top:1px}
+.notif-body{flex:1;min-width:0}
+.notif-who{color:var(--gold);font-weight:600;font-family:var(--mono);font-size:.75rem}
+.notif-what{color:var(--text);margin-top:2px;line-height:1.4}
+.notif-what .notif-excerpt{color:var(--dim);font-style:italic}
+.notif-meta{font-family:var(--mono);font-size:.6rem;color:var(--dim);margin-top:3px}
+.notif-empty{padding:32px 16px;text-align:center;font-family:var(--mono);font-size:.8rem;color:var(--dim)}
 
 /* Modal */
 .modal-overlay{position:fixed;inset:0;background:rgba(10,14,23,.95);display:flex;align-items:center;justify-content:center;z-index:100;padding:20px}
@@ -660,6 +684,7 @@ const state = {
   checkStates: JSON.parse(localStorage.getItem('op-trish-checks') || '{}'),
   fbConnected: false,
   fbError: null,
+  notifOpen: false,
 };
 
 // ═══════════════════════════════════════════════════════════
@@ -873,6 +898,190 @@ function fbSetDuration(stationId, mins) {
 
 
 // ═══════════════════════════════════════════════════════════
+// ACTIVITY FEED / NOTIFICATION BELL
+// ═══════════════════════════════════════════════════════════
+
+function getLastSeenTs() {
+  const key = 'op-trish-notif-seen-' + sanitizeName(state.userName || '_');
+  return parseInt(localStorage.getItem(key) || '0', 10);
+}
+function setLastSeenTs() {
+  const key = 'op-trish-notif-seen-' + sanitizeName(state.userName || '_');
+  localStorage.setItem(key, String(Date.now()));
+}
+
+// Relative time formatting
+function relativeTime(ts) {
+  const diff = Date.now() - ts;
+  if (diff < 0) return 'just now';
+  const secs = Math.floor(diff / 1000);
+  if (secs < 60) return 'just now';
+  const mins = Math.floor(secs / 60);
+  if (mins < 60) return mins + 'm ago';
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return hrs + 'h ago';
+  const days = Math.floor(hrs / 24);
+  if (days < 7) return days + 'd ago';
+  return new Date(ts).toLocaleDateString();
+}
+
+// Station title lookup helper for activity items
+function stationTitleById(sid) {
+  const st = STATION_MAP[sid];
+  return st ? st.title : sid;
+}
+
+// Build unified activity feed from comments, votes, suggestions
+function buildActivityFeed() {
+  const items = [];
+
+  // Comments: { stationId: { pushKey: { name, text, ts, author } } }
+  for (const [sid, entries] of Object.entries(state.comments)) {
+    if (!STATION_MAP[sid]) continue;
+    for (const [key, c] of Object.entries(entries)) {
+      if (!c || !c.ts) continue;
+      items.push({
+        type: 'comment',
+        who: c.author || c.name || 'Unknown',
+        station: sid,
+        text: c.text || '',
+        ts: c.ts,
+      });
+    }
+  }
+
+  // Suggestions: { pushKey: { name, text, ts, author } }
+  for (const [key, s] of Object.entries(state.suggestions)) {
+    if (!s || !s.ts) continue;
+    items.push({
+      type: 'suggestion',
+      who: s.author || s.name || 'Unknown',
+      text: s.text || '',
+      ts: s.ts,
+    });
+  }
+
+  // Votes: { stationId: { sanitizedName: "up"|"down" } }
+  // Votes don't have timestamps — we can't meaningfully sort them chronologically.
+  // We'll add them with ts=0 so they appear at the bottom, but only show them once.
+  for (const [sid, entries] of Object.entries(state.votes)) {
+    if (!STATION_MAP[sid]) continue;
+    for (const [who, voteType] of Object.entries(entries)) {
+      items.push({
+        type: 'vote',
+        who: who,
+        station: sid,
+        vote: voteType,
+        ts: 0, // no timestamp available
+      });
+    }
+  }
+
+  // Sort: newest first (votes with ts=0 go to end)
+  items.sort((a, b) => b.ts - a.ts);
+
+  return items;
+}
+
+function getUnreadCount() {
+  const lastSeen = getLastSeenTs();
+  const feed = buildActivityFeed();
+  return feed.filter(item => item.ts > lastSeen).length;
+}
+
+function renderNotifBell() {
+  const unread = getUnreadCount();
+  const badgeHtml = unread > 0
+    ? `<span class="notif-badge">${unread > 99 ? '99+' : unread}</span>`
+    : '';
+  const bellClass = unread > 0 ? 'notif-bell has-new' : 'notif-bell';
+
+  let html = `<div class="notif-bell-wrap">
+    <button class="${bellClass}" onclick="toggleNotif(event)" title="Activity feed">
+      🔔${badgeHtml}
+    </button>`;
+
+  if (state.notifOpen) {
+    html += renderNotifDropdown(unread);
+  }
+
+  html += `</div>`;
+  return html;
+}
+
+function renderNotifDropdown(unreadCount) {
+  const feed = buildActivityFeed();
+  const lastSeen = getLastSeenTs();
+
+  let html = `<div class="notif-dropdown" onclick="event.stopPropagation()">
+    <div class="notif-header">
+      <span class="notif-header-title">Activity</span>
+      <span class="notif-header-count">${feed.length} total</span>
+    </div>
+    <div class="notif-list">`;
+
+  if (feed.length === 0) {
+    html += `<div class="notif-empty">No activity yet — be the first! 🕵️</div>`;
+  } else {
+    // Show max 50 items
+    const shown = feed.slice(0, 50);
+    for (const item of shown) {
+      const isUnread = item.ts > lastSeen;
+      const unreadCls = isUnread ? ' unread' : '';
+
+      let icon = '';
+      let whatHtml = '';
+
+      if (item.type === 'comment') {
+        icon = '💬';
+        const excerpt = item.text.length > 80 ? item.text.slice(0, 80) + '…' : item.text;
+        whatHtml = `commented on <strong>${escapeHtml(stationTitleById(item.station))}</strong>: <span class="notif-excerpt">"${escapeHtml(excerpt)}"</span>`;
+      } else if (item.type === 'suggestion') {
+        icon = '💡';
+        const excerpt = item.text.length > 80 ? item.text.slice(0, 80) + '…' : item.text;
+        whatHtml = `added a suggestion: <span class="notif-excerpt">"${escapeHtml(excerpt)}"</span>`;
+      } else if (item.type === 'vote') {
+        icon = item.vote === 'up' ? '👍' : '👎';
+        whatHtml = `${item.vote === 'up' ? 'upvoted' : 'downvoted'} <strong>${escapeHtml(stationTitleById(item.station))}</strong>`;
+      }
+
+      const timeStr = item.ts > 0 ? relativeTime(item.ts) : '';
+
+      html += `<div class="notif-item${unreadCls}">
+        <span class="notif-icon">${icon}</span>
+        <div class="notif-body">
+          <span class="notif-who">${escapeHtml(item.who)}</span>
+          <div class="notif-what">${whatHtml}</div>
+          ${timeStr ? `<div class="notif-meta">${timeStr}</div>` : ''}
+        </div>
+      </div>`;
+    }
+  }
+
+  html += `</div></div>`;
+  return html;
+}
+
+function toggleNotif(event) {
+  event.stopPropagation();
+  state.notifOpen = !state.notifOpen;
+  if (state.notifOpen) {
+    // Mark all as read
+    setLastSeenTs();
+  }
+  render();
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', (e) => {
+  if (state.notifOpen && !e.target.closest('.notif-bell-wrap')) {
+    state.notifOpen = false;
+    render();
+  }
+});
+
+
+// ═══════════════════════════════════════════════════════════
 // RENDER
 // ═══════════════════════════════════════════════════════════
 
@@ -993,6 +1202,7 @@ function renderNameModal() {
 function renderAgentBadge() {
   if (state.showNameModal) return '';
   return `<div class="agent-badge-wrap">
+    ${renderNotifBell()}
     <button class="agent-badge" onclick="changeName()" title="Click to change name">
       🕵️ Agent ${escapeHtml(state.userName)}
     </button>
