@@ -386,7 +386,7 @@ const STATION_CONFIG = [
 
   // ── Station 4: Broken Comms ─────────────────────────────────────────
   {
-    id: "station-4",
+    id: "station-comms",
     title: "Broken Comms",
     tagline: "Your comms line is compromised, agents",
     defaultMin: 7,
@@ -521,7 +521,7 @@ const HANDLER_TITLES = {
 // Seed assignments with {S:station-X} placeholders for dynamic station numbers
 const SEED_ASSIGNMENTS = [
   { handler: "evelyn", text: "🎯 Overall MC + timekeeper" },
-  { handler: "evelyn", text: "📡 Runs {S:station-4} (Broken Comms)" },
+  { handler: "evelyn", text: "📡 Runs {S:station-comms} (Broken Comms)" },
   { handler: "evelyn", text: "💃 Assists {S:station-5} (Disguise)" },
   { handler: "evelyn", text: "❤️ Runs {S:station-6} (Final Debrief)" },
   { handler: "evelyn", text: "🧧 Leads Ang Bao negotiation" },
@@ -607,20 +607,21 @@ const MUSIC = [
 const CHECKLIST_GROUPS = [
   { id: "prep", title: "🕕 0830H — Wake Up & Prep", items: [
     { text: "Handlers get dressed (coordinate outfits — matching is cute)" },
-    { text: "Eat lunch! You'll need energy to be evil." },
+    { text: "Eat breakfast! You'll need energy to be evil." },
     { text: "Charge all phones. Clear camera storage." },
   ]},
   { id: "setup", title: "🕖 0930H — Station Setup", items: [
     { text: 'Set up "polygraph chair" in hallway', stn: "station-1" },
-    { text: "Prep truth serums — lime juice, condensed milk + soy sauce, coffee/wasabi, hot sauce + crackers", stn: "station-3" },
+    { text: "Prep blind taste test items — unusual snacks, drinks, flavors", stn: "station-3" },
     { text: "Lay out disguise supplies — makeup, wigs, sarongs, accessories", stn: "station-5" },
     { text: "Print/arrange cipher and photo puzzles", stn: "station-1" },
+    { text: "Test noise-cancelling headphones for Broken Comms", stn: "station-comms" },
     { text: "Set up Bluetooth speaker and queue playlist" },
     { text: 'Tape "TOP SECRET" and "CLASSIFIED" labels on the villa door' },
     { text: "Brief Trish on the plan — she stays inside until the door opens" },
     { text: "Quick run-through with all Handlers: who runs what, timing, signals" },
   ]},
-  { id: "go", title: "🕗 1345H — Final Positions", items: [
+  { id: "go", title: "🕗 1015H — Final Positions", items: [
     { text: "Door barricaded (chairs, luggage, whatever's handy — for show)" },
     { text: "Camera person in position (Shu-min)" },
     { text: "Speaker playing Mission: Impossible theme on low" },
@@ -628,7 +629,7 @@ const CHECKLIST_GROUPS = [
     { text: "Water + napkins staged at each station" },
     { text: 'Text the groom\'s best man: "We\'re ready. Send your agents. 🕵️"' },
   ]},
-  { id: "after", title: "🕘 1115H — Post-Extraction", items: [
+  { id: "after", title: "🕘 1130H — Post-Extraction", items: [
     { text: "Group photos — everyone together (agents still in whatever state they're in)" },
     { text: "Clean up ALL stations (don't leave mess for the hotel)" },
     { text: "Collect the ang baos — give to the bride" },
