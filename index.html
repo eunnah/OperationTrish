@@ -384,7 +384,38 @@ const STATION_CONFIG = [
     photoGuide: { text: `Truth serum reactions — the betrayal on their faces (VIDEO). Carrot extraction chaos. Agents suffering while the groom recites love declarations.` },
   },
 
-  // ── Station 4: Disguise & Infiltration ──────────────────────────────
+  // ── Station 4: Broken Comms ─────────────────────────────────────────
+  {
+    id: "station-4",
+    title: "Broken Comms",
+    tagline: "Your comms line is compromised, agents",
+    defaultMin: 7,
+
+    tags: [
+      { label: "100% Funny", cls: "tag-funny" },
+      { label: "📸 Photo Op", cls: "tag-photo" },
+    ],
+
+    concept: `The agents' communication channel has been "compromised." They must relay classified intel down a 14-person chain while wearing noise-blocking headphones — lip reading only. The message will be destroyed. It's always hilarious.`,
+
+    instructions: `<ol>
+<li>Line up all 14 agents in a row. Everyone puts on noise-cancelling/blocking headphones (or earbuds with loud music).</li>
+<li><strong>Round 1:</strong> Handler whispers a phrase to Agent #1. He turns to Agent #2 and says it — but #2 can only lip-read. Pass it down the entire chain. Last agent says what they think it is out loud. Read the original. Chaos.</li>
+<li><strong>Round 2:</strong> Use a phrase about Trish — something specific and personal. E.g. <em>"Trish likes her coffee with oat milk and no sugar"</em> or <em>"John proposed at [location] while wearing ugly shorts."</em></li>
+<li><strong>Round 3 (optional):</strong> Make the groom start the chain with a love declaration to Trish. Whatever comes out the other end gets read aloud to Trish. This is the money round.</li>
+<li><strong>Rules:</strong> No gestures, no miming, no writing — lips only. One attempt per pass. No repeats.</li>
+</ol>`,
+
+    callouts: [
+      { icon: "🎬", html: `<strong>Photo moment:</strong> Film the ENTIRE chain from the side — the progressive confusion is gold. Close-up the last agent's face when they say their version. Film Trish's reaction when the groom's love declaration comes out mangled.` },
+      { icon: "📦", html: `<strong>Supplies:</strong> Noise-cancelling headphones or earbuds + phone with loud music (need at least 13 pairs — agents can share as the message passes down), prepared phrase cards` },
+      { icon: "👤", html: `<strong>Run by:</strong> Evelyn — manage the chain, keep it moving, build the hype` },
+    ],
+
+    photoGuide: { text: `The full chain from a side angle (VIDEO). Close-up of last agent's answer. The reveal moment when original phrase is read. Trish's reaction to the mangled love declaration.` },
+  },
+
+  // ── Station 5: Disguise & Infiltration ──────────────────────────────
   {
     id: "station-5",
     title: "Disguise & Infiltration",
@@ -490,6 +521,7 @@ const HANDLER_TITLES = {
 // Seed assignments with {S:station-X} placeholders for dynamic station numbers
 const SEED_ASSIGNMENTS = [
   { handler: "evelyn", text: "🎯 Overall MC + timekeeper" },
+  { handler: "evelyn", text: "📡 Runs {S:station-4} (Broken Comms)" },
   { handler: "evelyn", text: "💃 Assists {S:station-5} (Disguise)" },
   { handler: "evelyn", text: "❤️ Runs {S:station-6} (Final Debrief)" },
   { handler: "evelyn", text: "🧧 Leads Ang Bao negotiation" },
