@@ -772,12 +772,28 @@ function setupListeners() {
   db.ref('order').on('value', snap => {
     if (snap.val()) {
       const validIds = new Set(STATIONS.map(s => s.id));
-      // Filter out deleted stations and append any new ones
+      const configOrder = STATIONS.map(s => s.id);
+      // Filter out deleted stations
       let order = snap.val().filter(id => validIds.has(id));
-      for (const s of STATIONS) {
-        if (!order.includes(s.id)) order.push(s.id);
+      // Insert any new stations in their correct config position
+      for (let ci = 0; ci < configOrder.length; ci++) {
+        const sid = configOrder[ci];
+        if (!order.includes(sid)) {
+          // Find the best insertion point based on config neighbors
+          let inserted = false;
+          for (let oi = 0; oi < order.length; oi++) {
+            const configIdx = configOrder.indexOf(order[oi]);
+            if (configIdx > ci) { order.splice(oi, 0, sid); inserted = true; break; }
+          }
+          if (!inserted) order.push(sid);
+        }
       }
       state.order = order;
+      // Persist cleaned order back to Firebase
+      const snapOrder = snap.val();
+      if (JSON.stringify(snapOrder) !== JSON.stringify(order)) {
+        db.ref('order').set(order);
+      }
     }
     render();
   });
