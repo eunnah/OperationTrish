@@ -274,22 +274,24 @@ const FIREBASE_CONFIG = {
 // ╚═══════════════════════════════════════════════════════════════════════════╝
 
 const STATION_CONFIG = [
-  // ── Station 1: Security Clearance Polygraph ─────────────────────────
+  // ── Station 1: Intelligence Test ────────────────────────────────────
   {
     id: "station-1",
-    title: "Security Clearance Polygraph",
+    title: "Intelligence Test",
     tagline: "How well does the spy know his asset?",
-    defaultMin: 7,
+    defaultMin: 12,
 
     tags: [
       { label: "60% Funny", cls: "tag-funny" },
-      { label: "40% Savage", cls: "tag-savage" },
+      { label: "20% Savage", cls: "tag-savage" },
+      { label: "20% Sweet", cls: "tag-sweet" },
       { label: "📸 Photo Op", cls: "tag-photo" },
     ],
 
-    concept: `The groom sits in a chair facing the door (the "polygraph chair"). Handler reads questions about Trish. Wrong answers = punishment for the ENTIRE squad. The agents learn quickly that the groom's ignorance costs everyone.`,
+    concept: `Two-part brainpower test. First, the groom faces a polygraph — questions about Trish where wrong answers punish the entire squad. Then, the team must crack codes, decode photos, and compose a love poem under pressure. Brain over brawn — but penalties keep it chaotic.`,
 
-    instructions: `<ol>
+    instructions: `<h3>Part A — Security Clearance Polygraph</h3>
+<ol>
 <li>Place a chair in the hallway — this is the <strong>"polygraph station."</strong> Groom must sit. No phone, no lifelines.</li>
 <li>Handler reads 8-10 questions about Trish (prepared in advance with Trish's answers sealed in envelopes).</li>
 <li><strong>Easy warmups:</strong> Trish's birthday, her favourite food, the date they first met.</li>
@@ -297,15 +299,22 @@ const STATION_CONFIG = [
 <li><strong>Wrong answer punishment:</strong> Groom + all 14 agents do 10 push-ups per wrong answer (on the floor right there). OR they must yell "TRISH IS ALWAYS RIGHT" at the top of their lungs facing the beach.</li>
 <li>After 3+ wrong answers, start adding <strong>"penalty interest"</strong> — additional push-ups stack (10, then 15, then 20…)</li>
 <li><strong>Twist:</strong> One question should be "What would Trish say is your most annoying habit?" — both answers are read aloud. Comedy gold.</li>
+</ol>
+<h3>Part B — Code Breaking</h3>
+<ol>
+<li><strong>Puzzle 1 — Photo Decode:</strong> Show 5 zoomed-in/cropped photos of Trish (her eye, her hand with a specific ring, a childhood photo, a favourite place, her handwriting). Team must identify what each photo shows. 30 seconds per photo.</li>
+<li><strong>Puzzle 2 — Cipher Message:</strong> Give the groom a coded love message from Trish written in a simple cipher (A=1, B=2 or reversed alphabet). He has 2 minutes to decode it. The message should be something sweet and personal — maybe the first text she ever sent him, or an inside joke.</li>
+<li><strong>Puzzle 3 — Emoji Story:</strong> Display a sequence of emojis that tells the story of the couple's relationship (first meeting → first date → proposal, etc.). The team must narrate what each emoji represents. Every wrong guess = one person has to serenade Trish's door with "My Heart Will Go On" for 10 seconds.</li>
+<li><strong>Bonus — "Agent's Oath":</strong> The team must collectively write a 4-line poem/pledge declaring why the groom deserves Trish. Read it aloud. Handlers rate it 1-10. Below a 7? Rewrite. This is secretly sweet but publicly humiliating — perfect.</li>
 </ol>`,
 
     callouts: [
-      { icon: "🎬", html: `<strong>Photo moment:</strong> Get the groom sweating in the polygraph chair. Film the agents' faces when they realize wrong answers punish THEM.` },
-      { icon: "📦", html: `<strong>Supplies:</strong> Question cards, sealed answer envelopes, a chair, optional desk lamp for "interrogation lighting"` },
-      { icon: "👤", html: `<strong>Run by:</strong> Jenny (the serious one — play it deadpan for maximum comedy)` },
+      { icon: "🎬", html: `<strong>Photo moment:</strong> Groom sweating in the polygraph chair. Agents' faces when wrong answers punish THEM. 14 agents crowded around a cipher. The serenade penalty. The poem reading.` },
+      { icon: "📦", html: `<strong>Supplies:</strong> Question cards, sealed answer envelopes, a chair, optional desk lamp for "interrogation lighting", printed cropped photos, cipher message (prepare with Trish), emoji sequence card, paper + pens for the poem, timer` },
+      { icon: "👤", html: `<strong>Run by:</strong> Shu-min — keep the pressure on. Jenny assists` },
     ],
 
-    photoGuide: { text: `Groom in the "polygraph chair" — close-up of his face when he gets one wrong` },
+    photoGuide: { text: `Groom in the "polygraph chair" — close-up when he gets one wrong. 14 agents crowded around a cipher trying to crack it. The forced serenade punishment (VIDEO).` },
   },
 
   // ── Station 2: Field Agent Fitness Exam ─────────────────────────────
@@ -377,45 +386,15 @@ const STATION_CONFIG = [
     callouts: [
       { icon: "🎬", html: `<strong>Photo moment:</strong> Close-up reactions on the spicy round. The carrot dangling chaos. Agents suffering while the groom recites love declarations. Pure gold.` },
       { icon: "📦", html: `<strong>Supplies:</strong> Limes/calamansi, condensed milk, soy sauce, bitter melon juice or strong coffee, wasabi, hot sauce (Samyang level), crackers, shot glasses, cups, water bottles, napkins, raw carrots, chili paste, string/twine for dangling` },
-      { icon: "👤", html: `<strong>Run by:</strong> Chere + Bonkie — deliver each "truth serum" with a straight face and a dossier label` },
+      { icon: "👤", html: `<strong>Run by:</strong> Bonkie — deliver each "truth serum" with a straight face. Chere assists` },
     ],
 
-    photoGuide: { text: `Wasabi cupcake reactions — the betrayal on their faces (VIDEO). Carrot extraction chaos. Agents suffering while the groom recites love declarations.` },
+    photoGuide: { text: `Truth serum reactions — the betrayal on their faces (VIDEO). Carrot extraction chaos. Agents suffering while the groom recites love declarations.` },
   },
 
-  // ── Station 4: Code Breaking ────────────────────────────────────────
+  // ── Station 4: Disguise & Infiltration ──────────────────────────────
   {
     id: "station-4",
-    title: "Code Breaking",
-    tagline: "Decrypt the intel to proceed",
-    defaultMin: 7,
-
-    tags: [
-      { label: "80% Funny", cls: "tag-funny" },
-      { label: "20% Sweet", cls: "tag-sweet" },
-    ],
-
-    concept: `The team must solve puzzles and decode messages about the couple's relationship. Brain over brawn — but there's a catch. Time pressure + physical penalties for wrong guesses keep it chaotic.`,
-
-    instructions: `<ol>
-<li><strong>Puzzle 1 — Photo Decode:</strong> Show 5 zoomed-in/cropped photos of Trish (her eye, her hand with a specific ring, a childhood photo, a favourite place, her handwriting). Team must identify what each photo shows. 30 seconds per photo.</li>
-<li><strong>Puzzle 2 — Cipher Message:</strong> Give the groom a coded love message from Trish written in a simple cipher (A=1, B=2 or reversed alphabet). He has 2 minutes to decode it. The message should be something sweet and personal — maybe the first text she ever sent him, or an inside joke.</li>
-<li><strong>Puzzle 3 — Emoji Story:</strong> Display a sequence of emojis that tells the story of the couple's relationship (first meeting → first date → proposal, etc.). The team must narrate what each emoji represents. Every wrong guess = one person has to serenade Trish's door with "My Heart Will Go On" for 10 seconds.</li>
-<li><strong>Bonus — "Agent's Oath":</strong> The team must collectively write a 4-line poem/pledge declaring why the groom deserves Trish. Read it aloud. Handlers rate it 1-10. Below a 7? Rewrite. This is secretly sweet but publicly humiliating — perfect.</li>
-</ol>`,
-
-    callouts: [
-      { icon: "🎬", html: `<strong>Photo moment:</strong> 14 agents crowded around a cipher trying to crack it. The serenade penalty. The poem reading.` },
-      { icon: "📦", html: `<strong>Supplies:</strong> Printed cropped photos, cipher message (prepare with Trish), emoji sequence card, paper + pens for the poem, timer` },
-      { icon: "👤", html: `<strong>Run by:</strong> Shu-min — keep the timer strict, hype the pressure` },
-    ],
-
-    photoGuide: { text: `14 agents crowded around a cipher trying to crack it. The forced serenade punishment (VIDEO).` },
-  },
-
-  // ── Station 5: Disguise & Infiltration ──────────────────────────────
-  {
-    id: "station-5",
     title: "Disguise & Infiltration",
     tagline: "A good spy can become anyone",
     defaultMin: 7,
@@ -438,15 +417,15 @@ const STATION_CONFIG = [
     callouts: [
       { icon: "🎬", html: `<strong>Photo moment:</strong> THIS IS THE STATION. Every single round is Instagram/TikTok gold. Film everything. The groom's makeover reveal is the centrepiece — get his reaction in the mirror.` },
       { icon: "📦", html: `<strong>Supplies:</strong> Cheap makeup kit (lipstick, blush, eyeliner), wigs or towels, clip-on earrings, sarongs, props, a mirror (for the reveal), Bluetooth speaker, phone with the dance video queued` },
-      { icon: "👤", html: `<strong>Run by:</strong> Evelyn + Jenny — you're the judges and the hype squad` },
+      { icon: "👤", html: `<strong>Run by:</strong> Evelyn — you're the judge and hype squad. Jenny assists` },
     ],
 
     photoGuide: { html: `<strong style="color:var(--accent)">MONEY SHOTS.</strong> The Trish impersonations. The groom's makeup reveal in the mirror. The group dance (VIDEO — film from two angles).` },
   },
 
-  // ── Station 6: Final Debrief — The Extraction ──────────────────────
+  // ── Station 5: Final Debrief — The Extraction ──────────────────────
   {
-    id: "station-6",
+    id: "station-5",
     title: "Final Debrief — The Extraction",
     tagline: "Mission complete. Almost.",
     defaultMin: 7,
@@ -508,7 +487,7 @@ const HANDLER_TITLES = {
   evelyn: "Evelyn — Coordinating Handler",
   jenny: "Jenny — The Interrogator",
   laura: "Laura — Drill Sergeant",
-  "shu-min": "Shu-min — Intel & Media",
+  "shu-min": "Shu-min — The Codemaster",
   chere: "Chere — The Chemist",
   bonkie: "Bonkie — The Chemist's Assist",
   wm: "Wm — Station Support",
@@ -517,26 +496,26 @@ const HANDLER_TITLES = {
 // Seed assignments with {S:station-X} placeholders for dynamic station numbers
 const SEED_ASSIGNMENTS = [
   { handler: "evelyn", text: "🎯 Overall MC + timekeeper" },
-  { handler: "evelyn", text: "💃 Co-runs {S:station-5} (Disguise)" },
-  { handler: "evelyn", text: "❤️ Runs {S:station-6} (Final Debrief)" },
+  { handler: "evelyn", text: "💃 Runs {S:station-4} (Disguise)" },
+  { handler: "evelyn", text: "❤️ Runs {S:station-5} (Final Debrief)" },
   { handler: "evelyn", text: "🧧 Leads Ang Bao negotiation" },
-  { handler: "jenny", text: "🔍 Runs {S:station-1} (Polygraph)" },
-  { handler: "jenny", text: "💃 Co-runs {S:station-5} (Disguise judge)" },
+  { handler: "jenny", text: "🔍 Assists {S:station-1} (Intelligence Test)" },
+  { handler: "jenny", text: "💃 Assists {S:station-4} (Disguise)" },
   { handler: "jenny", text: "📋 Backup timekeeper" },
   { handler: "laura", text: "🏋️ Runs {S:station-2} (Fitness Exam)" },
   { handler: "laura", text: "🍋 Preps all truth serums morning-of" },
   { handler: "laura", text: "💧 Manages water supply" },
-  { handler: "shu-min", text: "🧩 Runs {S:station-4} (Code Breaking)" },
+  { handler: "shu-min", text: "🧩 Runs {S:station-1} (Intelligence Test)" },
   { handler: "shu-min", text: "📸 Primary photographer/videographer" },
   { handler: "shu-min", text: "🎵 Manages Bluetooth speaker + playlist" },
-  { handler: "chere", text: "🥵 Runs {S:station-3} (Interrogation / food)" },
+  { handler: "chere", text: "🥵 Assists {S:station-3} (Interrogation / food)" },
   { handler: "chere", text: "🏋️ Co-runs {S:station-2} (Fitness Exam)" },
   { handler: "chere", text: "🧧 Backup ang bao collector" },
   { handler: "chere", text: "🎬 Secondary camera" },
-  { handler: "bonkie", text: "🥵 Co-runs {S:station-3} (Interrogation / food)" },
-  { handler: "bonkie", text: "💃 Co-runs {S:station-5} (Disguise props)" },
+  { handler: "bonkie", text: "🥵 Runs {S:station-3} (Interrogation / food)" },
+  { handler: "bonkie", text: "💃 Assists {S:station-4} (Disguise props)" },
   { handler: "bonkie", text: "💧 Hydration + supplies runner" },
-  { handler: "wm", text: "❤️ Co-runs {S:station-6} (Final Debrief)" },
+  { handler: "wm", text: "❤️ Co-runs {S:station-5} (Final Debrief)" },
   { handler: "wm", text: "📸 Secondary photographer" },
   { handler: "wm", text: "🧹 Cleanup lead post-extraction" },
 ];
@@ -544,19 +523,19 @@ const SEED_ASSIGNMENTS = [
 // Supply items with station associations for dynamic labeling
 const PACK_ITEMS = [
   { id: "pack-1", text: "Question cards + sealed answer envelopes", stn: "station-1" },
-  { id: "pack-2", text: "Cheap makeup kit — lipstick, blush, eyeliner", stn: "station-5" },
-  { id: "pack-3", text: "Wigs or costume hair pieces", stn: "station-5" },
-  { id: "pack-4", text: "Clip-on earrings + fun accessories", stn: "station-5" },
-  { id: "pack-5", text: "Printed cropped photos of Trish", stn: "station-4" },
-  { id: "pack-6", text: "Cipher message prepared with Trish", stn: "station-4" },
-  { id: "pack-7", text: "Emoji sequence card", stn: "station-4" },
+  { id: "pack-2", text: "Cheap makeup kit — lipstick, blush, eyeliner", stn: "station-4" },
+  { id: "pack-3", text: "Wigs or costume hair pieces", stn: "station-4" },
+  { id: "pack-4", text: "Clip-on earrings + fun accessories", stn: "station-4" },
+  { id: "pack-5", text: "Printed cropped photos of Trish", stn: "station-1" },
+  { id: "pack-6", text: "Cipher message prepared with Trish", stn: "station-1" },
+  { id: "pack-7", text: "Emoji sequence card", stn: "station-1" },
   { id: "pack-8", text: "Hot sauce — Samyang or equivalent", stn: "station-3" },
   { id: "pack-9", text: "Wasabi paste", stn: "station-3" },
   { id: "pack-10", text: "Bluetooth speaker", stn: null },
   { id: "pack-11", text: '"TOP SECRET" + "CLASSIFIED" printable labels', stn: null },
   { id: "pack-12", text: "Fake CIA badges for Handlers (optional but 🔥)", stn: null },
   { id: "pack-13", text: "Red packets / ang bao envelopes", stn: null },
-  { id: "pack-14", text: "Pens + paper (poem)", stn: "station-4" },
+  { id: "pack-14", text: "Pens + paper (poem)", stn: "station-1" },
   { id: "pack-15", text: "Timer (phone is fine)", stn: null },
   { id: "pack-16", text: "Wax strips — at least 15 (one per groomsman + groom)", stn: "station-2" },
   { id: "pack-17", text: "String/twine for dangling carrot", stn: "station-3" },
@@ -571,10 +550,10 @@ const LOCAL_ITEMS = [
   { id: "local-6", text: "Shot glasses / small cups", stn: "station-3" },
   { id: "local-7", text: "Water bottles — lots", stn: null },
   { id: "local-8", text: "Napkins / paper towels", stn: null },
-  { id: "local-9", text: "Sarongs — cheap ones for costumes", stn: "station-5" },
+  { id: "local-9", text: "Sarongs — cheap ones for costumes", stn: "station-4" },
   { id: "local-10", text: "Towels or string for army crawl line", stn: "station-2" },
   { id: "local-11", text: "A stick/bat for spinning relay", stn: "station-2" },
-  { id: "local-12", text: "A mirror — borrow from hotel", stn: "station-5" },
+  { id: "local-12", text: "A mirror — borrow from hotel", stn: "station-4" },
   { id: "local-13", text: "Ice — for water (it'll be hot)", stn: null },
   { id: "local-14", text: "Raw carrots — for dangling carrot challenge", stn: "station-3" },
 ];
