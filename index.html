@@ -71,6 +71,9 @@ body{background:var(--bg);margin:0;font-family:var(--sans);color:var(--text);lin
 .station-drag-handle{color:var(--dim);font-size:1rem;cursor:grab;padding:0 4px;flex-shrink:0}
 .station-drag-handle:active{cursor:grabbing}
 .station-num{background:var(--accent);color:#fff;font-family:var(--mono);font-weight:700;font-size:.85rem;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.station-class-stamp{font-family:var(--mono);font-size:.65rem;color:#cc0000;border:1.5px solid #cc0000;padding:2px 6px;letter-spacing:1px;transform:rotate(-2deg);display:inline-block;opacity:.85;white-space:nowrap}
+.station-directorate{font-family:var(--mono);font-size:.6rem;color:var(--dim);letter-spacing:1px;margin-top:1px}
+.station-directive{font-family:var(--mono);font-size:.6rem;color:var(--dim);letter-spacing:1px;opacity:.7}
 .station-title-wrap{flex:1;min-width:0}
 .station-name{font-family:var(--serif);font-size:1.1rem;color:#fff;margin:0}
 .station-tagline{font-family:var(--mono);font-size:.7rem;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-top:2px}
@@ -303,6 +306,9 @@ const STATION_CONFIG = [
     id: "station-1",
     title: "Intelligence Test",
     tagline: "How well does the spy know his asset?",
+    classification: "CONFIDENTIAL",
+    directorate: "Directorate of Intelligence",
+    directive: "DIRECTIVE 2026-OT-001",
     defaultMin: 12,
 
     tags: [
@@ -338,6 +344,9 @@ const STATION_CONFIG = [
     id: "station-2",
     title: "Field Agent Fitness Exam",
     tagline: "A spy must be in peak physical condition",
+    classification: "SECRET",
+    directorate: "Directorate of Support",
+    directive: "DIRECTIVE 2026-OT-002",
     defaultMin: 7,
 
     tags: [
@@ -377,6 +386,9 @@ const STATION_CONFIG = [
     id: "station-serenade",
     title: "The Harana",
     tagline: "Prove your love with song, agents",
+    classification: "TOP SECRET",
+    directorate: "National Clandestine Service",
+    directive: "DIRECTIVE 2026-OT-003",
     defaultMin: 7,
 
     tags: [
@@ -408,6 +420,9 @@ const STATION_CONFIG = [
     id: "station-6",
     title: "Final Debrief — The Extraction",
     tagline: "Mission complete. Almost.",
+    classification: "TOP SECRET//SCI",
+    directorate: "Office of the Director",
+    directive: "DIRECTIVE 2026-OT-004",
     defaultMin: 7,
 
     tags: [
@@ -440,7 +455,7 @@ const STATION_CONFIG = [
 // ═══════════════════════════════════════════════════════════
 // DERIVED LOOKUPS (auto-built from STATION_CONFIG — do not edit)
 // ═══════════════════════════════════════════════════════════
-const STATIONS = STATION_CONFIG.map(s => ({ id: s.id, title: s.title, tagline: s.tagline, defaultMin: s.defaultMin }));
+const STATIONS = STATION_CONFIG.map(s => ({ id: s.id, title: s.title, tagline: s.tagline, defaultMin: s.defaultMin, classification: s.classification, directorate: s.directorate, directive: s.directive }));
 const STATION_MAP = Object.fromEntries(STATION_CONFIG.map(s => [s.id, s]));
 const STATION_TAGS = Object.fromEntries(STATION_CONFIG.map(s => [s.id, s.tags || []]));
 const STATION_CONTENT = Object.fromEntries(STATION_CONFIG.map(s => [s.id, { concept: s.concept, instructions: s.instructions, callouts: s.callouts || [] }]));
@@ -1135,14 +1150,19 @@ function renderCover() {
     <div class="meta-info">
       <strong>SUBJECT:</strong> <span>TRISH & JOHN GOBOK — WEDDING GATE CRASH</span><br>
       <strong>DATE:</strong> <span>24 MAY 2026, 1030H PHT</span><br>
-      <strong>LOCATION:</strong> <span>BORACAY ISLAND, PHILIPPINES — First-floor villa near main pool</span><br>
+      <strong>LOCATION:</strong> <span>████████ ██████, PHILIPPINES — First-floor villa near main pool</span><br>
       <strong>CLASSIFICATION:</strong> <span class="redacted ${state.redactRevealed ? 'revealed' : ''}" onclick="toggleRedact()">EYES ONLY — HANDLERS</span><br>
       <strong>SQUAD SIZE:</strong> <span>1 Groom + 14 Agents vs 8 Handlers</span>
     </div>
     <div class="story-box" style="margin-top:1.2rem;padding:1rem 1.2rem;background:rgba(212,175,55,0.08);border-left:3px solid var(--accent);border-radius:6px;font-size:0.97rem;line-height:1.6;">
       <strong style="color:var(--accent);text-transform:uppercase;letter-spacing:0.05em;">The Story</strong><br>
-      John and his 14 agents are CIA recruits who must pass a full field certification before they're cleared to extract the asset (Trish). Each station is a phase of their training — building from <strong>mind → body → heart → soul.</strong>
+      John and his 14 agents are CIA recruits who must pass a full field certification before they're cleared to extract the asset (████████). Each station is a phase of their training — building from <strong>mind → body → heart → soul.</strong> Failure is not an option. The ████████ depends on it.
     </div>
+    <div style="margin-top:1.2rem;padding:1rem 1.2rem;background:rgba(231,76,60,0.08);border:1px solid var(--accent);border-radius:6px;text-align:left;">
+      <div style="font-family:var(--mono);font-size:.8rem;color:var(--accent);letter-spacing:2px;margin-bottom:6px;">🔒 EXTRACTION AUTHORIZATION CODE</div>
+      <p style="font-size:.9rem;line-height:1.5;margin:0;">Each station awards one digit of the 4-digit authorization code. The Lead Agent must present the completed code to the Coordinating Handler to release the asset.</p>
+    </div>
+    <div style="margin-top:1.5rem;font-family:var(--mono);font-size:.65rem;color:var(--dim);letter-spacing:3px;opacity:.6;">The Work of a Nation. The Center of Intelligence.</div>
   </div>`;
 }
 
@@ -1258,8 +1278,10 @@ function renderStations() {
         <div class="station-drag-handle" title="Drag to reorder">⠿</div>
         <div class="station-num">${displayNum}</div>
         <div class="station-title-wrap">
-          <div class="station-name">${escapeHtml(st.title)}</div>
+          <div class="station-name">${escapeHtml(st.title)}${st.classification ? ` <span class="station-class-stamp">${escapeHtml(st.classification)}</span>` : ''}</div>
           <div class="station-tagline">${escapeHtml(st.tagline)}</div>
+          ${st.directorate ? `<div class="station-directorate">${escapeHtml(st.directorate)}</div>` : ''}
+          ${st.directive ? `<div class="station-directive">${escapeHtml(st.directive)}</div>` : ''}
         </div>
         <div class="vote-row" onclick="event.stopPropagation()">
           <button class="vote-btn ${myVote==='up'?'vote-active-up':''}" onclick="fbVote('${sid}','up')">
