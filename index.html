@@ -416,23 +416,23 @@ const STATION_CONFIG = [
       { label: "📸 The Money Shot", cls: "tag-photo" },
     ],
 
-    concept: `The emotional closer. After all the chaos, this is the moment that makes people cry. The groom delivers his "final debrief" — a heartfelt declaration to Trish through the closed door. Then the ang bao negotiation. Then the door opens.`,
+    concept: `The emotional closer. After all the chaos, this is the moment that makes people cry. The groom delivers his \"final debrief\" — a heartfelt declaration to Trish while she's still locked up. Then the ang bao negotiation. Then the combination is entered, the lock opens, and Trish is free.`,
 
     instructions: `<ol>
-<li><strong>The Groom's Serenade:</strong> Before the promises, the groom sings the chorus of "Time After Time" (their song) solo to Trish through the door. No backup, no speaker — just him. This is the emotional peak.</li>
-<li><strong>The Groom's Declaration:</strong> Standing at the door, the groom must say (not read from a phone!) <strong>3 promises</strong> to Trish for their marriage. These must be specific and personal, not generic. Handlers reject anything like "I'll love you forever" — too easy. Make him dig deep.</li>
+<li><strong>The Groom's Serenade:</strong> The groom sings the chorus of "Time After Time" — the Boyce Avenue version (their song) — solo to Trish. No backup, no speaker — just him. This is the emotional peak.</li>
+<li><strong>The Groom's Declaration:</strong> Standing before Trish, the groom must say (not read from a phone!) <strong>3 promises</strong> to Trish for their marriage. These must be specific and personal, not generic. Handlers reject anything like "I'll love you forever" — too easy. Make him dig deep.</li>
 <li><strong>The Brothers' Testimony:</strong> Pick 2-3 agents (Edmund, Ron, and one childhood friend like Kenley work well — different eras of friendship). Each says ONE sentence about why the groom deserves Trish. Keep it tight — this isn't a roast, it's a testimony.</li>
-<li><strong>The Squad Shout:</strong> On the count of 3, all 14 agents yell something the groom has prepared — a line in Trish's love language, a meaningful phrase from their relationship, or simply "TRISH, OPEN THE DOOR, YOUR SPY HAS COME HOME!" 🕵️</li>
-<li><strong>Ang Bao negotiation</strong> (see next section) happens now — don't let this drag.</li>
-<li><strong>THE DOOR OPENS.</strong> Music cue: James Bond theme or something triumphant. Groom walks in. First look. Everyone cheers. Mission complete. 🎉</li>
+<li><strong>The Squad Shout:</strong> On the count of 3, all 14 agents yell something the groom has prepared — a line in Trish's love language, a meaningful phrase from their relationship, or simply "TRISH, YOUR SPY HAS COME HOME!" 🕵️</li>
+<li><strong>Ang Bao negotiation</strong> (see next section) — in Filipino pesos for the drama. Handlers are capricious. Station performance affects the ransom.</li>
+<li><strong>THE UNLOCK.</strong> Groom enters the combination earned across all stations. Lock opens. Trish is free. Music cue: James Bond theme or something triumphant. Everyone cheers. Mission complete. 🎉</li>
 </ol>`,
 
     callouts: [
-      { icon: "🎬", html: `<strong>Photo moment:</strong> Film the groom's face when the door opens. Film Trish's reaction. This is THE shot. Have two cameras — one on each side of the door.` },
+      { icon: "🎬", html: `<strong>Photo moment:</strong> Film the groom's face when the lock opens. Film Trish's reaction as she's freed. This is THE shot. Have two cameras — one on each side.` },
       { icon: "👤", html: `<strong>Run by:</strong> Evelyn — you control the pacing here. Don't rush the emotional beats.` },
     ],
 
-    photoGuide: { html: `The groom's 3 promises through the door (VIDEO + AUDIO). The squad shout. <strong style="color:var(--accent)">The door opening — two cameras, one on each side.</strong> First look. This is the shot.` },
+    photoGuide: { html: `The groom singing Time After Time (VIDEO + AUDIO). The 3 promises (VIDEO). The squad shout. <strong style="color:var(--accent)">The lock opening — two cameras.</strong> Trish being freed. This is the shot.` },
   },
 
 ]; // ← end of STATION_CONFIG
@@ -524,7 +524,7 @@ const LOCAL_ITEMS = [
 
 // Photo guide — auto-built from STATION_CONFIG.photoGuide + the static ang bao entry
 const PHOTO_GUIDE = STATION_CONFIG.filter(s => s.photoGuide).map(s => ({ stn: s.id, ...s.photoGuide }));
-PHOTO_GUIDE.push({ stn: null, text: `Ang Bao: Slide the "INVOICE" under the door — film from inside and outside.` });
+PHOTO_GUIDE.push({ stn: null, text: `The Ransom: Film the invoice reveal, the agents' reactions to the peso amount, and the groom entering the combination.` });
 
 const MUSIC = [
   { song: "Mission: Impossible Theme", use: "Opening — when agents arrive at the door" },
@@ -532,7 +532,7 @@ const MUSIC = [
   { song: "Eye of the Tiger — Survivor", use: "Fitness Exam" },
   { song: "Harana — Parokya ni Edgar", use: "Serenade station — the agents sing this" },
   { song: "I Want It That Way — Backstreet Boys", use: "Serenade station — crowd-pleaser closer" },
-  { song: "Time After Time — Cyndi Lauper", use: "Final Debrief — groom sings solo to Trish" },
+  { song: "Time After Time — Boyce Avenue version", use: "Final Debrief — groom sings solo to Trish (their version)" },
   { song: "A Thousand Years — Christina Perri", use: "Emotional closer (play softly)" },
   { song: "Celebration — Kool & The Gang", use: "Door opens — BLAST IT" },
   { song: "Marry You — Bruno Mars", use: "Victory walk-in / group photo after" },
@@ -549,8 +549,9 @@ const CHECKLIST_GROUPS = [
     { text: 'Set up "polygraph chair" in hallway', stn: "station-1" },
     { text: "Print/arrange cipher and photo puzzles", stn: "station-1" },
     { text: "Set up Bluetooth speaker and queue playlist" },
-    { text: 'Tape "TOP SECRET" and "CLASSIFIED" labels on the villa door' },
-    { text: "Brief Trish on the plan — she stays inside until the door opens" },
+    { text: 'Tape "TOP SECRET" and "CLASSIFIED" labels around Trish\'s area' },
+    { text: "Set up Trish in her chair with the padlock + combination box" },
+    { text: "Brief Trish on the plan — she stays locked up until the combination is entered" },
     { text: "Quick run-through with all Handlers: who runs what, timing, signals" },
   ]},
   { id: "go", title: "🕗 1015H — Final Positions", items: [
@@ -721,11 +722,14 @@ function setupListeners() {
           if (!inserted) order.push(sid);
         }
       }
+      // Only update state + re-render if order actually changed
+      const newOrder = JSON.stringify(order);
+      if (newOrder === JSON.stringify(state.order)) return;
       state.order = order;
-      // Persist cleaned order back to Firebase
-      const snapOrder = snap.val();
-      if (JSON.stringify(snapOrder) !== JSON.stringify(order)) {
+      // Persist cleaned order back to Firebase (only once)
+      if (JSON.stringify(snap.val()) !== newOrder) {
         db.ref('order').set(order);
+        return; // let the triggered listener handle the render
       }
     }
     render();
@@ -1408,21 +1412,20 @@ function renderAngBao() {
     <div class="section-label">SECTION 04</div>
     <div class="section-title">Ang Bao Protocol 🧧</div>
     <div class="angbao-box">
-      <h3>THE INVOICE</h3>
-      <p style="margin:8px 0">After ${stationLabel(STATIONS[STATIONS.length-1].id.replace(/.*/, () => state.order[state.order.length-1]))} — before the door opens — slide a red envelope under the door.</p>
-      <p style="margin:8px 0;font-family:var(--mono);font-size:.85rem;color:var(--dim)">Inside: a handwritten "invoice" listing what the Handlers put up with.</p>
+      <h3>THE RANSOM</h3>
+      <p style="margin:8px 0">The agents' performance across all stations determines the ransom. Handlers present "THE INVOICE" — a dramatic ransom demand in <strong>Filipino pesos</strong> (big scary numbers, small actual amounts 😏).</p>
+      <p style="margin:8px 0;font-family:var(--mono);font-size:.85rem;color:var(--dim)">₱1,000 ≈ $17 USD. The sticker shock is the point.</p>
     </div>
     <p style="margin:12px 0;font-size:.9rem;">
-      The groom slides the money back under the door. Standard practice: <strong>first offer is always rejected</strong>.
-      The Handlers confer dramatically. Trish decides when it's enough (coordinate via text — she has final say).
+      Station failures raise the ransom. Good performances earn discounts. Handlers reserve the right to be <strong>completely capricious</strong> at any point.
+      Trish has final say on when it's enough (coordinate via text).
     </p>
     <p style="margin:12px 0;font-size:.9rem;">
-      <strong>Recommended ask:</strong> $888 per Handler = $7,104 total (8 Handlers).
-      Settle for whatever feels right — this is ceremonial, not a shakedown.
+      Once the ransom is paid, the groom enters the <strong>combination</strong> earned across all stations. Lock opens. Trish is free. 🔓
     </p>
     <div class="callout" style="margin-top:12px">
       <span class="callout-icon">🎬</span>
-      <span class="callout-text"><strong>Photo moment:</strong> Film the envelope sliding under the door — from BOTH sides if possible.</span>
+      <span class="callout-text"><strong>Photo moment:</strong> Film the groom entering the combination. Film Trish's face as the lock opens.</span>
     </div>
   </div>`;
 }
