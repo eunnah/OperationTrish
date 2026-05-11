@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CIA PERSONNEL DATABASE — CLASSIFIED</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Courier+Prime:wght@400;700&display=swap');
+
+:root {
+  --green: #00ff41;
+  --green-dim: #00cc33;
+  --green-dark: #004d00;
+  --amber: #ffb000;
+  --amber-dim: #cc8800;
+  --red: #ff3333;
+  --bg: #0a0a0a;
+  --card-bg: #111111;
+  --card-border: #1a3a1a;
+  --text: #c0c0c0;
+  --text-dim: #666666;
+  --stamp-red: rgba(200, 0, 0, 0.7);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Courier Prime', 'Courier New', monospace;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* === LOADING SCREEN === */
+#loading-screen {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #000;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.8s ease;
+}
+#loading-screen.fade-out { opacity: 0; pointer-events: none; }
+
+.loading-text {
+  font-family: 'Share Tech Mono', monospace;
+  color: var(--green);
+  font-size: 14px;
+  text-align: left;
+  max-width: 500px;
+  width: 90%;
+  line-height: 1.8;
+}
+.loading-text .cursor {
+  display: inline-block;
+  width: 8px;
+  height: 14px;
+  background: var(--green);
+  animation: blink 0.7s infinite;
+  vertical-align: middle;
+  margin-left: 2px;
+}
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+.loading-spinner {
+  width: 40px; height: 40px;
+  border: 2px solid var(--green-dark);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 30px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* === SCANLINE EFFECT === */
+#main-content::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 255, 65, 0.015) 2px,
+    rgba(0, 255, 65, 0.015) 4px
+  );
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* === HEADER === */
+.header {
+  text-align: center;
+  padding: 30px 20px 20px;
+  border-bottom: 1px solid var(--green-dark);
+  position: relative;
+}
+.header .seal {
+  width: 80px; height: 80px;
+  margin: 0 auto 15px;
+  opacity: 0.6;
+}
+.header h1 {
+  font-family: 'Share Tech Mono', monospace;
+  color: var(--green);
+  font-size: 13px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.header h2 {
+  font-family: 'Share Tech Mono', monospace;
+  color: var(--amber);
+  font-size: 18px;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.header .subtitle {
+  font-family: 'Share Tech Mono', monospace;
+  color: var(--green-dim);
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+.header .classification-bar {
+  display: inline-block;
+  background: var(--stamp-red);
+  color: #fff;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  padding: 4px 16px;
+  margin-top: 12px;
+  border: 1px solid rgba(255, 0, 0, 0.4);
+}
+
+/* === DIRECTIVE BAR === */
+.directive-bar {
+  background: #0d0d0d;
+  border-bottom: 1px solid var(--green-dark);
+  padding: 10px 20px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.directive-bar span { white-space: nowrap; }
+
+/* === AGENT GRID === */
+.grid-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 25px 15px 40px;
+}
+.section-label {
+  font-family: 'Share Tech Mono', monospace;
+  color: var(--amber);
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin: 30px 0 15px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 176, 0, 0.2);
+}
+.agent-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+/* === AGENT CARD === */
+.agent-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 2px;
+  padding: 18px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+.agent-card:hover { border-color: var(--green-dim); }
+.agent-card.lead-agent {
+  border-color: var(--amber-dim);
+  box-shadow: 0 0 20px rgba(255, 176, 0, 0.08);
+}
+.agent-card.lead-agent:hover { border-color: var(--amber); }
+
+.card-top {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.photo-box {
+  width: 70px; height: 85px;
+  min-width: 70px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.photo-silhouette {
+  width: 36px; height: 36px;
+  background: #222;
+  border-radius: 50%;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.photo-silhouette svg { width: 20px; height: 20px; fill: #333; }
+.photo-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 7px;
+  color: var(--red);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.card-info { flex: 1; min-width: 0; }
+.agent-name {
+  font-family: 'Share Tech Mono', monospace;
+  color: #fff;
+  font-size: 14px;
+  letter-spacing: 1px;
+  margin-bottom: 2px;
+}
+.agent-card.lead-agent .agent-name { color: var(--amber); }
+
+.codename {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--green);
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.agent-card.lead-agent .codename { color: var(--amber); }
+
+.field-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 3px;
+  font-size: 10px;
+  line-height: 1.4;
+}
+.field-label {
+  font-family: 'Share Tech Mono', monospace;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  min-width: 75px;
+  white-space: nowrap;
+}
+.field-value {
+  color: var(--text);
+  font-family: 'Courier Prime', monospace;
+}
+.field-value.pending {
+  color: var(--amber);
+  font-family: 'Share Tech Mono', monospace;
+}
+.field-value.denied {
+  color: var(--red);
+  font-family: 'Share Tech Mono', monospace;
+}
+
+/* === PSYCH EVAL === */
+.psych-eval {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #1a1a1a;
+}
+.psych-eval-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--red);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.psych-eval-text {
+  font-family: 'Courier Prime', monospace;
+  font-size: 11px;
+  color: var(--text);
+  line-height: 1.6;
+}
+.redacted {
+  background: var(--text);
+  color: var(--text);
+  border-radius: 1px;
+  user-select: none;
+  padding: 0 2px;
+}
+.agent-card.lead-agent .redacted {
+  background: var(--amber-dim);
+  color: var(--amber-dim);
+}
+
+/* === LEAD AGENT STAMP === */
+.lead-stamp {
+  position: absolute;
+  top: 10px; right: 10px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px;
+  color: var(--amber);
+  letter-spacing: 2px;
+  border: 1px solid var(--amber-dim);
+  padding: 2px 8px;
+  text-transform: uppercase;
+  transform: rotate(3deg);
+}
+
+/* === FOOTER === */
+.footer {
+  text-align: center;
+  padding: 30px 20px;
+  border-top: 1px solid var(--green-dark);
+  margin-top: 20px;
+}
+.footer-warning {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--red);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  animation: pulse 3s infinite;
+}
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+.footer-sub {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+}
+.footer .motto {
+  font-family: 'Courier Prime', monospace;
+  font-style: italic;
+  font-size: 11px;
+  color: var(--green-dark);
+  margin-top: 12px;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 700px) {
+  .agent-grid { grid-template-columns: 1fr; }
+  .header h2 { font-size: 14px; letter-spacing: 3px; }
+  .directive-bar { flex-direction: column; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING SCREEN -->
+<div id="loading-screen">
+  <div class="loading-spinner"></div>
+  <div class="loading-text" id="loading-text"></div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div id="main-content" style="display:none;">
+
+  <div class="header">
+    <img class="seal" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHgAAAB4CAYAAAA5ZDbSAABewklEQVR42u29dZxV1f7//1w7Ts+ZnmGG7m5QuiTEFgTFjmtg67ULsOva3a2AIioo0inSIN01TPec3rF+f+xh1GvreO/n/h7f83icBzxmzuyz9nrtd7/e76Xyv/kS48ahjhuHungx4oEHkEKAlPVzcVV13paFCqhZWYht2/5HN+p/aJ1i0mCUyYuxNQ3bsn70ewVoADRp2Vhv2jRXNMpOV3PSgmQFvCLZ5yHg0nErChqAbWPGEySicWqqo7KqopqS4jIr/2C+zNt72DgIHAIKAfuHoJsmyuQhKFOWYAOy9v3/AP4LL2XSJJQH7se07B9JaJbbrXYbdox6bPsWWs8WDWnfOFs0bp6Dt3E2pKRK8ElwSVAB5Rdu05ZgAQkBEUFlheBwEewvIHK4SObty2P7jv3m2iWrrVXhuLUJKAYQAlQF7rwLbcoU7B8+CP8P4N+nfpVp07AVBVkLqgC6j+jvGtWnkza8UyvRvVsbUts0l5AqHfmNaZiVbllY4bMLynwyv8JHSZWH8hqPCEV1YoaGaTm3q6kSj24S8BqkJcVkZnKM3NQIOekR0SAlomgpcYHXdGCrEOzeL9i4m4rNu+SGVZvNeXNXJuYB6wGpCLBsxPjxKNOn10n2/wP459YyaTDqA8sxze/Vb5eTBulnDDnGdcoxHUXXgd0kZNlgKsSLffaWA6n2mt2ZYtP+DLGnIFUcKUsSFSEvkbhOwlSwpUBK5xaF+PG+//DnipDomo3fbZASiNIwLSRb51bILs1LZO9WJbJT8wrFkxVR0GwoVli2UbB6q9y0ZF3isy8WGTOATc6DA3cOQJuyBOv/CtD/FwAW06ahTJiAVWtXk9o1U04fO8p94ZCe6uDhx0qFTBuqdLbvSTfnbWgklm5tpGw5mCkKKwJEExoC0DQbl2qhqTaaCooCtm0jjt6hdHSrqgos63vzKYRACAUpwbQgYQgMS8UwFSTgcZk0SAnRuWmJHNTpiD2ie55s36pUI9mAUoX53wp78VpryYwF8Te377U/BUKqCh9+iDp+/H9fov+bAIvBg1GXL8esBTZnVH/XP04dql986hClWW47E2Iq27dnmjNWtFC+3tBc2XY4g5qIC1WVeFwmbt1GERIpJRJRa6MFCcPCNG18Xr3ObgsBpmlTE4oTDHpQhEBVFSLRBOFIApD4vC4CPhdSOrgIAbZUSBgK0YSGZQuSvAnaNy5lVPf99tj+++z27Us0PBb5OzQ+W2wf+GyB8frXKxOvAwWqCgMGoC35L0r0fwXgceNQP52BVauKG5w0SL92/PGuS8ePEBnuhibxfL81fVkLPlzSXlm9O1dUh924dROv28SlO9cwTIlh2CiKgqKIOhANw6ZhTjLpqQE2bz+CpimAwDBMsjODTDi9F298uJJwJEFNKEaHtjkM698GBKxYvY/1mw+TnOSpW6tpWuiagsvlOASGCZG4RjyhEfTF6d0mX04YtN0eP2gf7tywGs/XmDZXlk77OvHKrCXGs0ChpsLpY1CnT8f6/zvAipQgBDbgG9JTu+aC0zw3nnuiyNKyDYr3ppivftlR+WhZe2V3fhqaauP3GOiaRAgF04TqcAzLtEkOeklN8RGNGkSiCRRFoKkKRaU13H7NSC46qy+dhz5AsBasUDhBr65NWPTJdXQ97kG27izgjmtHcfOVw9m07QiGYdGpXS4zvtzITVNm4Pe5sW2b9NQApRUhysrDuF0afp8Lj1sFaWNYgnBMx7QUWuVWcNbAbfZlJ2y1s1pWakaRzvuzZfHbM2NPLF5nPgtE5DRUMR75n/S6tf+k1M6YgSUENEhjzE0X+e6/ZIzWPqV5gpK9yebT/+qmvr+ko3akLAm/xyA9GKtVrwo1YYNQOIHPqzN8QFuaN83g1fdWsGD6tbz+wUqef2sJGWkBJKCqCgXF1bhcGl6Pjm1LFEU46ta2qaqJUlYR5vTRXbn3lpM46bwX+WrBVnRdpUXTDFZ9eTPlFWEmPTabtFQfH710ESnJPhZ/s5u5S7bzzZp9HCmoJBBw43ZppCaZ2LbNkbIA9340QHl9Xlfl7MFb5fWnbbIuvKQy67Rhvodf+8S84LG3IneK8XyqqjDmPyjNyn9CS8hpzg1ZFk0uG+Oe9tXLwU/+eSPt/T7VfOSFPrLPDWdrj87oI2qiLrKSo/g8NpYtSBiS6lCMDm1yePiuU1k56yaee+hM2rbMJhqJU1hcTZ9ezbAs21FFUqKpCmXlYXxeHZ/XhWXbCJw0lxACVVFAwl3XH8/L7yxn9lebyG2QjN/nZvu2PK6/52PatsrGsmzat86hXesGPPbCPBIJkzuvO54ln97Al+9fSbNG6UQiCUorosQTEo/LJjM5Qk3UxWMz+og+N56tPfJCX+n3qeZN/6T9nJeCMy4d455qWTSZPh1LTkP9T2jQv1uCVU3FEuOxWjZUzrvzMu+/LjpTycRtWjM/by3un9pf++5AJkm+BJnJEYTQiCegOhTB69ZpmJvCcw+Mp2WzTLbuLODJVxayYNlOyirCKJrKijX7GHdyDzxuHbvWm1JVhfLKMLqmkhTwEArHQXc8HEURJAyTnOwgTRunM/nxL/EFvQgh6NapEVXV6cyat4WZX21CURVGDWnPlh35PP/8fPRkL8GAh07tcjluQFvCkTgtmmZwwfhjefaNJVRVR9E0BU2VZKdEqYq4ufu9QWL68vbanWeusE8/frd8pYtrfN+u2tAHXon+U4y339VUMJ10qPU/J8GDB6OpCpZpETznBNfbM59NeueiS+3Mgny/ef6kE9WzHz9F2V2QQmZyBI9LYloKJWUhNE3h3ptPYt60azASJn16NufZ1xdzwtineO+TNeTlV6IoAo9bZ913h2iUk0J2ZhKG4eyRqggqq6IgBClBL5Ztowgcr1lRsCxJwO9BIKisjgDg87p45K7TmPbKJaz4/J88dOdpmAmTEYPbEYubtO/ahIDPTWV1lGWr9vDgM1+ze38JV1wwkOsvG8bQfm0IheOoihNuVYctNMUiMznCnoIUznn8FOW8e05SC/L95kWX2pkzn01659wTXG+ZFkFVwRo8+O8TtL8F4EmT0JYswbRsuj9wtfebdx7ynN+pR8L6aHp7OfDWCdq05e1J8cfxeywMU6G0LIJhWFx23gC+/vBqhvRrzeMvzmff/hKmfraOU4/vAoqgWeM0Lj23P19/dDUP3XEKqzccRNMU2rbKJp4wUVUFl0sjHE1gmTapKT4Mw8IwbSKxBLG44Uh4RRgpbVKCPmxbEo4mOP2iV+g+/CG27SqgYYNksrKCtG6Rha4pfP3R1Sz4+FqemDKW44d2wOd10bVDQ04d1YUDh8to2igNy5ZICZqq0L51NggFw1Lwuk1S/HGmL2/HgFsmaB9N7yA79UhYbz/kueCBq73fWDbdlizBnDTp7wFZ+Tvs7ZQpmLkZnPnBw4Fld9ysdjQtxbz6oZHqRU+fJCpCHtKToli2IB63cOkqF57Zh+Wf38ijd5+O16Mz6LQnmT1/Kx6/m6mfraNH58Z8/M5EFk6/jsvO7c/Xi7bzzvRVRCJxCoqq6dm5CaFwnJpQjNLyEPsPlRKOxElN8aEoCpnpATq0yaF180zcbo2C4iq+XLCV268diWFaFBRVkXeknIDfTZ+ezVm+ei+D+7ZGSsnIs55jxJnP8sJbS2nZNIOLJ/SlvKSamyYOZ8OWPD6etYG2rbIRQHUoxojB7fjinYmoqkBVBIqiIoRKZkqMyrCHi54+UVz90EjVtBTzjpvVjh88FFiem8GZU6Zg/h12WdQruBJFCKw+nZTbH7s58OCAESa7NqRZlzw9Wl21K5eMYAQpBbZ0kgxCCDq1y+H5B8/k4efmsmzVXjbNv50rbv2I6V+sJyXoJRxJsGH+7ZSWh7jytqns3ldMLG7g87qoOFLO++9MxO91cfEN7zKob2t6dGpM86bpjBjUHqFAZVUUj1tDSsjLryQt1ccpF7xEKBzny/evRNc0vl68DV1TGHBsKzq0yeGym97n+KEdsGzJ+Re+RHJuGrGEiSJA1RRyMpPZvuxuhp7xNL26NOHU47sy8qxncekqq7+8hUXf7OLqO6bhcWskDAspnSRKcpIb27YorfZxbJsCXrvuS6tt9zJ1+TydWx6L3L5yi/mwlKi1YaT8v+RkiVon1Tqxv/7MU3f4rmnVPW7N+bKlcvkLo9Wyag9ZyRFM20k6mKZFSrKPpTNv4MrbPqLD4PvwuHVqQjFefX8F995yEjO+3IAQgppwnM/nfscx3Zqxdt1+kpJ9SCA56OWkEYOJxw3OPr0XazvcimHaHDxczrrvDjHx1g+xbccLr6iMUFUTJWFY+DwuwuEE8YTJqLOe48xTe9K7W1OiMYOrbvuIfse0pCYc59gezUgYFlddO4qVa/eze38JpmkRqolx/Z2nsXNvMcuWbKddy2zSU30kYganHd+F1i0yGXnms6Sl+ph4/iD6H9OC0vIQb09dxbJVe0hN8ZGVHGHD/ixG3nWW+tJVX8nRJ+y138nwP3T9g5EcIYzragWF+gBZ1CO49pnDtbeevtt/QXaLuPn6B93Uf75xnFAVG4/LxLJVbNtG01QUISirDHP/rSdz6bn96TDoPkzTxrYlbpfKrm8mc8t9n/Lqeyvw+Vy0a5XNspk3cty4Zwgmebhg/LH07taM6pooT7+2mMqqCAePlLP/YBmV1RGkBLfLeXaPJkCOagxbSlRFQVUEli2pqo5gmjYI8PvcKELU2fVRQ9ozamgHGjZIpqikhkUrdvP+J6tZ9tmNTLztIz6Y+i2jR3XhuQfG027Avaz66mZWrNnHlMdm882XN+N168z4ciPBJA+njOrC068u4uHn5pIS9CEwiRsapqXwxCUL5CVnb7SK9rm16x4Ivz11rnlhLch/ueYs6kstTxjlev/5Sd6zUxvGjcde7avf88FAgr44iiKxbUE0ZpAUcFNaFkLXVYIBDxVVUZZ8ej2xmMlx458hJztIfmEV99x4AldeOJA2/afg0jXCkTiLZ1xPhzY5HDhcxtJv9zD98/Ws3nDAcW4Al6bidmsOkE5IjKzdGyeCknW3XFeDFKAoSt0mHA21pJROhiyWQFNVWjTLYMTAdnTt2AhVVejZpTF9T3wcVVNo1SyDt54+n0eem8vLj51Nl2EP8Okbl1FdE2P0Oc8TCsexDYtje7dg8YwbOOfKN5mzaBspyT6QFqYF1RE3UyYs45bLVhoVR9z6VVOiH3z4deKc+lDXoj7AHTdce/vlewPnp+bGjXufH6DfP70f6cEoUjqhSXUoxhXnD2TiBQNZsWYfH366luWr91ITitEoN5X9q+7lgae/4r4n5pCdlUTCsNi1YhJPveI88X6fi369WuD3uZi3dAdV1VF8XledxB0FR/4CZ0cRtWjWlQrlb9J7FEWg1Ep8PG4SjiRIJAy6dGyE26WxZ38JmqYQ8Lv5+LVLaZAZ5P0Za9h3qJQnp5xBs953E08YBHxuFEXh0P4S3nj+AtJS/Iy99DWCfje2lPh9OrZlU1bj5c4zVjLpqmVGRYFbv/ye0DvT55sX/FWQ/7QNXjQJVQjM0f31Z56923d+asOYce9zA/X7pvcjMxitrcVCNGYQjRkUl9bQomkGldVRnn1gHOFIgqmfreOVd5cz7IynWfDxtSxZuYc1Gw9imBYPPv01t1w1ghffXoqiCJat2oNh2CQF3DTIDGJLiW1LrF9AStSCZElBLGFh23atUZPomoquKXUlxZ+7hG1L7No9dbk0PB4dIQSHjlSAlHjcOhJJeUWEtBQfuQ2Sef7NJXzxzkSefX0xJWU15GQnkzAsNFWieXVUVcGybayKMAOGdqC8KsLajQfJSPeTEYxw/8d9QaBPunqp8ezd/vND4UiVEMa1iyahDZ2C+acyTX82zr1oCmbvDtptr93nv6NJ+7jx+Ct99UkfDXDAtQVCUaiqifLUvWfQt2cL/nXfTDIap9G+VQNGjH+WUCTO+FN6cOs1I9E0hXjc5JIJ/fjos3VIG3btK2bOwm2UV0bqNtnr1pFS1krrz0mdU+JzCHiSquo4mmLQNMdFkxwXORkuGuf4sK041TVRQhELoWjomvhNiZa1D5Smqeiail2rvuIJk1jMYOPWPOYs2sadNxzPK++t4ODhcscPqNUeuqayc28xX8zdTJfOjfl62jWMO7k7cxZt42BeBX6fG58rztcbWuAxbHXkyAPGsW29fb/daMUf/NheWptbsP92FT14MNqyZZhZ6Yz7+LHgtP6jEuab73RTJ748UqQGYshayVUUQTgSZ8wJ3Xnr6fO45o5pPPf8XHasf5Dd+4o5+fQnCTRIpkfnxlwwvg/9e7egbatsJj8+m4efm0taso9wJIHHo/+udUkpiMS1OnB9Ho2Lxjbn1FHt6dm9I7rbj7RtigoOYliCvfsLWLpyJzO/3smew3ECfvcvqvhf3UAhqAnF0DSFRMJiyafXs+67w1x57TtkNU4nGjdIJEySAh4qq6P06NSIlV/ezKPPz6O8IsKUm09k2BlPs2HzYTLS/FiWRUXYwwuXz5UXn7/RWvG1Szvj5urxxWVMHzjQSSD9nRKsHsnDsmy6vHJXYNYJZ1jq17NbKJc8f4IIeIwfUWGkBI9bZ/nqvRzOr+SlRyewZU8RUx6bzav/OoeoLVm+ei+VVVGmfbGez7/+joXLdzJvyQ4EAiEELpf6u6iwUgpcmsXgznl0b1HI2L47OLXfEUaPHkOv3n1ZunQZpYe+ZuuWDew+EKLPsb1p2aIJQwZ2Y8zoDlSWF7B+Sykul/anqLdejwuPW8cwLXbuKeLxSWOQusq2XYU0bZTGK4+fTVV1FNO0WTf3Nl7/YCXX3zmd1RsPYpo2bz11HotW7GLfwTK8Hh2XZjJ7XSvRI7NYDB1dJht6PCd9PD/xxZE8Cm2J+kfssfiDTpUQAt+Uy71r77lTbbtrc6o14u7xaijqwqVb2PZPL6drKvlFVdw08Tgevft0+p7wGOnpAWa9O5FjT3iM7bsLSQ56icUMorEEXo+rroD/u544RVIdcXHHuFXccf4yIpUeVu/IoEfbQopK3Sw+NJG8smRa+adREGrDtbe9i0uXFBQUcvDgQdq2bUd6eoAJlz7FrEVFJPl1LPvPOa1qrVkaeGxLHr7rNFKTfQT8bhav2MWHM9fy8qNnczi/AgRMuOINikpqqAnHuP7SYUz65wkMPO0JDhwqw+fViCUUAh6DufdPtdp2rlDvfcDaOenlaC8pifyR8En9A06V1nwo1hnHuV5/4m73sERINcc9cKq2rzCFgMfAsn8+62nbkuSgl7mLt+Nx67z59Hnc/egsLEvyyF2n8cq7y7EsiaoqeNzaH7YZioBoQmNs31307HwEXQOfbrPsu4Z0ahGmReoi8iOD6D3yEXr3OZ7UFC8gOHz4EIFAgKysLExTkhKw+XzudlD0Px2VSCnxel3s3l/CW1O/ZdGKXbz41jIWLNvJBy9cxJJvdzP6zGfp2a0pj951Oh99to5ozGDNxkOs2XiQopIaYnETcDRSRdjDml25yln9tpsD+yhZO3bJJmdeYM1YNAnt7d9pj38XwOPGod7+Elbjhso5r03yT85pbpj/fOo47bPVrUlPimFJFVVVftGG2bYkmOTh86830ygnhecfOotJj81iw5bDHMgrr2Pb/Rn1qAiImypel0WztApWb8mmMuyiOqIzZ20uqSkasdK17CnMYOjQQU7cKwRZWVmkp6ejaRrhcJhwTQWLVx6gssZEU/989CilxOPW0DWVkrIQRaU1LJh+HS6XxoATHyerQTIfzVxPboNknntwPF8v2k5NKMb+Q2UkEmYtxQhsKfC7TXblp1FZ6VFOHrHb7NTI023WCmPP87PlpjPOQN227befxN8DsLJ1K3LSZHL/dZ1v1qgxpvvjGe3FXR8MEulJUSypEosbhCNxfF7XL4IsBPh9Lj6etYHunRvj0lWefnYuvoDnr6VapEBVoKzGzfx1TZi+siNz1rVk5a4m7ClM50B5D6SrGZUVJQSC6aSkpKJpWi2bUlBQUEBJSSmBgId5S3dzpDiGS1f/UhvM0b916RqaprD4m12MP6UHLZpnMmP2JnKyg8yYvRGf10U0mmDHnqI6atGPBEMKAh6DFTsa0S61gsGjimTQdA37bInx7tat1EyZgvJb6uY3H9VaHpF17gnuGe886To9/4jfGnTrBLUy5MGt24SjJl065NKyaQbvfbKGjLRALT1G/ihpEI875TxFEcTiBprqZJ4sq37pSXadkycwTEFyAM4a5efcM0+iS9cubNq0iQ4dOiCEoLS0lOrqGsrKykhLDXDD5FksW1tKwK//aP1/ifGgCKpqYjRrnM7ST29g+qz1XHnbVLIzk6isjuLSVbyenxcMIQQCScJUSPHHWProh1Zuw7B6/o2JGe/Njo89is2fLheOG4eqnoWVlc4pt1zkPl24LfOONweqR0qT8LhMJAqWZZGTlcxbT5/PE1PGUl0TJZGw0FSn+K0qCtGoQW6DZJKTPNi2xOdxoetKvYPrbKiNqthoqkXAa1JVY7J+W4h4rAqAtm3bIoRAUZRagKto27YtFRXlRKIGilK/FVTLlqQkezl0pJxjT3yM047vyrvPXUA8bpKW7KvTek7a1KmyabXp1njCxLIdbvaRsiTueHOQKtyWecuF7jHZ6ZysnoU1btyva+FfuxsxbRrStvFeP8H3ROd+pvziq9bK9G/akZYUxbQc7ZAc9DJ7/haGjn2Kc8f05uuPrsbr1amsdsp0kViCrMwkls68kU7tGxKJJhBC1Fsn4M+FTEfftlQcPrTtolPnrgB4PB40TUNRFFq2bInX6yUcDpOZmUVaigfLrv+HzjRtgkkeCourGD7+GTxu3SEjmFZt4UPBsiWhcJyS0hoKS6pJmBaNc1MdKrApSEuKMf2btnzxVWulc39TXneW70nbxjttmkPp/8MATxqMqijYvTtr106coLWMFrmtyVP7KbpmIWuvFwrHCUcSJAe9rPvuML1HP4rX42LDvNvp0bkxBUVV2Lbk87ev4Iu5m5mzcCvJSd6/ZRN/zuYrikooHGFA78Z4fcE6tWvbNlVVVezfv59Dhw7hcrlo2aodfXo0xrIMhBB/C8hJAQ8FRdWcc9Wb1IRiRKIGBcVVlFWE0VWFY7o35aYrRzDjjcuYN/Valn56A9dfNozqmhiqoqBrFpOn9lOiRW7rirO1lsd01q5RFOxJg39Zin8JYGXyYiwpyZx4uvuWlBYJ+/kZXdXNB7JI8hjYtsC2Jf16taBVs0xicQPDsNi3v4TeIx/io5lrWTrzBsaf2pMXHjqTeNzk8ls+IDnoxZZ/P7hOGK1QXlHDeac25Y4bxxGLxeqyXIqikJ+fT01NDe3atcMwElimSbtWWXhcgr/r+bNtia6rpKf4sWzJ0P6t+dfkscyffg2bFtzB289cwAnDOrBtZwHvfbyKlGQvRwoqanPYjsO1+UAWz3/STU1tkbCvON19q5RkTl6M9UtSrP1CrllRFMxhx+o3TDhdSSvZHTBfmNNdC/riSFRC4RgnDu/EtFcuIS+/AgnsPVDKxq15fLtuP0+9sohtuwp548lzqayK0nv0I/i9TgKjvpyXXwPXsARmooZJ1x7LhNOPYd+BPNLTUsnJyUFKyd69ewHw+/00b96cvLw81q5bR252kIxUDxXVNprG32JGnEqWIBYz6NAmh95dm/DZnO/Y3bqEY3s0Y9CJj4GqsGXZPbwzfTXPv7mUnOxkhxosFIK+OC/O6SYuGLndmnBaOO29r/UbFMW4Y9IktCk/U5AQv5CxQggy373Pv/PcS+zkux8fxCMz+ojM5AiWrWIYFlmZSSyYfi2fzNrA/KU7OGF4JwYc05KObXOoCcXIL6xC1RQuueF91m46SErQ6zT5/gfA9briPHfviZx68nFEIlH27NlNly5d6j535MgRdu/eTcOGDUlJSSEzM5P9+/eTm5PJCWc/ydotNfi86t/6MAogEjMcR8q0UTWF7Uvv5sOZa2nZNIN+vVvS9bgH8Xl0EE4N27JsNNWmpMrHrWO+lffdtJR3X1Oqzr8n3EZKSn+OBaL8jPSqikAO7KldPna0SCnZk2y9t6SjCPriWLaTzHC7NQ4cKmPCFW9w6bkDqKqJccX5z7FzbxHvf7KGrkMf4Pk3l3LXw1+weuOB/xi4EhXLiPDslNH06t6Snbt24/V66NKlC/n5+SQSCaqqqsjOzsbr9eL1ekkkEmzatAm3x4vb7aFlY19dN8Tf+ZKA3+siPcVPTnYQr0dn/GWvc9MVwxl/Sk9OOf8lKqsilJSFKCiqorwiXNcMF/TFeW9JR1G6J9k64wSRMrCbdoUikJMm/dQW//sPxOLFyMlT8N9ygfetfiPspGfe6yk+X9NaBH0JbNtx403TJjnJw449RVRURXj50bNJuFxccGYfzrz8DUrKQ6zddIg9+4tJCfr+lnDoh86UqirYtkJlVTV3XNmTSy8aQ2FRGdlZGXi9XgCKi4s5cuQIlmWRnp5OgwYNSElJQUpJPB6noqKCqsoKGmQF+eTL77CkC12tLUsKAfIHUxvqyQmTtSobIBo1yMgIMPGCQZxz5Zss/mYXF53VlysuGMjYE7uRHPTy3fZ8kOBxQ2GFn6A7xtARhwiX6m2/XGG8vHgxiSlTfqyV1X8vBV50EXarJsqZj9/gvkA1PPa1Lw9VY4ZeW2sVVFVHUTWHpeH3ulm5bj85WUHuvnE0V98xleWr95KRFsDt1nG5tPpLGKhK3b6qqlpHtTESknBNBFWJcdM/enDHPycgpSAzIx2Px8OhQ4coKCggNTUVVVVp0aIFpYWFRGIxVCEoKynB5/eTlpbGnj376N2zM+1bJrF24x6qoi5cuoaQEkv1IBQdqego0qrHB1RgmBZpqX5WfH4Tb09bxaLlO1k56yZOH92NaMxA2nD++GMZObgdH8/eiG07zeYHS4Liov477VYN7eSZi83t190ovxs8GO3gwe/z1D9S0YsXO78Ye5z7sux2pvx0aQt2F6ThdRkIoRAKJ7j9mlFsW3I3C6dfS6d2uUhbcs0tH7L4m92ccVIPlNoFW5ZdjzZMUFUdoiYUxzChsrKKysoqIvE4HTu7ufW2ISz74kYm3X4xquZBVb9/blNTUwkEAkSjUSLhMPllZZjBIAUFBRSWl+POzqawsJB4PE5ySpCi4jLOOmMUH718IX57P1U1ecTsOO7q7djV2xFVW7HqkW0shJPQaN0ii2/X7+eDT9fwzaybmL1gKx0G3cfoc55n3KWv0W7AFFKCPu6/9WTKKiIEvBa7C9L4dFkLstuZcsxx7st+iOHPSbBy333YUtLx/omeB5s1UcRtrw5SDpUE8XugvDLKuJO7M+WWk7jtvpk0bpjKxRP6svdACf37tuaV95Zz/WXDaNIwjVnztvxqXvoPWleEHeXmf3QgJ1PHo5Rx3cV9OGV4a1L0Ak5c9DYnNfFTmZNLeShCXlUlhmVxYNcuYokE2VlZ7Nixg1BNDdmNGrHntVfY+8B9JPr1J7Z3L4dvvYkGJ59CVSRCqLqa4uIiKsrKCOQ0oM837zFm1aesju3n2qrVPBjfTueabXzubYnLnYqU1l/mLUoJuq5SWFzNGx+u5N1nL2Dh8l1cds076B6ngT0jPUAoFGfb7kJuu3okH3y6BtOwMC2N6qiunDNsJ7qhNHp7VuKT++6jWMrvc9TKD0Mj24aRffSzBvaV6u7tmdbq3bm1pUDnMzdePoy7H5nFa68uZNylr2FaNh+/fikP3HYyC6Zfh66p37MTRf083aYFyQGL668axxvP38SQ3imMO20ol1w4lhN7NqdPXj7248/w4uChHD5lNIV33MrMU04gpWFDoqEQixcvoU2btqQEg8R1F2nrVtN14RI+vOgCXJdfxMB581gyajje1DQaN2xIfn4Bx/TpQ0V1CDu/lFP9CqcYJXg1N23dfo7RFLJi+SSE6oQb9STFti1pkBWkeeN0Xv/gG4IZAbwenTEndENTVTwenf2HSrFsm6z0JOKGTcBrsHp3Lru3Z1oD+0p1eB/9TNt2sPyJip48GQtQjztWP13NsJm2ooVSFXbj0iTVNXH69GxORlqAz7/+jqxmmTRpmEZaio+xl7xKm36TuebOaXw8awPPvr4Yv9dVb+pZOFNsqKiowZYK/QcMpays1PmdL5kKoHlGCj19Or78Q5w4+1O6rlpH6eHDtG3fnpLiAkwjTJv27Sk4fIDNXi/NktycmLefNZWV+NLc9Dx4hP3fLqdZixZkZ6ax9bsN9GnXhgIzStSyudKjs9OIsyMepjU2XSP7idp2HaPzr8fGtRSncJxwNEF2VhDDsIgnTO695SROGdWZyqIqxp7UHV1TOVJYia5pqIpNVdjN9BUtFDXTZsSx+hhArcXyRypaufdeJNBtyhXuuxpn6tz1Vn+ltMaHW4eq6hiP3H0a23YV8s6bSwjHTSZeOIgGWcnc9sBMUlP8bN5RwFcLt4EAXVP+dJJAVZXanh6HturSVWrCBmn+avr16Y7fq3Hnva+QnuwjrVkun8+eSbeqMna6vPwz0A3cUJJIkN+iOY2bN+brhd/x4FOfoYsoO/bm8+6bH9LKrmK9nsKU9GFsRWGvFOSlZaJ43Xz46Toee3EhBQV5fBuVFO/dzWHdzXPpQ/nc24LttsV2by7hpOboQtaNkFAUgVDEnzZLmqpQXhmhYYMULhzfh9c/XEl1YRVFlRGuvngwr3/4DQ/ddRrvfryaZav2EqidQCClIBTXxUVDd0gMMt/4LDHz3nsprBVep7Z2NAsyqJfrjgWv6g/sy8s2+906XtMUR9UmEhZfvDuRTm1zmPHlJl58awkvPDKBx1+czyezN5KbHcQwnSZs6xdoqL/3VVUddaRffJ8QMC1BkidCl7ZBCkqi7DkogSiZ6R6qqqvRaoqJeDIQviZIowasKF6Pjq5YVEc0wAPxGtB1hKYgjSrQk9DdKRiWBdIAKwFGDIQXxeXBDofBrYMSBxQ0VxALBWmbIMAlzR9nFGqlMDno/cs56/eevxApJZ/N2UTfXi248Mw+HDfuGTZsPkwoEkfaEp/PhbfWRlu2YOUjU83mjYq14ZcYdyxZn3ho0mC0KUswjzbGK0Jg3/EP76IHpjDk2dd7Wf98Y5iamRwlYUAwyYPLpXFs96Zcdu4AenVtgsulcdOUGXzw6VqKS2tIDnrRNfXPMRNry2per85FZ/bF69Xrws2jpRJbKkRjBpqm4nErIAWGaaOqKlLVUG0L7ASKUJHC4R/bCDRFIpzdd9YmQQgVpIVtm6hCAAq2ECAUkM5AHEVRnIRHrb9i2Y7vrAhqR9uJOjdD1i4yGjV4c+pKolHDyRb9iZDJtm1CkQSLPr6OY3s0Y97SHTzy3FzWbz5MZlqAY7o34/hhHSgoqmLKv74kJclFUZWHf1280Lrm4rXqXZNY9MBr0WFHMdUAoWnYQEbX1koPTFiypZGiqTaqolBeWcPjk06nJhTnmuvfZfoXG+jQpgFnnNSdf15xHHdcN4rPv97Mw8/OpbQ8hPYnQJaApilUVEQIReJMuflE/hdfN02ZQUVlhIDf/ad8EGccFDTITGLRN7t4+Nm5RKIJRg3pwH23nkzr5lmYpkVeQSVD+7XmqVcWYVoGmmKzdEsj5RpzPZ1b0RPI0DRKAaGMA8WywOdTe/RqRzBW7LO3HMoUXpeJaUm8Hhc9uzRhw5Y8/JlBsjKS2HuwlEmPzabb8Ie4+d6ZNM5Nxe93/6V0pG1LAn43z762mIXLd2JaNvGEiWnZ/6ffR9e4YPlOnnltca1t/PM2SteckCm/sIon7x3L1JcvpkenRjRskMIXc7+j+TF3M3TsUyQMi64dGxEKG/g8FlsOZop4sc/u1Z6g3692tywYB4rSYZKjaQZ0U/s0by7ZeiDNLqwI4NJtYgmLJg1TyUxPYte+ImJxg8P5FcRiBkm1XKqpn63lhHNf4ODhsto+3D9/c4oinHlVa/bVdQRq9fhWFacpu16vWfvvN2v2QS0r468WIQzDIiXZi2FYtOl/L8NPfJynX11Ei6YZzkQ+02bHniIG921FJGbg0SUFFQG2Hki1WzSX9Oui9gHoMAmhTJ7smIpOLbVeIlWyZnemiCY0NBXicZN2rbLJTA/w2ZuXs37ebbz82ATOOq0XuQ2SiSdMDMMiOclbq5rrj+by9+Stxd9SzAdqxyPWT83Y53PV0YwDfhdJDZJZu+kgrZpn0ig3hXjcYNmqPfTt1RxVUVCETTShsWZ3phCpkk4ttV61oa9UdN2Jf5s3oj0KbNqfIY5uRjRmMKRfa2bP38KJ57zA7HlbaN44nQduO5nln93I+rm38cGLF5OZHsAwzHrbPFnPAB/VKoWFheTn5//oZ/X9HX+dNOg0tu3aW0w8YXJs92YYpsW2XYVYlk2fni2QwDdr9tOlQ0OaNkojnjBRhHCwU6BlI9oDqq5jabXratAkSzQmqrI7P1W4NBvLcsqCo4Z24PUPVvLt6r1s3H4Ey7JJTfbRukUWfXs255juzVCU+uVY2fVMqbBtx9teuGABCcPgwgsvxLIsNE37P7lmTVUoLQ+xcWseQ/u3Yeac74gnTOYt3UlOVhBVUdixp5ALr3uXSMypE2iqxe6CVEFMo3G23RjIlpJ8rZZz3qRFQ9xGlVvmlweErlnYtlOv/HLBVmbP34Luc+H3upw5DZbNd9uOsGbjQWzLGSvo9BH9dZTF36Cij67r4KFDRKPRv0dF27LeShBHJ/YtWbmbM0/tSawijJXs5crbPsLt0miQHSSY5GH3vmICPhcVVQa6ZnOkLEmYlW7ZPDfqAZrYNvkaQItGetMmDaC4wmdVhLyarkoM0yYjLcC2XYV07eiogvLKMNU1MSLRhMNzVgS67pTu6lPlyb/JBh88cIBwKPS38a3q81oBn5slK3dz0ojOvPXqP8jJCpKe5ic91Y/LpRGNGbRsmsEzry3mn1M+ITNdpyLkobjCZzVpENGa5SpND+Tb32oAzRuJxsEUyY7tPsJxnYDXJBZ3apQ3Xzkcr1vH7dZwuTQUIaioijizpoD7nviKeUt3kBTw1Juaqg8JlrWdcj/kJRlH8qipqqplgIifSPhf8SHql97j9GpVVceoCcVICXrZe7CU1RsPsmtvEeUVYe6//RTyCiqZOWcTfp8bsIjEdY6U+ejdHlo10hofyE84pLvsVCUXn6Sg3IdhKiAlXrfO7n3F9Bj5MD6PTsDvqRtocuLwjtx/2ymYpkVVdbQ2NKi/2q9dH6q+lsckaudCA7iKi4iXV2DDjwju9eEcOmzR+i0+xOIG513zNkbCQtUUEmUhmnVoyIw3LqWsPMyYi1+huLTGCVmlTcJUya/wgk+Sma7k1lWTUoMiA7ekpNqLLQVCOBkVTVVICXpJGBb7D5WS5Hdzz42jmXjBIJ5+dRGdhz7A+i2H8fvqr3qEAPkHNIH8mdkc0WiU0tLSutQfQiFiWnjKSjFKSqkKh0EILMuZYVVQUMDhw4d/4g07yXz5+yX4b4jA0lP8NMgKgoRLJx7HzuWTWL56L6df9DKhcJy0FD+27aRjbSkoqfKCS5KWLDLqAA74SUGB8hq3+P4sA0HcMCkpDdG6eSbTX/0HCz+5DgmccemrTP7XbMLRBF63Xu/sw6PXE7/5Obsutq2bwSEllmUxefJk4vF4HUAVFeX4qqqwamooLSz8kRp/9NFHicfj/xbXWnWdiL/lFNa/iqbOjIQjcapqojw5ZSz33XIyp130Mtde9y5xw6KiMkJ+YZVzj8Lp6qiocQtUSPKKFKjlRftdwo8CoaheB65pWWSmB7j7hoGMHtaRhct30nXYgxzekY9I9pHkd2MYFoqr/h/b37NZUkoSiQQvvvgi5513HhkZGVimU+EJBALE43GefuYZbrn5ZqdKVVREIBJCSklRXh6tW7ZE0zS+mDWLrVu30qpVK2zbmSBvmiaaprFjxw78fj+NGzf+kU3/TziGR7laWZlJvPDQWTTKTeWcK98kFIlz8aVDSU/1k5udQlLAzQNPzyESiSIE1MRcoAg8bgJ1AOsu3ABRQ3NOIVEcct0LD53F+FN6sHNvEbGYwRUXDCQSTVBUUk1peZjS8hC79hbXo2txtHL0+wD2eDz06tWL4cOH89bbb9Ota1cS8ThSVRl3xhmMHzuWiy++mPS0NMrzDpMUN1GAwgMHkIMGYdo2t153HRdfcUVtqc5E1zQ0TePdd99lxowZvPrqq3Wa4rceyvr0RFRFUFod5darR3LcwLYUFFfzwYsX4XbrhMIxqqqduZyH8srr9IgQEEs4JX5XLaaaczHnX9N07sK2JUkBN29PW8WaTQdp0jCNNi2zSAn6CCZ5CPjdeNw6W3cVcM6Vb9Z7+u/3SLCiOJ2NAwcOZOJVV9GvZ09mTJ/G8aePASkZOGgQLaTN/TfeyFNvv03lgQMk2Q7DIX/XLoQQTHvuWar37eOUMWOwLQuXy4UB3HPzzbz82mt8t3kzGRkZvw/ges6MWbYkGPAw/Yv1rFizl4N55VRURqmsjlBVHYWEheZ1RjslB724dFF7poSTDNcUh8yh/ZJ06JrKqg37WbJyF7GYicRRUW6Xhi0lvbo04dwzjkHWH034D4ccqqpimiaXX3op29et45oxY7ln8iROnzSZgNfLuBNO4J133mHL5Mm4a2rw1j7r0eJiKsJhPr/7Lnp06ECLZk1RVJW9Bw/y/KWX8vq8eXy9ahWNGjXCsqwfsTT/M2HS0UkBOtt2FbJtVyFXnD+AEYPbE0zyUFYeYt6SHUz9fL3T7aApHJ0pLsTPdDZYttPTotcmLtVa+sjzD57JTROHoyqCdq0asPDj62jTMgvbkng9Oqcd3wVdd2ZG1RvI4vdtlm3bdY6QZVk88uyztO/dm08mT+GNU07iUFUVx517Lm2AB6+9jsLt2wgqoANH8vOZOfkeamrC9DnpJDRV46tPPuGN/v2YM28ez7/xBn2OOQbDMH53GrK+vWghBAnTJC3Vx6ovb+aGy4eRl1/Bmg0HicVNJt10IvOnXUNqso944vs6gKY6e2faDuIaQNwkDuDRTaR0mAqWZSMUQW52CgnDJBpL0KZFFim1lJTyqgjRmDOqr6wi7JyFQH0l3O3fpaKPvkzTRFcUHnv3XS44tg/7v5jNwiEDse+cxKDsDD6d9QWbA17G+HXcNQb7Fi6k8dIFmLpO+1HH8/H993Lg7kl8A5w6cSLnXnQRiXgcl9v9X8ufq4qgtDzKg7efgmXZtO47mXjcrOV9QXLQw6x3JvLKYxM4/pzn8Xu9SAQe3ek/SyQcTBWAaEyGsSUBr/Ej57+4pIbkoAdVU4nGDCqro6Qm+1BVpztOVRWSAu567fcV/HoH4tGNXLBgAW+//TaFhYVOQ7eq0rZtW+5+9RUWA4UbNyMuu4BC06CxppBuJFCFgglkx2PsicQpdrnZfect2HdPYhHQaMAAHnrhBcdJcbupqKjgww8/5KOPPvrZePvfbbCoRxG2bGfG9KA+rXjkuXmYlk3DnBSyM5LIzQ4ST5hMvO0junRsWNfCK4CANwG2JBYnVAdwKEwlFqQlxaST5HAIPeWVEZKDXizTpqwiTDgcd/KgpTXsO1hW1/zttDb+Z2zw0QxVp06dOHToEAMHDWJk//588NSTbNmwgcHjxjHhnnuYraqUxxNcGA9TKiBZVVCR6EBIwiwpuN6K0n39Wt536ajt2nPn9Ons3rmTT156ibEjhtOte3dWr15Nnz59/is22JmcK6iqiaJrKlYti8QwLYIBD5VVEaprYgSTPFiWYybTkuISC6ojsqpORZdXy1ISgszkWO1RcQJFFZSWh0hN8dG0cRppqX7cbo0TjutIMOCheZN0WjXLJDXZ9/2xNv8hgAGys7O5++67Offcc5l0663cesONdAX6d+5A9oCBJAeTWFBRhcencatHIyolZu1BpRZwn1ejq64wOSywLJPODTJZdNYZzF+ygrVA58GD+fTTT+nRvft/IRftZBHLKsJs3pHPtf8Ywuy5m/G4dVy6CgIKj1Rw4uiu+LwuDhwux+XSiJk2mckxSAgqqmVJHcDFFXY+EY3c1AguzcKWtRPqCis5tnszvlt4J5qmEArHGT6wHV06NKSsPMxnX2+itNyZ/yzrT0d/H3KIn5b86lSllNiWRfPmzXln2jTWrF7N83fdyeJ58+myeRt9vRqrhWRWxGC6pvCiT6Oy9rjgbGC2YfFBxEAFcl0qrsVL+RwI9unDG/ffz3HHHed8n2nWxejy+6fse3aI+HucLKt2tthdD3/B3KnXsG7+7Vx43TvkFVTi0jXOP7sfzz4wnufeXEJZeYjMdD+6apGbGoGIoKTMyq8DeH+ePFxdKWiYHsHnNjBMFZ9XZ/3mPE489wWKSmoorQihqyql5SHGndIDv9fFJ19upKi4mvS0AGY9SvH30iB+Uun5YTyqahomUC0lzbr34NoXXuLZyZNZPPUjGpgSn67SFYgIWGhKemsCFSgCmiuCRh6N/bakCMEaTUNt25YJN91EbtOm7Dx0mOT0dJL9vrrw6pd8hr8jDj4aJhWVVDP49Ce5aeJwUpN97DtYSoOsIHdcN4qHn5vL4y/OJyPVT8KQ+NwGDdMjVFXAvnyZB6AJYF+ecfBgoYv2LSNqaiBGYUUAt64QjsT5cv4WhvRvw6C+rXjl3RUoiiA7M8i4k7pz360nM/G2j/hk1gZSkuunD1j8IO0nfgCoaZpUVVZSUVJMRV4elQcOULN/H7H9+5CHDyGOHCZYWcmVqkKyXyUowIdAEeAHvjRspiVsCgRc5NU5360Sqa3cGEiiQChvDwVnncFmVRBLSSWeno6VlY3MzkHPzcWd2xB3dgOSs7LIyMggPT2dhg0boehaXSar/sIkiEYTqJqDw01TZpAUcOPSnWHk7QbcS8e2ORzbvRlbd+UjhJuMYITM1Ii6Y69gX55xQACaooJlcWj/EeKde8bdDdND8lBpsvC6bRJxi47tcpnzwdW88NZSbNsmOejnyZcXcv+TX3HxhL4898B4Vq3b70yK0bV6Kfwf9coNw+D9999j5TffsOm77zi8axfeqipSgTQgGQgCPsB1NM0pQGoKcfm9So0DKcB0yyYGbEpYXBR38tZK7VsHFMsByTYl8aJyokXlhLbtJgSEgRiQSE8nvWVLOnfuTM+ePTnvvPPRda1ew6SjR+E2a5JBNJrg0JFy53ynSIJWzTM5cXgnTh/dlS4dGnLe1W+zccshFN1Hw/QaqafExf58YsAhRQWtVkAK84rlYTxmq9Y55XLp1sZCVQWV1VHuvO541mw6yI13TycnNxXTtEgKuEkOennjg5Vcdu4ATj2+K0+9upDM9KR6YBd+z+/SdZ0zzzyTk08+mVAoRGVlJWWlZZQWFVJ8JJ/ivMOUHc6j7MgRwgUFqNEoiUQCQjWk19rMRC24O4ArPBoLYybfmTZda39n1QIXBkRSEvj8EAyS2rwZLVq2pEHLljRs2YrcZk3Jyc0lKyMD7Qcx+NG1Hj27uF6qSIpCJBrn9mtGcsJxHdlzoITVGw6QluKnX68WFJVWM2veFq6+Yyp79pcSTHJTWi1onVMh8ZjiUIHIA4qEAM0wUIXA2pvHdmxadW1eWrdUKSE7M8jm7UdQXZrzwToX3mm2Ki0PkZMVxLbqR0X9+xhEv9+P3+8nMzPzV//OAFZv3MgXN99E8rIlfGlJDNtmrEvlw4TF3V6N1prCppiJC/gaaA6UCYFbVYhKyOralbuefZZ+3br9pn08KrFC1J7mYtdfNs+ybJL8bm5/8DPemb6K3t2actrornTt0JABp/yLFWv24XZpuN3OCatHT6vt2rxUYsO+fLYDlmGgKpMnO7hs2WuulRWC3q1LpNfljNBTVcF324/Qt1cLLMMiljCddk5LcqSgkqaN0hjWvw2rNhzE7db+OrNS/nzi/qjnfDQ9aZkmRiKBWZtKNE2TGU8/xbQRwymZv4CVcRMpJa8FdLIVgUdKWqmCsJQYtaq9l0vFLwTNpWSoLphgWXiXL+eu44bx3L/+RaL22kYigWEYTvG/lgDgsETUH+Wo69Zcf8QWqqqjLP5mN/c98RW9Rj3M9C/W8/JjZzudJD4XAb+nrvnM6zLp3bpEygrBtj3mGoDJkxHKtinOkr7daH27b7+gY7MKJSc1RDShkBr08uGna2mSm8ozD45HUQSG4QTZ5449hlVf3syyVXv5csGWep1g9+/27GhIoiiKs7Gahu5yoek6b7/7Lj1btuDu629gu89P9pVXkn3xxdygqyyTCtMjBrqEPbbEjeNFlwCDNYXrk1zUqCrLLAVuvJ5Tzp1Aa03lmZtuolfLlnw0dSq6y4Wu607x/1cIAPbfMD1N05xMYYOsIGkpfs6/9h0OH6lg+ef/JJjkJRJNoCqChKmSkxqiY7MKZd9+wbJN1iqAbVOQ2nSwVRWqI9b6tdupadktktSpaYmcvTZZpCVZVFRFGPuPV3nr6fM5d+wxVIdipKb4QMKbU1dy3xNf1Z1AUm8hgv3TOPjf4+HVq1fz6quvcuTIEc656mqOGzmSTp07k19dzeoBfTls2UyPGbRWBEJTOGxDa+foYFwC7omaPOVRudIlec6w2L5uI08uXsToigr2b9jAZzNn8uCDDzLz00+58cYb6d2790/CtB+u8e9gdDjhvsS2LRQhCAY8nHbxy3z25uWs+Pyf9Bj5MFJaxA0PnZqWSHdWRFm7gOpIxFqvqjDdcroLpekQ40u37LHXnakxZHCnPPuzVa1V27YJ+N2s23SIY0Y/ysBjW5KVEaSguIr13x2ioLia1GRfXfqwPkr+4geJDvEr2Sy3283dd99N06ZN635eFovx+ajhFG7byWKgy/jxtF+/inV7DlJkWeByYwFuCWM0uN9UOL9ZY87ZvZ+XlizmoYsv5sE33iBr2DCOHTaMB2sfpPLy8t+k7Mi6itrfQ/m1pUPESPJ7OOeqt7jjuuMJ+N3U1IQwLYXBnfJsNFvdvId1QGktprZWq6sVwF6+0ZpnFutDRnXLk0FfonZMv8Tvd2NZNl8u2FZXf/R6dDLSAn+ImPb7TLD4XanKbrWOkGVZmIaB4vEw9YrLWL1mPbuTkrj1hRfo2KsXH3bvym6fj0aNckgcPoALKPJ46e+GxmGDpHsfwrV8MaOff4nP33yTToMGc/aFFxCPxXB7PBxzzDF/IDkj/jS8TlJMIvnlLhHblrUzwSR3P/IFAb8bhEaSN86obnnSLFZYvt6YBzB5iIOpAjBlitP/vHht4qvVG4Vs3bpM7di4lGhcQxGybvJbStBDepqf5CQPmubMe/7hYhQh0VQbRZF/+Wn9PXZaSom0bdweDx8++givvP0ukQEDeG3FCsaeey6bP57GoliCk26/gwHnn09p1MIAmvbuRcNb7kAzTQqWL2fscy/S6pGH6aGpPHrZpWzbvh23x4NlWXWOXX2s+RfDIiExTIVoXHNoy4Cq2qiqjRA/dTgVxWnKV4QkmtDo2LiU1q3L1FUbhFyyPvGVEDCl9kwH5Qf7JYDvlm+0t5NsiFHd99sxQ6sDy/HWnHmJRw9D/nH90vmy0kofkZj+k4X9KRv8Oyg7mq4z4+OPuerW2zjx1lv5cOFCunTujGXbLJ05k2hqKjfceitKRpaTuQKCycmMveU20hvmsOKzmViJBGfdcivnz5lDg7RUzj3pJOKGUZdJ+z2Mjj9LuhNCEonrpAdjtGlaTlowhmULyqu8lFd5MUwV5ScgUyt0klhCY1T3/TbJhlixyd4GbK7F8kcAM3myc5b8glXGDKtEYVz/fXayP147+Pu3Kh82VWEXHZuXcfWEtXRrXUw8of0pkH9og38tceCcZKrxzTffcO311/Hmp5/ywMMP41adU04L8vKYtm4D/3zmGfy6hqtBDhHVAdiTlUVA0zjryafZnJfH1m3bkJZFv+OG89qatYhAgLFjxqCov6ffStSpzz8aB6uKJBx1MbzXQVa99S5LX5jG8hc/Ys6TH/PKbXO54IStZKZEiBmun722aSkk++OM67/PtkoU5q0yZgBWLZb8COApU7AVAXO/NaYu/1ZYrduXqMe2PkIopqP+isrVNZuKGg99OxXw5ZMf869/LmD24zNo2bCSeEL7ydP3++zZbyfihRAcOnSI9957jyVLlnLGaadhmiZmLY3no6lTaXFsH84691yklGS0aEHY6zhZWS1bIqVk1LhxtD7mGD6eOhWhqsRjMRo1bsy3a9fi83p59NFHa5vt/iYVLSSmJWiQHsbrSVBTo5KRHKFXtwLOH7+Rl+/5iqUvfcQZAzcSjYofgawqklBM59g2+bTuUKIuWyms+d8aUxXFwfInAAO2ZaMAW7761lqJx+KcwTssy1Z+0XXQNZvKkJsWuVW8O2k2Aa9BpDRAIGCQ5Etg2eJPZe9+ePzrrzlbKSkpPP3007Rs2bKOy3xUnX6zciXPPf8c1D4MaTk5xFJSMIGspk0dZ01Knnz+eVZ++20di8O2bXRdZ9q0aWRnZ5OXl+cMevmV02R+uOY/lrFSSE2K89aXnbjsvpFs3u9m9tIMvp6fxfpVGYSqvOzd7+KGM7/lzGFbqYm4UBX7aEIXy1Y4e9B2C7fFV99a3wBbLctxrn4OYIY4nhcfz4+/UrRDE6cN2kfrnHIiiZ/aVFWVVIQ8NM6sYdoDn9MgPQyWhtsb57OFTflubya+2unwf5Rs9lsx5VFPOhgMout6nbo+Slzfvn07AwcOpGfPnnXJl5TUNOIZmSSArMaNnSyVadK7Vy+OO+44vvvuu7rrHs2cXXDBBTSu/exv86L/fI+TEJLzjt/FsIHlDO9bQec2YRKGYPG3ySxdm0qHdlEaZFkYpqg9fFMSSei0zinn9EH7KNqhiRkL4q/8EMOfBXjJEiwpEXsP2TM+nm/ne3MjytmDttnhf1PTioCqGp0RPfaw+KWpdGheBqjsPOhh9sIMFMUkyWdgWsqfys/+EWk4OqL/hyDk5OQwceLE739n2wRUBatBLnEgq2HDOkdNSskNN9xAbm7uj7JmP2yHqS/P/yc2WLWprHFzUr99jOi3l2i5B02V5GQk6NO9muMHlHP2iUWUlfqY820zfG7TGemsSMIxnbMHbbe9uRFl+jz7yJ5D9qdSIpYs+fExO//uQcnJk1EFhKfNjb8cPaKJS0dvsxul1xA3VGc2syKpibi4/NTvmHTRAnbucSFVhaVrkjl4xMNx/ao5+aR93HDmWqrD7jqVUl+UnV+S5h/+PyUlBY/H8yOgBKA0akRCVcjKyqoDWAiB3+8nIyPjJ9f7I0fs/Bkv2rIU/F6DOy/4Fml/LwwJUxCLKCQMlcYta1i9vSFb9qXj85hIBHFDpWF6DZeO3mpHj2hi2tz4SwLCtc7Vr098nzLFaVZfut586eMv7aqMVpXquUO2yurI92DZEk4esJ/ufasJhXVmfpWBpkpGDytFV21ixX6uHLeBId0PUxVyo6p/ALB6YEf8OwPy6CPmatyERHo6KUlJv/r5Pxu7/xFlpWs25dUerh23gc6dComFXChHB7UBigKqkNhRlZdmdqkzkapiUx1xc96QrTKjVaX68Zd25bIN5su2REyZ8tNDsn7uEXWkWFD8zpeJF2NFurj2tI1W44zqWil2vuidOe3BEBw44iYYsOjfp4JY6PtGCU2xeeLqxfi9Bqb5B1S1cKThr+z3L03TCTZugqtRY8cL+UE7yl+dvuMkXH4/J0tVJFUhN306FvDPc1cTr3ShBiQiVSD8DiqWpeAOxFmwqjkL1jUh6E9gS0Hc0GicUc21p220YoW6eGt24kUhKPk56f0lgJkyxbn/+d8aT3w4067IaFWlXDl6g6yOuBFAsj/OtIVtmbuwNeePzWNw7yriNd8nRRQkMcNFp2MKefDS5VSG/piqtn8gUfWRBD0KXqNGjWjdtu2f9np/obrpJB5+5/WcEckCj27w3K0L8RQmqLjcIPJUgugHBsY6GxkGRbUx4hoPv9e7LopxpNfFlcdvkBmtqpUPZ9rlC1cZT9j2z0vvLwIM2JOHoApBycsz4o9U7ncpV47ZZHVpVkxNzBnvr2s2t700EKRee3O1j68FIigQxRbVM3UuOWcjF4/eQkmlD12zf7N6cvTUzsrqaB17sj4YEgANGjSgU8eO9VrukVJSWR2lpCxUO6vzt9biSO+/rllK1175xBt7cLcCraNCYr5FbLpJeJaNOz3O2190Yvl3DQn6EyAhFNPp0qyYK8dusir26cpLn8YfEYLSyUN++dDoX8zBLTnoOKGXXmmvS/GqE4Yeb6XluiJy6vL2wqNbuHSLg4VBqmo8nDRsF0ZMR0EikgXmDpvwIwn0XioiR2NEnwMsX9eI3UdS8XuMugMkf9Y26SpFpdV0apdL5/YNMS27ti3mr0twcnIyHTt2JBAI1MtQNNOyUVWFmXM28e70VQQCnl91EHXNpqjcx63nr+WGC1dR9ZkLTZe4BmuEHkjgHafjvdmNt5XFkbxkLn5oVN36FQGRuM7zl8+3O/YoVp56wd73zqz4hVJiD73ol88S/tUk67ZtKDt2kPhuj31gdFfPhAGDS63de9OUNbtz8LlNPG6LlVtyaduwiq4d80lIF/Z2i/CTBv6bXLj7qVhlAq00wcgTDjFrcUtKqnx43eavgqwIwbpNhzjjpO4kJ3kxTKce+lcB0TSNQCDwu+La37K5pmXXzZW8+Ib3SCTMX/W6j4J74fHbeOqWhZQ/JqDERkkGvYcKqsDaZaN2V3EpJhMfHcna7Q0I+AwUISmv8XLmgB3ccum31uZVmnrVw6ELo3G2bt2Ksm3bLwP8q6IxfTqW9RFqcZn1+aNvxWfKuKo9eOEyq2FGDbGEhkDi8xhc//QQduzMwpuWIPS+jf96HVc/BbtIErkvRmS7RqP0aqY98AXpwRjhmI6q2r+4eR63Tl5BJadf/Ao79xaha2rdgZaWZf+ht2n++HCQo7bXtiWmaf/h6zntsgJdU9m1t4jTL36FvPwKh/Qg5a+CO37oTl7611zCiwXCLQje68Y1WCP6kYmSDKKXjkeJ8urMbnyyuDVpwRjSFsQSGg0zanjwomWWjKvao2/FZxSV8YX1Eer06b9+vOxvlkmmTHeOJhhzjrWsSZp+0aDRMU8jPSynLm8vvC4LVZVUR9x8uzmX8SfsQi83SewCISF0fwLvuTpyn0XlK9B8YpiB7Y7w2ZLW1ERceFzWz0qy072vc6SgkmmfryeRMGmYk0Jqiq9uuvofeX9Pivv+/3/mOs614MDhMl56ZznX3Dmdw/kVJAV+/tRSIZxCTHGFj3NGbOf12+dgHQSpq5grTFyDVIQfZIEktgpSb7BZtyKXix4ahcflHPihCKiJunjxinn2sYPyxBuvU3n/a9GTpSQkOv22H/q79NS4caiffILVNEc5d/ZzSe+275Ewr3topPbinG5kJkccNkWVlzGDd/P+w7Oofg/MXRL/PzSMdTbxWSZ6VwX3DR48NRE27s9h3O2nUFDhJyUQr6uB/jSccIZ+V4diZKYF6NCmAY1yU50Tun9r8ULgcWs0yklhaP+29OzS+EddEms3HWLRil0cKagkljB/1Zk7+l0Jw5nVvH1XAcWlIYJJHqcp7GfAVRSJbQsqqj1cO249j9++BAuVqntN9BbOZ4y1Np4xGpFZFklnCqqb+hhx2Tj2FwbxeUxUISmu8nHFqI08c8dcc9s6lzb62ppzj+Tb748Z+9vS+7sBBlg0CW3oFMxxw13vvfeE5xzTFObxt4/X1u/NJtkXBwEllT6uG7eex+5eSEJ6iL6QQFZJ9M4KCMe7jiyUZNxqs+dwGhNuOZHN+zPJSIn+IshCiFpimUUsZmCa9h9MZYKmK9w8cTiTb3IGjd/9yBc88fJCTPOPdUUKIdA0pa4JzKmLy58tn4ZjOtjw4NXLufL8dVS8Koivt0m+Wif2voXaRqC3U4gutvEMEug9BGOvOY1565uQlhRDSqiOuOnRoog5D083Vc3Wzrsh9u70BYnzj2LxexNHv7+45Wg5332Xe9fedafadteWFGvEXWeqNVEXbt1CCCir9DD54m+4/ZIVVH7uwj9WJfa+gR0G67CNZ7RG6BOb9HNtqtr6uezuEXy2pBXpKdFaTrT4ZUrLn3C0jqYqCwurWDDjekzDYtT4Z8jJSf1Th2gczXr93J8pipPNKqv20CangucnL2BQ9wOUPKzgaqOgNRaEXkmQ/paXmpvjqD1UvBfq6KE4l911PG/N7UBmchTbdpiSAW+CefdPtdp0qlSn3G/tnPxKtJeURGrHNPyuhat/5OamTEHRVOIL1phL22a4LhwyOqx1TC1j6vL2Qq29Oa/HZM6q5iR5LIZcfJhEWCfyTAK7SOK/3kXkRYOkyzXCqwX68hjn3L0HVYHFqxtj2sov2uWj0vj9Bv++t2NvHQ1ypKCSb9buo6gshNul1TpN8g+++UVbG4nrhKM6543axntPf0V7iqla5SIxL0HS5S5iC0xkBGJfm/gud4Mu8KYmuPnRYbz8RRcyU6K1B4AKEpbKuzfMkscMKuDDd4he82hklKaSV3sm0u/OGql/NEIYOAjt8GEKlm1K7O7Xyjd+yKhSK0eLiE9WthVel6M1vG6TWd+0JGCbDOxzgESljneMRvQFA8/pGu7jdWShTXimjbkfRl11gD59i1m7IZv9BSl43Saq6hwZUz/5CInLpZFXUElBUTVut15P4xIdYE1TobzGS9smFTx74wJuvmIV4muDincESeer6J1VyiZE8I7WSLnHg1UFMiZJGmVx24NDeOrjHmSkRLFra++VEQ/PXTpfnnHGdmvF17p6yb2hc6IxFg0YiHbwIH/o4MQ/CjAHD2Lfcw/a7K/YvGWPlRjW2Tti2PAjpjduqV+sbYXf44DscTkgKwmFkbcdIr5GgXQF39kaiRU2kZcNUt9wo2QplN0AHZuVcvaNu5GWYM13DaiJuvF6TOfYWFlfPT+iXmZbCyHRVIlpKVRUe0gNxLjpnDU8f9MCuvYrovJljcS3NqkvuYl9bKE1UtC7KiS+tVDaaXg7g6e5zXX3HMezn/YgIzmKLRUUISmr8fLAOcu46uK15p6Nbv2yyZHbdx20X7nnHrS33/59dvcvAVxbN7YXTUJ7cLq9dM9+O2N4D1/fEccdMIgo6pz1LepA9npM5nzbnIqDPk6asB9XZ4X4PkH00Tj+q3W0dgqRlwzc/QSxhI78JM6JN+5n1Al5lBZ72bong0hCx+My0VSHUvrffKmKQ3SLJzQqQ25S/HH+cdpmXrxnAScP3YUaEpRcIvEOE9iHJcZKGyxwDVTRchWMaoVArklMUbn4rtG8/XUnMlMideCWVHu5e9w33D5xhVG0361fcU/k2SUbzDsXTUK7aMofB/dPAwzw9hKnB+3cf9izD+eZLY7r7esxath+g4hQ56xvgc/trMfnNVi8sQlbd2Ywss9+kkIxjBw3nuMUEouc3KtIFnhP1lDbqYS/0chZW86ZV++hX58CKis87MlLdWrLqkTXLZxRX38/2KLWcVIVZ9BnTcRFJOqiSYMaJp6xiaduWMT447bh3x0nkeQBDYwZBsIn0HuoJJZYBJ9wE37aILZdkH6DycH8FM66/RTmrGlWa3OdFvKyGgfce65ablTke/Qrp4Tf+WypebmUqM2H8qf7YtS/sgFTpjiHao27wP708BG77bCe3q6jjttneE1L/Wp9S1y1nnXAa7BhTzbzvmnGsQMLaTqoinihTujuOMGH3agtFKIfmHhOVIm/ZWA10wl9LOnQr4LxZ+9maKdDuDw2eSUBikoDxE0VVbHRNWfzqSfAhXAAVRSJIsC0FcJRnVDYhUc3GdT9CLefv4qHrlrO6B67SU0xiYTcVF6egEIL92AVbDA2S1xDNARQ/ZCJe6BKysUGc75oyVl3ncyOw2mkBWPYtkBKQVXEw/3nLOOOiSuMiny3fvW90Q+nzjXOkxJVCOy/UlSrl47P2vDJPnOE9vbTd/nPz24RN9/4sKt64+vHCUWReHQLIRwmiN9j8PDEpVwwZjOxeYLqeYLAWQruISqRVwysI5Lgo26in5rEFtoE7nThJgFRi8LyIAu2NWPWwuas3tKAgpIAlhS4XDZu3ULTLByHubZTSv6ALih/fNfOM/H9fElpC0xLIZ5QiSdUFEWSkRKlS5sSRg4+yMi+B2mfVQpY2G43ZbebUGmT+rab6OsGicUWWncVLFCbCRKrbDzXuPFFYhjNXDzw1DE8MbUXmmrXZqkgZqjYtsITFy+QF5+90Sra59auuy/8ztT55gW1J5dJ/mLFtN7m0x0F+aSB+jNP3ua7plX3uPX1Vy2Uy58fLUqrvST740gpMCyFUNjF2SO389Dty8iqrqJ8mobnJI3oE3GSHnCjNlaIvG5g59v4b3URnWsTm2fh0S2SxtjQTiO/JMi6vAZ8sy6X9Zuy2Hs4mdJKLzFTwzYd3piiyjqJ/B5qgS0FlikcCRKO5LpcFmn+GM2bVdGtSwl9WufTu3khLXKqYEec+EYFe5gH0hRUt030LRMSEhkD/40uQlPiuEZohJ9K4Lneg7eVjZ6ZYPWuxtz62CBWbGtIWjBap/arwm4yglFeumqOPH70XnvPBrd6w4ORZ2etMK6tL3Dr25CJ2oVZfTpptz92s+/BASNMdm9Msy55erT67c5cMoLfH4hRXuOheVYV9169gnGn7YQ9kuJ/Cdy9BGoyxL8w8d/mQuugUHN7Aq2twDVCo/phE3d/BWVTAn8bG9FRIJu4KEr4OViYzJ7dyRwKJXOkOEBJuZeqaheRsI4pFGfIuZB4hEFaTpz0tBhZ7jBNM6ppkVtJy5ZVZMVCuHbGnFbERjql11so3TXcvQR6C+HUu5MF4WcSDn9qmYXnBA2RKTCrBP5TFFwiRplM4l9v9uLlGV1JWIrDyLCdXHZptZc+bfJ57fqvrDZdy9Tl83Vufixyx7dbzIfqQy3/XQA7IE9DEeOxcjM48/GbAq9PmIDfKFPNG18ZrL02txtet8HReDka14jGNU7us5e7Jq6iS/sCErMFNXtVfCeoaE0E1kEbJEReNdDaKbhHqig5CpG3DOKbJXovFd8pKqxMoIVN1LNVWGyCLsCjYrkV7KCKUeIcMqr6wd1UwooEosKGIQqkClAUzLWCqndt1EEaiQUW3tNUzFUWrsEq1mEbrbWC1kFB+AThRxIIv8B7pU7N8yb+4QJPc4OY5eb9Oe154r1e7DmSSkpSDFWRCOG0mUTiGv8Y8R1PXL7E1NNN7cMPCN/0r9Al+aVMldNQxfj6A/cvO1m/UH2SkyahzfqKzZ/MT3zlMtUBg3opDU4cvttqnVohVu5oJIoq/HhdFrrm2KPv9mfy0Zx2FBQFaH9iFbmnhtFVgaGqRD+3sPfZJP/LTfiZBEojBa29QvwzC/9ZKt5TVWSFpOZ5i1ihijjWQ2SXSvVUCK8EUhRis03sHTayRCI0iK2B6GGVRLaL0OcC0cWDpWqEXjbxnqHhG6uiNxMkvrBQGwviX5q4BmhozRSECuiCxE6J1lfDmyPxDTaIqy6mLWzP1Y8cx+ufdSFuqiQH4nW57vIaL9kpEZ69bJ68+R+rbJFQtIeeNbde9VDk5JoI8ydNQht69R9LYvxXAD4aJw8ejJZ3mPz5q8z39h6SDdvkeLoPG1kkxvfcbRaU+5T1extg2QK3buF1O3TQZZsaMW12WwoPBmicVUODjGq87SSxpRCeYyPcAvcwFWKQmGvhHqmh+ASRpx3pxgK9pcA7XEUetnH3UfCepxP73EQfoqH3UNHaqpibLGSZRG8ucHcSqBmg6GAsMdG7qYgkgeIXJJZb6F0ViIH3Hy7sGFhSQbUk/m4mrmyTI/kB3v6kCzc+PZRXZ3ahvMZLclIcTXV6lcJxnUhcZ/yAHXxw62yzz6A8dcsal3LTY7G3n3o/foaqcHDQoD+XxPivAXw04yUlqqYS27TLmjl3ubE/IFwDB/YxA6cP32l1yi5l66FMsa8wBVWRuHULv9ckbmgs3dSY6QvbsXVPJoGgSauxYZLaxPENUiFTI7YJrGKJ52QNY6VFfK6FkiVIfGPh6quhpAvicy3UXIHaRCGxwMI+YGMXOrRU9zAVoQrsIpvYlxZaawU1VyAjEJ9hondWic40saIC1xgX1j6Jp6nE5TfQvQbxqM6yzY15/P1jufOlgXy8qA3VYTfBQAKX5lSo4qZGRchDh8ZlPH35fPv2f3xrJ3lN7c13KLnq/vCVS9abUzSVuGWj/tH043/TBv+qXQaaXDbG/fjECe5x3fqZmMVu88kZXdWX53QXh0qCBH1xPLrlnDpuKNRE3GiqRZeWJZw0bB/H9zxAp2al6K4EGAKCGjVTJTRTcY9UCd2XQM0E3yU61dfF8Zyi4h6kUn1TAs9JKmobBTSIf2kiY+A+RSP0sIHnLA2tvVNjTswzsbZYeBpJfOMF+GxQFMryfWzYlcX8tU1ZsLYJOw+kORUfXwK3bjljmIUkbqhUR9w0zqzm8uM3yBvGbLL0rLi28RuNFz+MT39lRvwm4NDfYW//WwDXkQZmzHAa9RqkMeami3z3XzJGa5/SPEHJ3mTzmZld1fcXdxJ5ZUn4PQY+t8NFMm2FSEwnFlNJ8ifo0LyM/t2O0L9LPp2bltCocRjVZThs/HIgqkBDldhiG6W1ishViE43Mbfa4AEtV+A5TSPxmYGotPH0F6jHCEjYzm74BTKuU1zlZfeOFNbvyGLVlhw27MnicFESCVPF6zJr8+Tf905HEzrhmE7D9BrOGbJVXnfaRiuzZZVWud/F6zPM7Y+/GbmrsJwZqgpjxvy+Yv3/FMBH8/21RwDYgG9IT+2aC07z3HjOiSJLzzYo2ZtivvpVB+XDZR2U3UfSUFWbgMfApTl7YVgqkZhGPKGiqTYZqVFa5FTRrmk57ZqW06JJFQ2zQqR7oiRnJnBjomOj+SVHiaW2JTCiAsOtEY7pVFe6KC7wkF8W4EBBkL2HU9hzOJUDhUFKqr3EEhqqIvG4TNwu60ftsKalEIrpWJZC69xyJgzabl86equd2bJSM4t03psti9+eGXti8TrzWSBSG0byR8p9/2sA10nzpzOwTAe3BqcM1q85Y5TrsvEjlAx3Q4N4gd+avrQFHy1tp6za1VBUh924dROv28SlOelPyxYkDJW4oZIwHPWqKY5XHvAlCHgMAj4Dr8fEpVgoilPLNSyVmKESieiEoo7URQ3noTkap+qahUu3cWnWT8ZRmJYzaiFuaAT9cY5pc0ROGLTDHjdwH+7ciBo/ojJtniyd9nXilVlLjGeBQk2F0/+DUvtfB/jodw8ejLp8OWZtf3XuqP6uS04fpl988mClWW47E+IqO7ZnmjNWtFDmrG+ubD+cQXXU9b1EaRaa6jg1EocNYtkKliWwbCdTZUsn31vH4RJOnlkRsrY6ZNflnoX4vl51FFarll0RS2hYtiDJm6BD41JG9dhvj+23z27XvkTDY5G/Q+OLJfaBTxcab3y9IvEaUKCqMGAAWm3Hn/yvbDL//ZeYNg1lwoS6Rvqkdi2V08cOd184pKc6ePixUiHThmqdHbvTzXkbG4mlWxopmw9misKKANGEk9TXNBuX6gCuqhJFyLrJNT8l0Yk6FCVOvdmZQaJgWg6bwjSdzJfXZdIgNUSnpiVycKc8e0S3PNmudZlG0IAShfmrhL1krbXk4wXxt3bstT8FalQVPvwQdfx/wIn6XwC4bi2TBqM+sBzT/F6RdT1pkD52SG/91GM6KV0GdpOQZYOpEC/22VsOpNprdmeKTfszxJ6CVHGkLElUhDxE4joJU62T3qNF+h+zPL7/uSIkLs3C5zZIDcRomB6SrXLKZdfmpbJ36xLZqVmF4s6KKGg2FCss2yhYtcX+bsk647NZi41PgE0Aqgp3DUCb8l+U2P/LANetadw4lGnTsH9wLLEAeozo7xrZp5M2vFNL0aN7W1JaN5eQWjunP6ZhVrplYYXXLijzy4IKL8VVXsprPCIU1YkZat2hUbpmS4/LIuBJkJ4UlxnJMXJTI+Smh0V2alTRkuMCr+m4QhWC3QcEG3dRsXm33PDtFnP+vBWJucB6QDpEQcT48SjTp//3JfZ/AeAfed2TJqE8cD+mZf+Iupzlc6vdBh+jHtuhhdarRUPaNc4WjZvl4m2SDckpEnwSXLXes/ILt2nXzvhPCIgIKisEh4tgfwHRw0Xy8L4jbN++z1y3ZJ21KhKxNgLFR+vGqgJ33oVWO/DE/r+6gf/XAf7hOsWkwSiTF2NrGva/Db5RgQZAk5aN9SZNckTjnAw1JzVIZsArkr1uktwuXIriTLi3bMyEQTwSIxSKyqryaoqLyqyCg/kyb+9h4yBwCCj8IXCqCqaJMnkISu2QMfl/TVr///QS48ahTpqEJiWqpjkA1Fv+VgVNAymd7xg3DvV/SBh+9Pr/AEb8EsFeHMHgAAAAAElFTkSuQmCC" alt="CIA Seal">
+    <h1>Central Intelligence Agency</h1>
+    <h2>Personnel Database</h2>
+    <div class="subtitle">Operation Trish &mdash; Directive 2026-OT-001</div>
+    <div class="classification-bar">TOP SECRET // EYES ONLY // NOFORN</div>
+  </div>
+
+  <div class="directive-bar">
+    <span>SYSTEM: PERSONNEL RECORDS MANAGEMENT v4.7.2</span>
+    <span>QUERY: OT-2026 FIELD TEAM ROSTER</span>
+    <span>RECORDS: 15 RETRIEVED</span>
+    <span>SESSION: <span id="session-id"></span></span>
+  </div>
+
+  <!-- LEAD AGENT -->
+  <div class="grid-container">
+    <div class="section-label">&#9632; Lead Agent &mdash; Primary Operative</div>
+    <div class="agent-grid">
+      <div class="agent-card lead-agent">
+        <div class="lead-stamp">&#9733; Lead Agent</div>
+        <div class="card-top">
+          <div class="photo-box">
+            <div class="photo-silhouette"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg></div>
+            <div class="photo-label">Photo Redacted</div>
+          </div>
+          <div class="card-info">
+            <div class="agent-name">GOBOK, JOHN</div>
+            <div class="codename">CODENAME: SHADOW GROOM</div>
+            <div class="field-row"><span class="field-label">Clearance:</span><span class="field-value pending">PROVISIONAL — PENDING FIELD EXAM</span></div>
+            <div class="field-row"><span class="field-label">Recruit ID:</span><span class="field-value">OT-001</span></div>
+            <div class="field-row"><span class="field-label">Designation:</span><span class="field-value">Primary Extraction Operative</span></div>
+            <div class="field-row"><span class="field-label">Status:</span><span class="field-value pending">UNCLEARED — EVALUATION 24 MAY 2026</span></div>
+          </div>
+        </div>
+        <div class="psych-eval">
+          <div class="psych-eval-label">&#9888; Psychological Evaluation — Excerpted</div>
+          <div class="psych-eval-text">
+            Subject exhibits <span class="redacted">████████</span> levels of emotional attachment to Asset PHOENIX BRIDE. Operational judgment <span class="redacted">████████████</span> when asset is present. Field evaluators note subject has rehearsed his <span class="redacted">████████</span> at least 47 times in the mirror. <strong>RISK ASSESSMENT:</strong> Will do literally anything we ask. <span class="redacted">████████████████</span>. Recommend maximum exploitation of this vulnerability.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PH CONNECTIONS -->
+    <div class="section-label">&#9632; Field Recruits &mdash; Manila Station (Childhood Assets)</div>
+    <div class="agent-grid">
+
+      <div class="agent-card">
+        <div class="card-top">
+          <div class="photo-box">
+            <div class="photo-silhouette"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg></div>
+            <div class="photo-label">Photo Redacted</div>
+          </div>
+          <div class="card-info">
+            <div class="agent-name">KENLEY</div>
+            <div class="codename">CODENAME: NIGHT HAWK</div>
+            <div class="field-row"><span class="field-label">Clearance:</span><span class="field-value pending">PENDING</span></div>
+            <div class="field-row"><span class="field-label">Recruit ID:</span><span class="field-value">OT-002</span></div>
+            <div class="field-row"><span class="field-label">Status:</span><span class="field-value pending">UNCLEARED</span></div>
+          </div>
+        </div>
+        <div class="psych-eval">
+          <div class="psych-eval-label">&#9888; Psychological Evaluation — Excerpted</div>
+          <div class="psych-eval-text">
+            Subject has known Lead Agent since <span class="redacted">████████</span>. Demonstrates <span class="redacted">████████████</span> loyalty, though evaluators question whether this extends to <span class="redacted">████████</span> situations involving open bars. <strong>NOTE:</strong> Do not seat near <span class="redacted">████████</span> at post-mission debrief. Incident report still pending from <span class="redacted">████████</span> 2019.
+          </div>
+        </div>
+      </div>
+
+      <div class="agent-card">
+        <div class="card-top">
+          <div class="photo-box">
+            <div class="photo-silhouette"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg></div>
+            <div class="photo-label">Photo Redacted</div>
+          </div>
+          <div class="card-info">
+            <div class="agent-name">JEDD</div>
+            <div class="codename">CODENAME: IRON FIST</div>
+            <div class="field-row"><span class="field-label">Clearance:</span><span class="field-value pending">PENDING</span></div>
+            <div class="field-row"><span class="field-label">Recruit ID:</span><span class="field-value">OT-003</span></div>
+            <div class="field-row"><span class="field-label">Status:</span><span class="field-value pending">UNCLEARED</span></div>
+          </div>
+        </div>
+        <div class="psych-eval">
+          <div class="psych-eval-label">&#9888; Psychological Evaluation — Excerpted</div>
+          <div class="psych-eval-text">
+            Subject shows <span class="redacted">████████</span> aptitude for physical endurance tasks but <span class="redacted">████████████████</span> when confronted with trivia questions. Evaluators observed subject attempting to <span class="redacted">████████</span> during a practice interrogation. <strong>RECOMMENDATION:</strong> Keep away from any station involving <span class="redacted">████████</span> and singing.
+          </div>
+        </div>
+      </div>
+
+      <div class="agent-card">
+        <div class="card-top">
+          <div class="photo-box">
+            <div class="photo-silhouette"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg></div>
+            <div class="photo-label">Photo Redacted</div>
+          </div>
+          <div class="card-info">
+            <div class="agent-name">CHRIS</div>
+            <div class="codename">CODENAME: GHOST PROTOCOL</div>
+            <div class="field-row"><span class="field-label">Clearance:</span><span class="field-value pending">PENDING</span></div>
+            <div class="field-row"><span class="field-label">Recruit ID:</span><span class="field-value">OT-004</span></div>
+            <div class="field-row"><span class="field-label">Status:</span><span class="field-value pending">UNCLEARED</span></div>
+          </div>
+        </div>
+        <div class="psych-eval">
+          <div class="psych-eval-label">&#9888; Psychological Evaluation — Excerpted</div>
+          <div class="psych-eval-text">
+            Subject claims to be <span class="redacted">████████</span> under pressure. Field tests indicate the opposite. When placed in a simulated <span class="redacted">████████████</span> scenario, subject's first instinct was to <span class="redacted">████████</span> and call his mom. <strong>ASSESSMENT:</strong> Reliable but <span class="redacted">████████</span>. Will follow Lead Agent off a cliff if asked.
+          </div>
+        </div>
+      </div>
+
+      <div class="agent-card">
+        <div class="card-top">
+          <div class="photo-box">
+            <div class="photo-silhouette"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg></div>
+            <div class="photo-label">Photo Redacted</div>
+          </div>
+          <div class="card-info">
+            <div class="agent-name">EDMUND</div>
+            <div class="codename">CODENAME: DEEP COVER</div>
+            <div class="field-row"><span class="field-label">Clearance:</span><span class="field-value pending">PENDING</span></div>
+            <div class="field-row"><span class="field-label">Recruit ID:</span><span class="field-value">OT-005</span></div>
+            <div class="field-row"><span class="field-label">Status:</span><span class="field-value pending">UNCLEARED</span></div>
+          </div>
+        </div>
+        <div class="psych-eval">
+          <div class="psych-eval-label">&#9888; Psychological Evaluation — Excerpted</div>
+          <div class="psych-eval-text">
+            Subject possesses dual-network connections across <span class="redacted">████████</span> and <span class="redacted">████████</span> circles. Intelligence value: high. However, subject was observed <span class="redacted">████████████████</span> at a formal function when he should have been <span class="redacted">████████</span>. <strong>WARNING:</strong> Has a talent for disappearing when <span class="redacted">████████</span> are being assigned.
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- GSB FRIENDS -->
+    <div class="section-label">&#9632; Field Recruits &mdash; Stanford GSB Station (Business Cover Operatives)</div>
+    <div class="agent-grid">
+
+      <div class="agent-card">
+        <div class="card-top">
+          <div class="photo-box">
+            <div class="photo-silhouette"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg></div>
+            <div class="photo-label">Photo Redacted</div>
+          </div>
+          <div class="card-info">
+            <div class="agent-name">YEN</div>
+            <div class="codename">CODENAME: THE ASSET</div>
+            <div class="field-row"><span class="field-label">Clearance:</span><span class="field-value denied">COMPROMISED — HANDLER SPOUSE DETECTED</span></div>
+            <div class="field-row"><span class="field-label">Recruit ID:</span><span class="field-value">OT-006</span></div>
+            <div class="field-row"><span class="field-label">Status:</span><span class="field-value denied">LOYALTY UNCERTAIN</span></div>
+          </div>
+        </div>
+        <div class="psych-eval">
+          <div class="psych-eval-label">&#9888; Psychological Evaluation — Excerpted</div>
+          <div class="psych-eval-text">
+            <strong>&#9888; CONFLICT OF INTEREST FLAG:</strong> Subject is married to Coordinating Handler. Polygraph results <span class="redacted">████████████████████</span>. Cannot confirm whether subject is a double agent. When questioned about loyalties, subject replied <span class="redacted">████████</span> which evaluators interpreted as <span class="redacted">████████████</span>. <strong>ASSUME COMPROMISED.</strong> All intel shared with this agent reaches enemy handlers within <span class="redacted">████</span> minutes.
+          </div>
+        </div>
+      </div>
+
+      <div class="agent-card">
+        <div class="card-top">
+          <div class="photo-box">
+            <div class="photo-silhouette"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg></div>
+            <div class="photo-label">Photo Redacted</div>
+          </div>
+          <div class="card-info">
+            <div class="agent-name">DAN</div>
+            <div class="codename">CODENAME: MAVERICK</div>
+            <div class="field-row"><span class="field-label">Clearance:</span><span class="field-value pending">PENDING</span></div>
+            <div class="field-row"><span class="field-label">Recruit ID:</span><span class="field-value">OT-007</span></div>
+            <div class="field-row"><span class="field-label">Status:</span><span class="field-value pending">UNCLEARED</span></div>
+          </div>
+        </div>
+        <div class="psych-eval">
+          <div class="psych-eval-label">&#9888; Psychological Evaluation — Excerpted</div>
+          <div class="psych-eval-text">
+            Subject displays classic <span class="redacted">████████</span> tendencies — high confidence, <span class="redacted">████████████</span> risk tolerance. During simulated negotiations, subject attempted to <span class="redacted">████████</span> the interrogator. It almost worked. <strong>NOTE:</strong> Assign to tasks requiring <span class="redacted">████████</span>. Keep away from tasks requiring <span class="redacted">████████</span>.
+          </div>
+        </div>
+      </div>
+
+      <div class="agent-card">
+        <div class="card-top">
+          <div class="photo-box">
+            <div class="photo-silhouette"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg></div>
+            <div class="photo-label">Photo Redacted</div>
+          </div>
+          <div class="card-info">
+            <div class="agent-name">ED</div>
+            <div class="codename">CODENAME: SILENT BLADE</div>
+            <div class="field-row"><span class="field-label">Clearance:</span><span class="field-value pending">PENDING</span></div>
+            <div class="field-row"><span class="field-label">Recruit ID:</span><span class="field-value">OT-008</span></div>
+            <div class="field-row"><span class="field-label">Status:</span><span class="field-value pending">UNCLEARED</span></div>
+          </div>
+        </div>
+        <div class="psych-eval">
+          <div class="psych-eval-label">&#9888; Psychological Evaluation — Excerpted</div>
+          <div class="psych-eval-text">
+            Subject is <span class="redacted">████████</span> quiet, which either indicates superior operational discipline or that he is <span class="redacted">████████████████</span>. Evaluators cannot tell. Last three attempts to assess subject resulted in <span class="redacted">████████</span> and an awkward silence. <strong>ASSESSMENT:</strong> Either the most dangerous operative on this team or <span class="redacted">████████████</span>. Further observation required.
+          </div>
+        </div>
+      </div>
+
+      <div class="agent-card">
+        <div class="card-top">
+          <div class="photo-box">
+            <div class="photo-silhouette"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg></div>
+            <div class="photo-label">Photo Redacted</div>
+          </div>
+          <div class="card-info">
+            <div class="agent-name">JEFF</div>
+            <div class="codename">CODENAME: WILDCARD</div>
+            <div class="field-row"><span class="field-label">Clearance:</span><span class="field-value pending">PENDING</span></div>
+            <div class="field-row"><span class="field-label">Recruit ID:</span><span class="field-value">OT-009</span></div>
+            <div class="field-row"><span class="field-label">Status:</span><span class="field-value pending">UNCLEARED</span></div>
+          </div>
+        </div>
+        <div class="psych-eval">
+          <div class="psych-eval-label">&#9888; Psychological Evaluation — Excerpted</div>
+          <div class="psych-eval-text">
+            Subject's file contains <span class="redacted">████████████████████████</span>. We're not sure what to do with this information. Standard protocols do not cover <span class="redacted">████████</span> of this nature. <strong>RECOMMENDATION:</strong> Pair with a handler who has <span class="redacted">████████</span> and a strong stomach. Subject will either save the mission or <span class="redacted">████████████████</span>. No middle ground.
+          </div>
+        </div>
+      </div>
+
+      <div class="agent-card">
+        <div class="card-top">
+          <div class="photo-box">
+            <div class="photo-silhouette"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg></div>
+            <div class="photo-label">Photo Redacted</div>
+          </div>
+          <div class="card-info">
+            <div class="agent-name">EDDIE</div>
+            <div class="codename">CODENAME: MIRAGE</div>
+            <div class="field-row"><span class="field-label">Clearance:</span><span class="field-value pending">PENDING</span></div>
+            <div class="field-row"><span class="field-label">Recruit ID:</span><span class="field-value">OT-010</span></div>
+            <div class="field-row"><span class="field-label">Status:</span><span class="field-value pending">UNCLEARED</span></div>
+          </div>
+        </div>
+        <div class="psych-eval">
+          <div class="psych-eval-label">&#9888; Psychological Evaluation — Excerpted</div>
+          <div class="psych-eval-text">
+            Subject is easily confused with Agent OT-008 (SILENT BLADE). This has caused <span class="redacted">████████</span> filing errors and one incident where the wrong Ed received <span class="redacted">████████████████</span>. Subject took it well. <strong>NOTE:</strong> For the love of <span class="redacted">████████</span>, put name tags on these two.
+          </div>
+        </div>
+      </div>
+
+      <div class="agent-card">
+        <div class="card-top">
+          <div class="photo-box">
+            <div class="photo-silhouette"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg></div>
+            <div class="photo-label">Photo Redacted</div>
+          </div>
+          <div class="card-info">
+            <div class="agent-name">NOEL</div>
+            <div class="codename">CODENAME: PHOENIX RISING</div>
+            <div class="field-row"><span class="field-label">Clearance:</span><span class="field-value pending">PENDING</span></div>
+            <div class="field-row"><span class="field-label">Recruit ID:</span><span class="field-value">OT-011</span></div>
+            <div class="field-row"><span class="field-label">Status:</span><span class="field-value pending">UNCLEARED</span></div>
+          </div>
+        </div>
+        <div class="psych-eval">
+          <div class="psych-eval-label">&#9888; Psychological Evaluation — Excerpted</div>
+          <div class="psych-eval-text">
+            Subject demonstrates <span class="redacted">████████</span> composure in high-stress environments, which evaluators attribute to <span class="redacted">████████████████</span> or possibly <span class="redacted">████████</span>. When informed of the mission parameters, subject simply nodded and said "<span class="redacted">████████████</span>." <strong>ASSESSMENT:</strong> Unflappable. Either genuinely brave or hasn't read the briefing.
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- HARVARD FRIENDS -->
+    <div class="section-label">&#9632; Field Recruits &mdash; Cambridge Station (Harvard Assets)</div>
+    <div class="agent-grid">
+
+      <div class="agent-card">
+        <div class="card-top">
+          <div class="photo-box">
+            <div class="photo-silhouette"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg></div>
+            <div class="photo-label">Photo Redacted</div>
+          </div>
+          <div class="card-info">
+            <div class="agent-name">KOLA</div>
+            <div class="codename">CODENAME: BLACK MAMBA</div>
+            <div class="field-row"><span class="field-label">Clearance:</span><span class="field-value pending">PENDING</span></div>
+            <div class="field-row"><span class="field-label">Recruit ID:</span><span class="field-value">OT-012</span></div>
+            <div class="field-row"><span class="field-label">Status:</span><span class="field-value pending">UNCLEARED</span></div>
+          </div>
+        </div>
+        <div class="psych-eval">
+          <div class="psych-eval-label">&#9888; Psychological Evaluation — Excerpted</div>
+          <div class="psych-eval-text">
+            Subject has <span class="redacted">████████</span> energy levels that evaluators describe as "<span class="redacted">████████████</span>." During intake assessment, subject <span class="redacted">████████████████</span> before anyone could finish explaining the rules. <strong>WARNING:</strong> Do not give subject <span class="redacted">████████</span> after 6pm. Incident file: KOL-2024-<span class="redacted">████</span>.
+          </div>
+        </div>
+      </div>
+
+      <div class="agent-card">
+        <div class="card-top">
+          <div class="photo-box">
+            <div class="photo-silhouette"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg></div>
+            <div class="photo-label">Photo Redacted</div>
+          </div>
+          <div class="card-info">
+            <div class="agent-name">KOGOS</div>
+            <div class="codename">CODENAME: THE ARCHITECT</div>
+            <div class="field-row"><span class="field-label">Clearance:</span><span class="field-value pending">PENDING</span></div>
+            <div class="field-row"><span class="field-label">Recruit ID:</span><span class="field-value">OT-013</span></div>
+            <div class="field-row"><span class="field-label">Status:</span><span class="field-value pending">UNCLEARED</span></div>
+          </div>
+        </div>
+        <div class="psych-eval">
+          <div class="psych-eval-label">&#9888; Psychological Evaluation — Excerpted</div>
+          <div class="psych-eval-text">
+            Subject approaches all problems with <span class="redacted">████████████</span> analytical precision, which is useful in intelligence work but <span class="redacted">████████████████</span> at bachelor parties. Evaluators note subject tried to <span class="redacted">████████</span> the engagement ring selection process. <strong>ASSESSMENT:</strong> Will overthink every station. Pair with someone <span class="redacted">████████</span>.
+          </div>
+        </div>
+      </div>
+
+      <div class="agent-card">
+        <div class="card-top">
+          <div class="photo-box">
+            <div class="photo-silhouette"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg></div>
+            <div class="photo-label">Photo Redacted</div>
+          </div>
+          <div class="card-info">
+            <div class="agent-name">VERNON</div>
+            <div class="codename">CODENAME: VIPER</div>
+            <div class="field-row"><span class="field-label">Clearance:</span><span class="field-value pending">PENDING</span></div>
+            <div class="field-row"><span class="field-label">Recruit ID:</span><span class="field-value">OT-014</span></div>
+            <div class="field-row"><span class="field-label">Status:</span><span class="field-value pending">UNCLEARED</span></div>
+          </div>
+        </div>
+        <div class="psych-eval">
+          <div class="psych-eval-label">&#9888; Psychological Evaluation — Excerpted</div>
+          <div class="psych-eval-text">
+            Subject's dossier is <span class="redacted">████████████████████████████████████████</span>. The remaining unredacted portions indicate <span class="redacted">████████</span> and a fondness for <span class="redacted">████████████</span>. Evaluators were unable to complete the standard assessment because subject <span class="redacted">████████████████</span>. <strong>CLASSIFICATION:</strong> Unknown quantity. Proceed with caution and <span class="redacted">████████</span>.
+          </div>
+        </div>
+      </div>
+
+      <div class="agent-card">
+        <div class="card-top">
+          <div class="photo-box">
+            <div class="photo-silhouette"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg></div>
+            <div class="photo-label">Photo Redacted</div>
+          </div>
+          <div class="card-info">
+            <div class="agent-name">RON</div>
+            <div class="codename">CODENAME: ROGUE ONE</div>
+            <div class="field-row"><span class="field-label">Clearance:</span><span class="field-value pending">PENDING</span></div>
+            <div class="field-row"><span class="field-label">Recruit ID:</span><span class="field-value">OT-015</span></div>
+            <div class="field-row"><span class="field-label">Status:</span><span class="field-value pending">UNCLEARED</span></div>
+          </div>
+        </div>
+        <div class="psych-eval">
+          <div class="psych-eval-label">&#9888; Psychological Evaluation — Excerpted</div>
+          <div class="psych-eval-text">
+            Subject operates best as a <span class="redacted">████████</span> — independent, resourceful, and <span class="redacted">████████████████</span>. However, when placed in group exercises, subject was observed <span class="redacted">████████</span> while others were <span class="redacted">████████████</span>. <strong>RECOMMENDATION:</strong> Give subject a clear individual objective or he will <span class="redacted">████████████████</span> and somehow make it everyone else's problem.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-warning">&#9888; Access Logged. All Viewing Activity Is Monitored. &#9888;</div>
+    <div class="footer-sub">Unauthorized disclosure subject to prosecution under 18 U.S.C. &sect; 798</div>
+    <div class="motto">"The Work of a Nation. The Center of Intelligence."</div>
+  </div>
+
+</div>
+
+<script>
+// Generate random session ID
+document.getElementById('session-id').textContent =
+  'OT-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+
+// Loading animation
+const lines = [
+  '> Establishing secure connection...',
+  '> Authenticating credentials... OK',
+  '> Accessing CIA Personnel Records Management System...',
+  '> Querying database: OPERATION TRISH field team...',
+  '> Retrieving 15 personnel files...',
+  '> Decrypting psychological evaluations...',
+  '> WARNING: This access has been logged.',
+  '> Rendering dossiers...'
+];
+
+const loadingEl = document.getElementById('loading-text');
+const loadingScreen = document.getElementById('loading-screen');
+const mainContent = document.getElementById('main-content');
+let lineIndex = 0;
+
+function typeLine() {
+  if (lineIndex >= lines.length) {
+    setTimeout(() => {
+      loadingScreen.classList.add('fade-out');
+      mainContent.style.display = 'block';
+      setTimeout(() => { loadingScreen.style.display = 'none'; }, 800);
+    }, 400);
+    return;
+  }
+
+  const line = lines[lineIndex];
+  const lineEl = document.createElement('div');
+  loadingEl.appendChild(lineEl);
+
+  let charIndex = 0;
+  const cursor = document.createElement('span');
+  cursor.className = 'cursor';
+
+  function typeChar() {
+    if (charIndex < line.length) {
+      lineEl.textContent = line.substring(0, charIndex + 1);
+      lineEl.appendChild(cursor);
+      charIndex++;
+      setTimeout(typeChar, 12 + Math.random() * 18);
+    } else {
+      if (cursor.parentNode) cursor.parentNode.removeChild(cursor);
+      lineIndex++;
+      setTimeout(typeLine, 150 + Math.random() * 200);
+    }
+  }
+  typeChar();
+}
+
+typeLine();
+</script>
+</body>
+</html>
