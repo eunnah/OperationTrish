@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ASSET DOSSIER — TOP SECRET</title>
 <style>
+
   @page {
     size: letter;
     margin: 0.75in;
@@ -302,9 +303,141 @@
       padding: 0;
     }
   }
+
+
+  /* Password Gate */
+  #password-gate {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: #0a0a0a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    font-family: 'Courier New', monospace;
+  }
+  #password-gate .gate-header {
+    color: #cc0000;
+    font-size: 14px;
+    letter-spacing: 6px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    text-align: center;
+    border-top: 2px solid #cc0000;
+    border-bottom: 2px solid #cc0000;
+    padding: 6px 20px;
+  }
+  #password-gate .gate-seal {
+    font-size: 48px;
+    margin: 24px 0;
+  }
+  #password-gate .gate-title {
+    color: #d4a528;
+    font-size: 18px;
+    letter-spacing: 4px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  #password-gate .gate-subtitle {
+    color: #888;
+    font-size: 11px;
+    letter-spacing: 3px;
+    margin-bottom: 32px;
+  }
+  #password-gate .gate-label {
+    color: #cc0000;
+    font-size: 10px;
+    letter-spacing: 3px;
+    margin-bottom: 12px;
+  }
+  #password-gate input {
+    background: #111;
+    border: 1px solid #333;
+    color: #d4a528;
+    font-family: 'Courier New', monospace;
+    font-size: 20px;
+    letter-spacing: 6px;
+    text-align: center;
+    padding: 12px 24px;
+    width: 280px;
+    text-transform: uppercase;
+    outline: none;
+  }
+  #password-gate input:focus {
+    border-color: #d4a528;
+    box-shadow: 0 0 10px rgba(212,165,40,0.2);
+  }
+  #password-gate input::placeholder {
+    color: #333;
+    letter-spacing: 4px;
+    font-size: 12px;
+  }
+  #password-gate .gate-btn {
+    margin-top: 16px;
+    background: none;
+    border: 1px solid #cc0000;
+    color: #cc0000;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    letter-spacing: 3px;
+    padding: 10px 32px;
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+  #password-gate .gate-btn:hover {
+    background: rgba(204,0,0,0.1);
+  }
+  #password-gate .gate-error {
+    color: #cc0000;
+    font-size: 11px;
+    letter-spacing: 2px;
+    margin-top: 16px;
+    height: 20px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  #password-gate .gate-error.visible {
+    opacity: 1;
+  }
+  #password-gate .gate-footer {
+    color: #333;
+    font-size: 8px;
+    letter-spacing: 2px;
+    position: absolute;
+    bottom: 24px;
+  }
+  #dossier-content {
+    display: none;
+  }
+  @keyframes gate-shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-6px); }
+    80% { transform: translateX(6px); }
+  }
+  .gate-shake {
+    animation: gate-shake 0.4s ease-in-out;
+  }
 </style>
 </head>
 <body>
+
+<div id="password-gate">
+  <div class="gate-header">TOP SECRET // SCI</div>
+  <div class="gate-seal">🦅</div>
+  <div class="gate-title">CLASSIFIED DOCUMENT</div>
+  <div class="gate-subtitle">CENTRAL INTELLIGENCE AGENCY</div>
+  <div class="gate-label">ENTER ACCESS CODE</div>
+  <input type="password" id="gate-input" placeholder="••••••••" autocomplete="off" autofocus>
+  <button class="gate-btn" onclick="checkAccess()">AUTHENTICATE</button>
+  <div class="gate-error" id="gate-error">⚠ ACCESS DENIED — INVALID CREDENTIALS</div>
+  <div class="gate-footer">UNAUTHORIZED ACCESS IS A FEDERAL OFFENSE</div>
+</div>
+
+<div id="dossier-content">
+
 <div class="page">
   <div class="watermark">TOP SECRET</div>
 
@@ -363,7 +496,7 @@
       </div>
       <div class="field">
         <span class="field-label">Affiliation</span>
-        <span class="field-value"><span class="redacted">████████</span> Bridesmaids Unit</span>
+        <span class="field-value">Raffles All The Way</span>
       </div>
     </div>
   </div>
@@ -390,5 +523,33 @@
 
   <div class="stamp-bottom">TOP SECRET // OPERATION TRISH // NOFORN</div>
 </div>
+
+</div>
+
+<script>
+function checkAccess() {
+  var input = document.getElementById('gate-input');
+  var error = document.getElementById('gate-error');
+  if (input.value.toUpperCase() === 'RAFFLES') {
+    document.getElementById('password-gate').style.display = 'none';
+    document.getElementById('dossier-content').style.display = 'block';
+  } else {
+    error.classList.add('visible');
+    input.classList.add('gate-shake');
+    setTimeout(function() {
+      input.classList.remove('gate-shake');
+    }, 400);
+    setTimeout(function() {
+      error.classList.remove('visible');
+    }, 3000);
+    input.value = '';
+    input.focus();
+  }
+}
+document.getElementById('gate-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') checkAccess();
+});
+</script>
+
 </body>
 </html>
