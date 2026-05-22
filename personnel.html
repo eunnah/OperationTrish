@@ -219,12 +219,25 @@ body {
   justify-content: center;
 }
 .photo-silhouette svg { width: 20px; height: 20px; fill: #333; }
+.photo-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
 .photo-label {
   font-family: 'Share Tech Mono', monospace;
   font-size: 7px;
   color: var(--red);
   letter-spacing: 1px;
   text-transform: uppercase;
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  background: rgba(0,0,0,0.6);
+  padding: 1px 0;
 }
 
 .card-info { flex: 1; min-width: 0; }
@@ -382,7 +395,7 @@ body {
   <div class="directive-bar">
     <span>SYSTEM: PERSONNEL RECORDS MANAGEMENT v4.7.2</span>
     <span>QUERY: OT-2026 FIELD TEAM ROSTER</span>
-    <span>RECORDS: 15 RETRIEVED</span>
+    <span>RECORDS: 14 RETRIEVED</span>
     <span>SESSION: <span id="session-id"></span></span>
   </div>
 
@@ -394,8 +407,8 @@ body {
         <div class="lead-stamp">&#9733; Lead Agent</div>
         <div class="card-top">
           <div class="photo-box">
-            <div class="photo-silhouette"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg></div>
-            <div class="photo-label">Photo Redacted</div>
+            <img src="photos/john.jpg" alt="Surveillance capture">
+            <div class="photo-label">Surveillance</div>
           </div>
           <div class="card-info">
             <div class="agent-name">GOBOK, JOHN</div>
@@ -422,8 +435,8 @@ body {
       <div class="agent-card">
         <div class="card-top">
           <div class="photo-box">
-            <div class="photo-silhouette"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg></div>
-            <div class="photo-label">Photo Redacted</div>
+            <img src="photos/jedd.jpg" alt="Surveillance capture">
+            <div class="photo-label">Surveillance</div>
           </div>
           <div class="card-info">
             <div class="agent-name">JEDD</div>
@@ -444,8 +457,8 @@ body {
       <div class="agent-card">
         <div class="card-top">
           <div class="photo-box">
-            <div class="photo-silhouette"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg></div>
-            <div class="photo-label">Photo Redacted</div>
+            <img src="photos/chris.jpg" alt="Surveillance capture">
+            <div class="photo-label">Surveillance</div>
           </div>
           <div class="card-info">
             <div class="agent-name">CHRIS</div>
@@ -466,8 +479,8 @@ body {
       <div class="agent-card">
         <div class="card-top">
           <div class="photo-box">
-            <div class="photo-silhouette"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg></div>
-            <div class="photo-label">Photo Redacted</div>
+            <img src="photos/edmund.jpg" alt="Surveillance capture">
+            <div class="photo-label">Surveillance</div>
           </div>
           <div class="card-info">
             <div class="agent-name">EDMUND</div>
@@ -494,8 +507,8 @@ body {
       <div class="agent-card">
         <div class="card-top">
           <div class="photo-box">
-            <div class="photo-silhouette"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg></div>
-            <div class="photo-label">Photo Redacted</div>
+            <img src="photos/yen.jpg" alt="Surveillance capture">
+            <div class="photo-label">Surveillance</div>
           </div>
           <div class="card-info">
             <div class="agent-name">YEN</div>
@@ -516,8 +529,8 @@ body {
       <div class="agent-card">
         <div class="card-top">
           <div class="photo-box">
-            <div class="photo-silhouette"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg></div>
-            <div class="photo-label">Photo Redacted</div>
+            <img src="photos/dan.jpg" alt="Surveillance capture">
+            <div class="photo-label">Surveillance</div>
           </div>
           <div class="card-info">
             <div class="agent-name">DAN</div>
@@ -538,8 +551,8 @@ body {
       <div class="agent-card">
         <div class="card-top">
           <div class="photo-box">
-            <div class="photo-silhouette"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg></div>
-            <div class="photo-label">Photo Redacted</div>
+            <img src="photos/ed.jpg" alt="Surveillance capture">
+            <div class="photo-label">Surveillance</div>
           </div>
           <div class="card-info">
             <div class="agent-name">ED</div>
@@ -552,7 +565,7 @@ body {
         <div class="psych-eval">
           <div class="psych-eval-label">&#9888; Psychological Evaluation — Excerpted</div>
           <div class="psych-eval-text">
-            Subject originates from Hong Kong station. Two dependents. Maintains a covert YouTube surveillance channel called "Fisherman's Life" — which Langley cannot confirm is actually about <span class="redacted">████████████</span> fishing. Known to acquire egg tarts at every safe house within a 50km radius. Has expressed intent to pursue early retirement, which <span class="redacted">████████████████</span> Langley denies. <strong>ASSESSMENT:</strong> Talented baker. Dangerous with a pastry. Do not let him near the <span class="redacted">████████</span> dessert table.
+            Subject originates from Hong Kong station. Two dependents. Maintains a covert YouTube surveillance channel called "Fisherman's Life" — which Langley cannot confirm is actually about <span class="redacted">████████████</span> fishing. Known to acquire egg tarts at every safe house within a 50km radius. Has expressed intent to pursue early retirement, which <span class="redacted">████████████████</span> Langley denies. <strong>NOTABLE APTITUDE:</strong> Classified as one of the unit's top code breakers and intelligence analysts. Subject conducted a freelance consulting operation in the <span class="redacted">████████</span> diamond trade — taught himself gemology, infiltrated the supply chain under a business cover, and emerged with a personal discount on conflict-free diamonds that even Langley's procurement division cannot <span class="redacted">████████████████</span> replicate. <strong>ASSESSMENT:</strong> Talented baker. Dangerous with a pastry. Will crack any code — especially if there's a <span class="redacted">████████</span> jeweler on the other side.
           </div>
         </div>
       </div>
@@ -560,8 +573,8 @@ body {
       <div class="agent-card">
         <div class="card-top">
           <div class="photo-box">
-            <div class="photo-silhouette"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg></div>
-            <div class="photo-label">Photo Redacted</div>
+            <img src="photos/jeff.jpg" alt="Surveillance capture">
+            <div class="photo-label">Surveillance</div>
           </div>
           <div class="card-info">
             <div class="agent-name">JEFF</div>
@@ -574,7 +587,7 @@ body {
         <div class="psych-eval">
           <div class="psych-eval-label">&#9888; Psychological Evaluation — Excerpted</div>
           <div class="psych-eval-text">
-            Subject underwent a classified physical transformation — zero to peak operative condition in under 12 months. BSch suite mate of Lead Agent. Cover activities include advanced culinary operations and being perpetually stationed in Poland for reasons <span class="redacted">████████████████████████</span> no one at Langley can explain. <strong>RECOMMENDATION:</strong> Feed him. Subject performs best when cooking for others. If the mission goes sideways, he will <span class="redacted">████████</span> and somehow still make dinner.
+            Subject underwent a classified physical transformation — zero to peak operative condition in under 12 months. BSch suite mate of Lead Agent. Cover activities include advanced culinary operations and being perpetually stationed in Poland for reasons <span class="redacted">████████████████████████</span> no one at Langley can explain. <strong>FINANCIAL RED FLAG:</strong> Subject will do anything for money. Internal Affairs flagged multiple <span class="redacted">████████</span> questionable investment schemes. During a field trip to Las Vegas, subject was observed counting cards at the <span class="redacted">████████████</span> blackjack table — successfully — before being quietly escorted from the premises. Langley has classified this as "entrepreneurial initiative" rather than <span class="redacted">████████████████</span> misconduct, but the file remains open. <strong>RECOMMENDATION:</strong> Feed him. Subject performs best when cooking for others. If the mission goes sideways, he will <span class="redacted">████████</span> and somehow still make dinner. Do not give him access to the mission's <span class="redacted">████████</span> operating budget.
           </div>
         </div>
       </div>
@@ -582,8 +595,8 @@ body {
       <div class="agent-card">
         <div class="card-top">
           <div class="photo-box">
-            <div class="photo-silhouette"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg></div>
-            <div class="photo-label">Photo Redacted</div>
+            <img src="photos/eddie.jpg" alt="Surveillance capture">
+            <div class="photo-label">Surveillance</div>
           </div>
           <div class="card-info">
             <div class="agent-name">EDDIE</div>
@@ -604,8 +617,8 @@ body {
       <div class="agent-card">
         <div class="card-top">
           <div class="photo-box">
-            <div class="photo-silhouette"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg></div>
-            <div class="photo-label">Photo Redacted</div>
+            <img src="photos/noel.jpg" alt="Surveillance capture">
+            <div class="photo-label">Surveillance</div>
           </div>
           <div class="card-info">
             <div class="agent-name">NOEL</div>
@@ -618,7 +631,7 @@ body {
         <div class="psych-eval">
           <div class="psych-eval-label">&#9888; Psychological Evaluation — Excerpted</div>
           <div class="psych-eval-text">
-            Subject is a licensed ENT physician — LA-based, Lebanese descent, multiple family members embedded across the medical sector. <strong>CRITICAL VULNERABILITY:</strong> Confirmed arachnophobia. Deploy spiders and subject will abandon position immediately, <span class="redacted">████████████████</span> regardless of mission status. Previous safehouse operation with Lead Agent was compromised by a bedbug infestation that left both operatives <span class="redacted">████████</span> traumatized. <strong>ASSESSMENT:</strong> Medically useful. Tactically fragile. Keep all insects out of his line of sight.
+            Subject is a licensed ENT physician — LA-based, Lebanese descent, multiple family members embedded across the medical sector. <strong>INTELLIGENCE VALUE:</strong> Subject functions as an unwitting HUMINT collector — fellow agents routinely disclose <span class="redacted">████████████████</span> medical ailments, prescription dependencies, and physical vulnerabilities during informal "consultations." Subject now possesses a classified health dossier on nearly every operative in the unit. <strong>CRITICAL VULNERABILITY:</strong> This makes subject a prime target for extortion. A hostile actor could leverage subject's medical oath against his operational loyalty — forcing him to divulge health data that would <span class="redacted">████████████████████████</span> compromise the entire team. Also: confirmed arachnophobia. Deploy spiders and subject will abandon position immediately, <span class="redacted">████████████████</span> regardless of mission status. Previous safehouse operation with Lead Agent was compromised by a bedbug infestation that left both operatives <span class="redacted">████████</span> traumatized. <strong>ASSESSMENT:</strong> Medically useful. Tactically fragile. Knows everyone's secrets. Keep all insects — and all interrogators — out of his line of sight.
           </div>
         </div>
       </div>
@@ -632,8 +645,8 @@ body {
       <div class="agent-card">
         <div class="card-top">
           <div class="photo-box">
-            <div class="photo-silhouette"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg></div>
-            <div class="photo-label">Photo Redacted</div>
+            <img src="photos/kola.jpg" alt="Surveillance capture">
+            <div class="photo-label">Surveillance</div>
           </div>
           <div class="card-info">
             <div class="agent-name">KOLA</div>
@@ -654,8 +667,8 @@ body {
       <div class="agent-card">
         <div class="card-top">
           <div class="photo-box">
-            <div class="photo-silhouette"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg></div>
-            <div class="photo-label">Photo Redacted</div>
+            <img src="photos/kogos.jpg" alt="Surveillance capture">
+            <div class="photo-label">Surveillance</div>
           </div>
           <div class="card-info">
             <div class="agent-name">KOGOS</div>
@@ -676,8 +689,8 @@ body {
       <div class="agent-card">
         <div class="card-top">
           <div class="photo-box">
-            <div class="photo-silhouette"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg></div>
-            <div class="photo-label">Photo Redacted</div>
+            <img src="photos/vernon.jpg" alt="Surveillance capture">
+            <div class="photo-label">Surveillance</div>
           </div>
           <div class="card-info">
             <div class="agent-name">VERNON</div>
@@ -698,8 +711,8 @@ body {
       <div class="agent-card">
         <div class="card-top">
           <div class="photo-box">
-            <div class="photo-silhouette"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg></div>
-            <div class="photo-label">Photo Redacted</div>
+            <img src="photos/ron.jpg" alt="Surveillance capture">
+            <div class="photo-label">Surveillance</div>
           </div>
           <div class="card-info">
             <div class="agent-name">RON</div>
