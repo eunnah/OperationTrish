@@ -304,6 +304,130 @@
     }
   }
 
+  /* Mobile responsive */
+  @media screen and (max-width: 768px) {
+    body {
+      padding: 0;
+    }
+    .page {
+      width: 100%;
+      min-height: auto;
+      padding: 20px 16px;
+      box-shadow: none;
+    }
+    .stamp-top, .stamp-bottom {
+      font-size: 11px;
+      letter-spacing: 2px;
+    }
+    .stamp-bottom {
+      position: relative;
+      bottom: auto;
+      left: auto;
+      right: auto;
+      margin-top: 24px;
+    }
+    .cia-seal {
+      width: 70px;
+      height: 70px;
+    }
+    .agency-title {
+      font-size: 10px;
+      letter-spacing: 3px;
+    }
+    .doc-title {
+      font-size: 20px;
+      letter-spacing: 2px;
+      margin: 18px 0 4px;
+    }
+    .doc-subtitle {
+      font-size: 10px;
+      margin-bottom: 18px;
+    }
+    .photo-section {
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+    }
+    .photo-frame {
+      width: 180px;
+      height: 220px;
+    }
+    .photo-stamp {
+      font-size: 20px;
+      padding: 3px 10px;
+    }
+    .profile-fields {
+      width: 100%;
+    }
+    .field {
+      flex-direction: column;
+      margin-bottom: 8px;
+    }
+    .field-label {
+      width: auto;
+      font-size: 9px;
+      margin-bottom: 2px;
+    }
+    .field-value {
+      font-size: 13px;
+    }
+    .section-header {
+      font-size: 11px;
+    }
+    .notes-body {
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .handler-box {
+      padding: 10px 12px;
+    }
+    .handler-box p {
+      font-size: 11px;
+    }
+    .watermark {
+      font-size: 40px;
+    }
+    .seal-container {
+      margin: 16px 0 6px;
+    }
+    .divider {
+      margin: 16px 0;
+    }
+  }
+
+  /* Password gate mobile */
+  @media screen and (max-width: 480px) {
+    #password-gate .gate-header {
+      font-size: 11px;
+      letter-spacing: 3px;
+    }
+    #password-gate .gate-seal {
+      font-size: 36px;
+      margin: 16px 0;
+    }
+    #password-gate .gate-title {
+      font-size: 15px;
+      letter-spacing: 3px;
+    }
+    #password-gate .gate-subtitle {
+      font-size: 9px;
+      margin-bottom: 20px;
+    }
+    #password-gate .gate-label {
+      font-size: 9px;
+    }
+    #password-gate input {
+      width: 220px;
+      font-size: 16px;
+      padding: 10px 16px;
+    }
+    #password-gate div[style*="font-size:9px"] {
+      font-size: 8px !important;
+      padding: 0 20px;
+      text-align: center;
+    }
+  }
+
 
   /* Password Gate */
   #password-gate {
